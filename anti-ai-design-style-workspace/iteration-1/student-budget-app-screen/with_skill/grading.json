@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "AI-look score below 20",
+      "passed": true,
+      "evidence": "score 0"
+    },
+    {
+      "text": "No CR1/CR2 craft flags",
+      "passed": true,
+      "evidence": "craft flags: none"
+    },
+    {
+      "text": "Shows allowance, top-3 categories, log button",
+      "passed": true,
+      "evidence": "all three present"
+    },
+    {
+      "text": "Log button >= 44px tall",
+      "passed": true,
+      "evidence": "min-height: 844px"
+    },
+    {
+      "text": "No gradient card/glow/glass",
+      "passed": true,
+      "evidence": "colour tells: none"
+    },
+    {
+      "text": "Two+ student-context choices",
+      "passed": true,
+      "evidence": "EGP / campus / local-item references present"
+    }
+  ],
+  "summary": "6/6 assertions passed."
+}

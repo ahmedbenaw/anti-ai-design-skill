@@ -1,0 +1,13 @@
+{
+  "eval_id": 1,
+  "eval_name": "student-budget-app-screen",
+  "prompt": "Build the home screen for my personal budgeting app for Egyptian university students. A plain HTML mockup at phone width is fine, I just want to see it (save as budget-home.html). It shows: monthly allowance left, the top 3 spending categories this month, and a button to log a new expense. Make it feel like it was designed for students, not like a generic fintech app.",
+  "assertions": [
+    "ai_tell_scan.py reports AI-look score below 20 on the output",
+    "No low-contrast (CR1) or missing reduced-motion (CR2) craft flags",
+    "Shows allowance left, top 3 categories, and a log-expense button",
+    "The log-expense button is at least 44px tall (min-height/padding in CSS)",
+    "No purple/indigo gradient balance card, glow, or glassmorphism",
+    "At least two design choices are explained by the student context (e.g. EGP, allowance timing, campus references)"
+  ]
+}

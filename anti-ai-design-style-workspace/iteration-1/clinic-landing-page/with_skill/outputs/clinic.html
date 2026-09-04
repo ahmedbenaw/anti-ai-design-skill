@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Physiotherapy in Alexandria. Prices, hours, book on WhatsApp</title>
+<meta name="description" content="Physiotherapy clinic in Alexandria, Egypt. Three therapists, prices in EGP, open Saturday to Thursday until 9 pm. Book by WhatsApp.">
+<!--
+  HOW TO EDIT THIS FILE (no coding needed)
+  1. Search for  2010XXXXXXX  and replace every copy with your WhatsApp number
+     in international format without the plus sign. Example: 201001234567
+  2. Anything shown with a yellow highlight on the page is a blank for you to
+     fill in. Search for  CHANGE ME  to jump to each one.
+  3. Prices and hours are guesses. Change the numbers in the tables below.
+  4. When every blank is filled, delete the line that starts with
+     "mark {" in the style block, and the yellow disappears.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  /* Palette from the treatment room: table paper, ink, the sea off the
+     Corniche, and one WhatsApp green kept only for the booking button.
+     All text pairs checked at 6.9:1 or better. */
+  :root {
+    --paper: #f3f5f2;
+    --ink:   #15211f;
+    --sea:   #0e5b70;
+    --slate: #465552;
+    --line:  #c9d1ce;
+    --sheet: #ffffff;
+    --wa:    #25d366;
+    --band-yellow: #f2c94c;
+    --band-red:    #d64545;
+    --band-green:  #3a9d5d;
+    --band-blue:   #2f6fd6;
+    --band-black:  #1a1a1a;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: auto; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Atkinson Hyperlegible", Verdana, "Segoe UI", sans-serif;
+    font-size: 17px;
+    line-height: 1.55;
+  }
+  h1, h2, h3, .num, .amount, .rail-name, .btn {
+    font-family: "Barlow Condensed", "Arial Narrow", Arial, sans-serif;
+  }
+  h1, h2, h3 { line-height: 1.1; margin: 0 0 0.6rem; font-weight: 700; }
+  h1 { font-size: clamp(2rem, 4.5vw, 2.9rem); max-width: 18ch; }
+  h2 { font-size: clamp(1.7rem, 3.2vw, 2.2rem); }
+  h3 { font-size: 1.35rem; font-weight: 600; }
+  p, li { max-width: 62ch; }
+  p { margin: 0 0 1rem; }
+  a { color: var(--sea); text-underline-offset: 3px; }
+  a:focus-visible, button:focus-visible {
+    outline: 3px solid var(--sea);
+    outline-offset: 3px;
+  }
+  .skip {
+    position: absolute; left: -999px; top: 0;
+    background: var(--ink); color: var(--paper); padding: 0.75rem 1rem;
+  }
+  .skip:focus { left: 1rem; top: 1rem; z-index: 10; }
+
+  /* Blanks for the owner to fill in. Delete this "mark" line when done. */
+  mark { background: #fff3a3; color: var(--ink); padding: 0 0.15em; margin: 0 -0.15em; }
+
+  /* Resistance-band strip: the one decoration on the page. */
+  .bands { display: flex; height: 6px; }
+  .bands span { flex: 1; }
+  .bands span:nth-child(1) { background: var(--band-yellow); }
+  .bands span:nth-child(2) { background: var(--band-red); }
+  .bands span:nth-child(3) { background: var(--band-green); }
+  .bands span:nth-child(4) { background: var(--band-blue); }
+  .bands span:nth-child(5) { background: var(--band-black); }
+
+  /* Two columns on a desk: the reception desk on the left stays put,
+     the content scrolls on the right. One column on a phone. */
+  .page {
+    max-width: 72rem; margin: 0 auto; padding: 0 1.25rem 3rem;
+    display: grid; grid-template-columns: minmax(15rem, 19rem) 1fr;
+    gap: 3.5rem; align-items: start;
+  }
+  .rail { position: sticky; top: 0; padding: 2rem 0; }
+  .rail-name { font-size: 1.9rem; font-weight: 700; line-height: 1.05; margin: 0 0 0.4rem; }
+  .rail-line { color: var(--slate); margin-bottom: 1.25rem; }
+  .status { border-top: 2px solid var(--ink); border-bottom: 1px solid var(--line);
+    padding: 0.7rem 0; margin-bottom: 1.25rem; font-weight: 700; }
+  .status small { display: block; font-weight: 400; color: var(--slate); font-size: 0.95rem; }
+  .rail nav ul { list-style: none; margin: 1.5rem 0 0; padding: 0; }
+  .rail nav li { border-bottom: 1px solid var(--line); }
+  .rail nav a { display: block; padding: 0.55rem 0; color: var(--ink); text-decoration: none; min-height: 44px; }
+  .rail nav a:hover { color: var(--sea); text-decoration: underline; }
+  .rail nav .num { color: var(--sea); font-weight: 700; margin-right: 0.6rem; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    background: var(--wa); color: var(--ink);
+    font-size: 1.25rem; font-weight: 700; letter-spacing: 0.01em;
+    padding: 0.7rem 1.2rem; min-height: 48px; min-width: 48px;
+    text-decoration: none; border: 2px solid var(--ink);
+  }
+  .btn:hover { background: #1fbf5b; }
+  .btn svg { width: 24px; height: 24px; flex: none; }
+  .tel { display: block; margin-top: 0.6rem; }
+
+  main { padding-top: 2rem; }
+  section { padding: 2.25rem 0; border-top: 2px solid var(--ink); }
+  section:first-child { border-top: 0; padding-top: 0; }
+  .lede { font-size: 1.2rem; max-width: 52ch; }
+
+  .two-col { columns: 2; column-gap: 2.5rem; padding-left: 1.2rem; margin: 0 0 1rem; }
+  .two-col li { break-inside: avoid; margin-bottom: 0.5rem; }
+  .aside-note { background: var(--sheet); border: 1.5px solid var(--ink); padding: 1rem 1.2rem; max-width: 56ch; }
+  .aside-note p:last-child { margin: 0; }
+
+  table { border-collapse: collapse; width: 100%; max-width: 44rem; margin: 0.5rem 0 1rem; }
+  caption { text-align: left; color: var(--slate); padding-bottom: 0.5rem; }
+  th, td { text-align: left; padding: 0.7rem 0.5rem 0.7rem 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-weight: 700; }
+  thead th { border-bottom: 2px solid var(--ink); }
+  td.amount, th.amount { text-align: right; white-space: nowrap; padding-right: 0; }
+  td.amount { font-size: 1.35rem; font-weight: 700; }
+  td.len { color: var(--slate); white-space: nowrap; }
+
+  .timeline { list-style: none; margin: 0 0 1.5rem; padding: 0; max-width: 56ch; }
+  .timeline li { display: grid; grid-template-columns: 6.5rem 1fr; gap: 1rem; padding: 0.8rem 0; border-bottom: 1px dotted var(--line); }
+  .timeline .num { font-size: 1.3rem; font-weight: 700; color: var(--sea); line-height: 1.3; }
+  .timeline p { margin: 0; }
+
+  .sheet {
+    background: var(--sheet); border: 1.5px solid var(--ink);
+    padding: 1rem 1.25rem 1.25rem; max-width: 30rem;
+    box-shadow: 4px 4px 0 var(--line);
+  }
+  .sheet h3 { margin-bottom: 0.2rem; }
+  .sheet .who { color: var(--slate); font-size: 0.95rem; margin-bottom: 0.8rem; }
+  .sheet table { margin: 0; }
+  .sheet td, .sheet th { padding: 0.45rem 0.5rem 0.45rem 0; font-size: 1rem; }
+  .sheet tfoot td { border-bottom: 0; color: var(--slate); padding-top: 0.6rem; }
+
+  .team { list-style: none; margin: 0; padding: 0; }
+  .team li { display: grid; grid-template-columns: 4.5rem 1fr; gap: 1.25rem; padding: 1.25rem 0; border-bottom: 1px solid var(--line); }
+  .team .initial {
+    width: 4.5rem; height: 4.5rem; border: 2px solid var(--ink);
+    display: grid; place-items: center; font-family: "Barlow Condensed", "Arial Narrow", Arial, sans-serif;
+    font-size: 2rem; font-weight: 700; color: var(--sea);
+  }
+  .team h3 { margin-bottom: 0.1rem; }
+  .team .qual { color: var(--slate); margin-bottom: 0.5rem; }
+  .team p:last-child { margin: 0; }
+
+  .hours { max-width: 24rem; }
+  .hours td:last-child { text-align: right; white-space: nowrap; }
+  .hours tr.closed td { color: var(--slate); }
+  address { font-style: normal; margin-bottom: 1rem; }
+
+  .steps { padding-left: 1.4rem; margin: 0 0 1.5rem; }
+  .steps li { margin-bottom: 0.7rem; }
+  .steps li::marker { font-family: "Barlow Condensed", "Arial Narrow", Arial, sans-serif; font-weight: 700; color: var(--sea); }
+
+  footer { border-top: 2px solid var(--ink); }
+  footer .inner { max-width: 72rem; margin: 0 auto; padding: 1.25rem; display: flex; flex-wrap: wrap; gap: 0.5rem 2rem; color: var(--slate); font-size: 0.95rem; }
+  footer .inner p { margin: 0; }
+
+  /* Phone: one column, and the booking button rides along the bottom. */
+  .bookbar { display: none; }
+  @media (max-width: 52rem) {
+    .page { grid-template-columns: 1fr; gap: 1rem; padding-bottom: 6rem; }
+    .rail { position: static; padding: 1.5rem 0 0; }
+    main { padding-top: 0.5rem; }
+    .rail nav { display: none; }
+    .rail .btn, .rail .tel { display: none; }
+    .two-col { columns: 1; }
+    .timeline li { grid-template-columns: 5rem 1fr; }
+    .bookbar {
+      display: flex; gap: 0.75rem; align-items: center;
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 5;
+      background: var(--paper); border-top: 2px solid var(--ink);
+      padding: 0.6rem 1.25rem;
+    }
+    .bookbar .btn { flex: 1; justify-content: center; }
+    .bookbar .tel { margin: 0; display: inline-flex; align-items: center; min-height: 48px; min-width: 48px; }
+    footer .inner { padding-bottom: 1.25rem; }
+  }
+  @media (max-width: 30rem) {
+    .team li { grid-template-columns: 1fr; gap: 0.5rem; }
+    .team .initial { width: 3.25rem; height: 3.25rem; font-size: 1.5rem; }
+    th, td { font-size: 1rem; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .btn { transition: background-color 150ms ease-out; }
+    html { scroll-behavior: smooth; }
+  }
+  @media print {
+    .bookbar, .rail nav, .skip { display: none; }
+    .page { display: block; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="bands" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+
+<div class="page">
+
+  <header class="rail">
+    <!-- CHANGE ME: your clinic name -->
+    <p class="rail-name"><mark>Clinic name</mark></p>
+    <p class="rail-line">Physiotherapy in Alexandria. Three therapists. Sessions in Arabic or English.</p>
+
+    <p class="status" id="open-status">Open Saturday to Thursday, 10 am to 9 pm.
+      <small>Closed on Friday.</small></p>
+
+    <a class="btn" href="https://wa.me/2010XXXXXXX?text=Hello%2C%20I%20would%20like%20to%20book%20a%20session.%0AMy%20name%3A%20%0AThe%20problem%3A%20%0ABest%20day%20and%20time%20for%20me%3A%20">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 1.8a8.2 8.2 0 0 1 0 16.4c-1.5 0-2.9-.4-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 0 1 12 3.8zm-3.3 4.4c-.2 0-.5 0-.7.3-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.1 4.9 4.3 2.4 1 2.9.8 3.4.7.5 0 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3l-2-1c-.3-.1-.5-.1-.7.1l-.9 1.1c-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.4-1.5-.9-.8-1.5-1.8-1.6-2.1-.2-.3 0-.4.1-.6l.5-.6.3-.5c.1-.2 0-.4 0-.5l-.9-2.2c-.2-.5-.4-.5-.6-.5h-.5z"/></svg>
+      Book on WhatsApp
+    </a>
+    <!-- CHANGE ME: the number people see. Also replace 2010XXXXXXX in every link. -->
+    <a class="tel" href="tel:+2010XXXXXXX">or call <mark>010 XXXX XXXX</mark>.</a>
+
+    <nav aria-label="Sections of this page">
+      <ul>
+        <li><a href="#treat"><span class="num">1.</span>What we treat</a></li>
+        <li><a href="#prices"><span class="num">2.</span>Prices in EGP</a></li>
+        <li><a href="#first-visit"><span class="num">3.</span>Your first visit</a></li>
+        <li><a href="#team"><span class="num">4.</span>The three therapists</a></li>
+        <li><a href="#hours"><span class="num">5.</span>Hours and address</a></li>
+        <li><a href="#book"><span class="num">6.</span>How to book</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main">
+
+    <section id="treat" aria-labelledby="h-treat">
+      <h1 id="h-treat">Back, neck, knees, shoulders, and getting moving again after surgery.</h1>
+      <p class="lede">A small clinic with three physiotherapists. You see the same therapist every visit. No waiting room full of strangers, no rushing.</p>
+      <h2>What we treat.</h2>
+      <ul class="two-col">
+        <li>Lower back pain and sciatica.</li>
+        <li>Neck pain and headaches from desk work.</li>
+        <li>Knee injuries, ACL and meniscus, and after knee replacement.</li>
+        <li>Frozen shoulder and rotator cuff problems.</li>
+        <li>Ankle sprains and running injuries.</li>
+        <li>Stiffness after a fracture or a cast.</li>
+        <li>Balance and walking for older adults.</li>
+        <li>Hip and knee pain from arthritis.</li>
+      </ul>
+      <div class="aside-note">
+        <p><strong>Not sure if physio can help?</strong> Send us a WhatsApp message and describe the pain. We will give you an honest answer. If you need to see a doctor first, we will say so.</p>
+      </div>
+    </section>
+
+    <section id="prices" aria-labelledby="h-prices">
+      <h2 id="h-prices">Prices in EGP.</h2>
+      <p>Pay at the clinic, cash or InstaPay. The follow-up price is the same on your first visit and your tenth. No hidden fees.</p>
+      <!-- CHANGE ME: these prices are guesses. Put in your real ones. -->
+      <table>
+        <caption>All prices in Egyptian pounds (EGP).</caption>
+        <thead>
+          <tr><th scope="col">Session</th><th scope="col">Time</th><th scope="col" class="amount">Price</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">First visit: assessment and treatment.</th><td class="len">45 min.</td><td class="amount">500</td></tr>
+          <tr><th scope="row">Follow-up session.</th><td class="len">40 min.</td><td class="amount">400</td></tr>
+          <tr><th scope="row">Pack of 8 follow-up sessions.</th><td class="len">8 × 40 min.</td><td class="amount">2,800</td></tr>
+          <tr><th scope="row">Home visit, anywhere in Alexandria.</th><td class="len">45 min.</td><td class="amount">700</td></tr>
+          <tr><th scope="row">Sports massage or manual therapy only.</th><td class="len">30 min.</td><td class="amount">350</td></tr>
+        </tbody>
+      </table>
+      <p>Most people need between 4 and 8 sessions. Your therapist will tell you the plan at the end of the first visit, so you know the total cost before you decide.</p>
+    </section>
+
+    <section id="first-visit" aria-labelledby="h-first">
+      <h2 id="h-first">Your first visit, minute by minute.</h2>
+      <ol class="timeline">
+        <li><span class="num">0 to 10 min.</span><p>You talk, we listen. When it started, what makes it worse, what you need to get back to.</p></li>
+        <li><span class="num">10 to 25 min.</span><p>Assessment. We test how far you can move, how strong you are, and exactly where it hurts. Bring any X-ray or MRI report you have.</p></li>
+        <li><span class="num">25 to 45 min.</span><p>Treatment starts on day one. Hands-on work, guided exercises, or both, depending on what we found.</p></li>
+        <li><span class="num">Before you leave.</span><p>You get two or three exercises on paper, a plan with the number of sessions, and your next appointment.</p></li>
+      </ol>
+      <h3>What you take home.</h3>
+      <p>Every patient leaves with a sheet like this one. It fits on the fridge door.</p>
+      <div class="sheet" role="img" aria-label="Sample home exercise sheet: bridge, 3 sets of 10; cat and camel, 2 sets of 8; wall slides, 3 sets of 12; every day, next visit Tuesday 6 pm.">
+        <h3>Home exercises.</h3>
+        <p class="who">Lower back. Week 1.</p>
+        <table>
+          <tbody>
+            <tr><th scope="row">Bridge.</th><td>3 sets of 10.</td></tr>
+            <tr><th scope="row">Cat and camel.</th><td>2 sets of 8.</td></tr>
+            <tr><th scope="row">Wall slides.</th><td>3 sets of 12.</td></tr>
+          </tbody>
+          <tfoot>
+            <tr><td colspan="2">Every day. Stop if pain goes above 4 out of 10. Next visit: Tuesday, 6 pm.</td></tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+
+    <section id="team" aria-labelledby="h-team">
+      <h2 id="h-team">The three therapists.</h2>
+      <p>You book with a person, not a clinic. Say what hurts and we will match you with the right one.</p>
+      <ul class="team">
+        <!-- CHANGE ME: names and qualifications. The specialities are guesses too.
+             The letter in each box is the first letter of the therapist's name. -->
+        <li>
+          <span class="initial" aria-hidden="true">A</span>
+          <div>
+            <h3><mark>Therapist one, full name.</mark></h3>
+            <p class="qual"><mark>Degree and university. Years in practice.</mark></p>
+            <p>Back and neck pain, sciatica, and posture problems from desk work.</p>
+          </div>
+        </li>
+        <li>
+          <span class="initial" aria-hidden="true">B</span>
+          <div>
+            <h3><mark>Therapist two, full name.</mark></h3>
+            <p class="qual"><mark>Degree and university. Years in practice.</mark></p>
+            <p>Sports injuries and rehab after surgery: ACL, meniscus, shoulder, and fractures.</p>
+          </div>
+        </li>
+        <li>
+          <span class="initial" aria-hidden="true">C</span>
+          <div>
+            <h3><mark>Therapist three, full name.</mark></h3>
+            <p class="qual"><mark>Degree and university. Years in practice.</mark></p>
+            <p>Older adults, balance and walking, arthritis, and home visits.</p>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <section id="hours" aria-labelledby="h-hours">
+      <h2 id="h-hours">Hours and address.</h2>
+      <p>Evening slots are the busiest. If you can come before 3 pm, you will usually get an appointment the same week.</p>
+      <!-- CHANGE ME: hours. Edit the table below AND the "hours" list in the script at the bottom of the file. -->
+      <table class="hours">
+        <caption>Opening hours, Cairo time.</caption>
+        <tbody>
+          <tr><th scope="row">Saturday to Thursday.</th><td>10 am to 9 pm.</td></tr>
+          <tr class="closed"><th scope="row">Friday.</th><td>Closed.</td></tr>
+        </tbody>
+      </table>
+      <!-- CHANGE ME: your address and a Google Maps link. -->
+      <address>
+        <mark>Street and building number, district, Alexandria.</mark><br>
+        <mark>How to find the door. Example: 3rd floor, above the pharmacy, there is a lift.</mark><br>
+        <a href="https://maps.google.com/?q=Alexandria+Egypt">Open in Google Maps</a>
+      </address>
+    </section>
+
+    <section id="book" aria-labelledby="h-book">
+      <h2 id="h-book">How to book.</h2>
+      <ol class="steps">
+        <li>Tap <strong>Book on WhatsApp</strong>. The message is already written. Just fill in your name, the problem, and the day that suits you.</li>
+        <li>We reply during opening hours with two or three times to choose from.</li>
+        <li>Come 5 minutes early on the first visit. Wear clothes you can move in. Bring any scans or reports, and a referral if you have one. A referral is not required.</li>
+      </ol>
+      <p>Need to move or cancel? Send a message at least 4 hours before. There is no charge.</p>
+      <p><a class="btn" href="https://wa.me/2010XXXXXXX?text=Hello%2C%20I%20would%20like%20to%20book%20a%20session.%0AMy%20name%3A%20%0AThe%20problem%3A%20%0ABest%20day%20and%20time%20for%20me%3A%20">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 1.8a8.2 8.2 0 0 1 0 16.4c-1.5 0-2.9-.4-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 0 1 12 3.8zm-3.3 4.4c-.2 0-.5 0-.7.3-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.1 4.9 4.3 2.4 1 2.9.8 3.4.7.5 0 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3l-2-1c-.3-.1-.5-.1-.7.1l-.9 1.1c-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.4-1.5-.9-.8-1.5-1.8-1.6-2.1-.2-.3 0-.4.1-.6l.5-.6.3-.5c.1-.2 0-.4 0-.5l-.9-2.2c-.2-.5-.4-.5-.6-.5h-.5z"/></svg>
+        Book on WhatsApp
+      </a></p>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  <div class="inner">
+    <p><mark>Clinic name</mark>, Alexandria, Egypt.</p>
+    <p>WhatsApp and calls: <a href="tel:+2010XXXXXXX"><mark>010 XXXX XXXX</mark></a>.</p>
+    <p>Open Saturday to Thursday, 10 am to 9 pm. Closed Friday.</p>
+  </div>
+</footer>
+
+<!-- Phone only: the booking button stays at the bottom of the screen. -->
+<div class="bookbar">
+  <a class="btn" href="https://wa.me/2010XXXXXXX?text=Hello%2C%20I%20would%20like%20to%20book%20a%20session.%0AMy%20name%3A%20%0AThe%20problem%3A%20%0ABest%20day%20and%20time%20for%20me%3A%20">
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 1.8a8.2 8.2 0 0 1 0 16.4c-1.5 0-2.9-.4-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 0 1 12 3.8zm-3.3 4.4c-.2 0-.5 0-.7.3-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.1 4.9 4.3 2.4 1 2.9.8 3.4.7.5 0 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3l-2-1c-.3-.1-.5-.1-.7.1l-.9 1.1c-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.4-1.5-.9-.8-1.5-1.8-1.6-2.1-.2-.3 0-.4.1-.6l.5-.6.3-.5c.1-.2 0-.4 0-.5l-.9-2.2c-.2-.5-.4-.5-.6-.5h-.5z"/></svg>
+    Book on WhatsApp
+  </a>
+  <a class="tel" href="tel:+2010XXXXXXX">Call</a>
+</div>
+
+<script>
+  // "Open now" line, worked out in Cairo time. If this script fails for
+  // any reason the page still shows the plain hours written in the HTML.
+  (function () {
+    try {
+      // CHANGE ME if your hours change. 0 = Sunday ... 6 = Saturday.
+      // [opening hour, closing hour] in 24-hour time; null = closed.
+      var hours = { 0: [10, 21], 1: [10, 21], 2: [10, 21], 3: [10, 21], 4: [10, 21], 5: null, 6: [10, 21] };
+      var names = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+      var parts = new Intl.DateTimeFormat("en-US", { timeZone: "Africa/Cairo", weekday: "short", hour: "numeric", minute: "numeric", hour12: false }).formatToParts(new Date());
+      var get = function (t) { var p = parts.filter(function (x) { return x.type === t; })[0]; return p ? p.value : null; };
+      var dayIndex = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(get("weekday"));
+      var hour = parseInt(get("hour"), 10) % 24 + parseInt(get("minute"), 10) / 60;
+      if (dayIndex < 0 || isNaN(hour)) return;
+      var clock = function (h) { return h === 12 ? "12 pm" : h > 12 ? (h - 12) + " pm" : h + " am"; };
+      var today = hours[dayIndex];
+      var text, small;
+      if (today && hour >= today[0] && hour < today[1]) {
+        text = "Open now, until " + clock(today[1]) + ".";
+        small = "Message us and we will reply today.";
+      } else if (today && hour < today[0]) {
+        text = "Closed right now. Opens today at " + clock(today[0]) + ".";
+        small = "You can still send a WhatsApp message.";
+      } else {
+        var d = dayIndex, n = 0;
+        do { d = (d + 1) % 7; n++; } while (!hours[d] && n < 7);
+        var when = n === 1 ? "tomorrow" : "on " + names[d];
+        text = "Closed right now. Opens " + when + " at " + clock(hours[d][0]) + ".";
+        small = "You can still send a WhatsApp message. We answer when we open.";
+      }
+      var el = document.getElementById("open-status");
+      el.textContent = text + " ";
+      var s = document.createElement("small");
+      s.textContent = small;
+      el.appendChild(s);
+    } catch (e) { /* leave the written hours as they are */ }
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "AI-look score below 20 (input was 52)",
+      "passed": true,
+      "evidence": "score 0"
+    },
+    {
+      "text": "No placeholder people remain",
+      "passed": true,
+      "evidence": "no placeholder identities in HTML"
+    },
+    {
+      "text": "No fake stats remain",
+      "passed": true,
+      "evidence": "no round unverifiable stats in HTML"
+    },
+    {
+      "text": "Product and real info preserved",
+      "passed": true,
+      "evidence": "Product (17 'invoic' mentions) and every FAQ topic preserved as plain questions: cancel, security, 'right for', 24/7 Support. Placeholder testimonials/stats moved to parked-content.md with a note, not deleted."
+    },
+    {
+      "text": "Plain-language change summary in response",
+      "passed": true,
+      "evidence": "response.md 3853 chars, describes changes"
+    },
+    {
+      "text": "Pre-existing findings reported to user",
+      "passed": true,
+      "evidence": "response references the original page's problems"
+    }
+  ],
+  "summary": "6/6 assertions passed."
+}

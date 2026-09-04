@@ -1,0 +1,70 @@
+{
+  "register_version": "2026.08",
+  "files_scanned": 1,
+  "ai_score": 0,
+  "ai_band": "distinct - no meaningful AI-look signals",
+  "pass_threshold": 20,
+  "verdict": "PASS",
+  "near_proof": [],
+  "tells": [],
+  "craft_flags": [
+    {
+      "id": "CR2",
+      "name": "Animations without a reduced-motion path",
+      "points": 0,
+      "files": [
+        "clinic-landing-page/without_skill/outputs/clinic.html"
+      ],
+      "evidence": [],
+      "why_it_matters": "The site animates but never checks the user's 'reduce motion' setting (WCAG 2.3.3 technique C39). Motion can cause dizziness and nausea.",
+      "fix": "Wrap non-essential animation in @media (prefers-reduced-motion: no-preference) { ... }",
+      "kind": "craft"
+    },
+    {
+      "id": "CR3",
+      "name": "Focus outline removed",
+      "points": 0,
+      "files": [
+        "clinic-landing-page/without_skill/outputs/clinic.html"
+      ],
+      "evidence": [
+        "outline:none"
+      ],
+      "why_it_matters": "Keyboard users can't see where they are (WCAG 2.4.7).",
+      "fix": "Never remove the outline without a visible replacement (e.g. focus-visible:ring-2).",
+      "kind": "craft"
+    },
+    {
+      "id": "CR5",
+      "name": "Tiny body text",
+      "points": 0,
+      "files": [
+        "clinic-landing-page/without_skill/outputs/clinic.html"
+      ],
+      "evidence": [
+        "font-size:12px",
+        "font-size:13px",
+        "font-size:13px"
+      ],
+      "why_it_matters": "Lots of very small text. Body copy should be at least 16px (BDA guide).",
+      "fix": "Reserve text-xs for true fine print; body at text-base (16px) or larger.",
+      "kind": "craft"
+    },
+    {
+      "id": "CR6",
+      "name": "Uppercase running text",
+      "points": 0,
+      "files": [
+        "clinic-landing-page/without_skill/outputs/clinic.html"
+      ],
+      "evidence": [
+        "text-transform:uppercase",
+        "text-transform:uppercase",
+        "text-transform:uppercase"
+      ],
+      "why_it_matters": "Uppercase removes the word shapes dyslexic readers rely on (BDA guide). Fine for tiny labels, not for sentences.",
+      "fix": "Use sentence case for anything longer than a word or two.",
+      "kind": "craft"
+    }
+  ]
+}

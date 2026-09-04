@@ -1,0 +1,13 @@
+{
+  "eval_id": 0,
+  "eval_name": "clinic-landing-page",
+  "prompt": "I run a small physiotherapy clinic in Alexandria, Egypt with 3 therapists. Make me a one-page website in plain HTML (single file, I'll upload it to my hosting). People need to see our services, prices in EGP, opening hours, and book by WhatsApp. I'm not a designer. Just make it look good and NOT like every other clinic website. Save it as clinic.html.",
+  "assertions": [
+    "ai_tell_scan.py reports AI-look score below 20 on the output",
+    "No near-proof (provenance) findings in the output",
+    "No low-contrast (CR1) or missing reduced-motion (CR2) craft flags",
+    "copy_check.py passes on the output page (no buzzwords, no fake stats, reading grade 9 or lower)",
+    "The page contains at least three elements that could only belong to this clinic (Alexandria, EGP prices, WhatsApp booking, named services or hours)",
+    "No invented testimonials, statistics, or logo bars"
+  ]
+}

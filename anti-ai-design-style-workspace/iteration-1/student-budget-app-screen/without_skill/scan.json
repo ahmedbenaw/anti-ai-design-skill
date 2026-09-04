@@ -1,0 +1,28 @@
+{
+  "register_version": "2026.08",
+  "files_scanned": 1,
+  "ai_score": 0,
+  "ai_band": "distinct - no meaningful AI-look signals",
+  "pass_threshold": 20,
+  "verdict": "PASS",
+  "near_proof": [],
+  "tells": [],
+  "craft_flags": [
+    {
+      "id": "CR5",
+      "name": "Tiny body text",
+      "points": 0,
+      "files": [
+        "student-budget-app-screen/without_skill/outputs/budget-home.html"
+      ],
+      "evidence": [
+        "font-size: 13px",
+        "font-size: 12px",
+        "font-size: 13px"
+      ],
+      "why_it_matters": "Lots of very small text. Body copy should be at least 16px (BDA guide).",
+      "fix": "Reserve text-xs for true fine print; body at text-base (16px) or larger.",
+      "kind": "craft"
+    }
+  ]
+}

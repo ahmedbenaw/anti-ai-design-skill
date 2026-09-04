@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>InvoiceFlow: invoicing software for teams</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<style>
+  /* Colours come from a paper invoice book: off-white paper, dark ink,
+     thin ruled lines, one green stamp. See DESIGN.md for the contrast numbers. */
+  :root {
+    --paper:  #fbfbf9;
+    --ink:    #1c1f1d;
+    --green:  #1f5f3f;
+    --pencil: #4f5a55;
+    --rule:   #cfd8d3;
+    --sheet:  #ffffff;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: auto; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Source Serif 4", Georgia, serif;
+    font-size: 17px;
+    line-height: 1.55;
+  }
+  h1, h2, h3, .wordmark, .btn, .sheet, .nav a, .label {
+    font-family: "IBM Plex Sans", Arial, sans-serif;
+  }
+  h1, h2, h3 { line-height: 1.15; margin: 0 0 0.75rem; }
+  h1 { font-size: clamp(1.9rem, 4.5vw, 2.9rem); font-weight: 700; max-width: 18ch; }
+  h2 { font-size: 1.5rem; font-weight: 600; }
+  p, li, dd { max-width: 62ch; }
+  a { color: var(--green); text-underline-offset: 3px; }
+  a:hover { text-decoration-thickness: 2px; }
+  a:focus-visible, button:focus-visible {
+    outline: 3px solid var(--green);
+    outline-offset: 3px;
+  }
+
+  .wrap { max-width: 68rem; margin: 0 auto; padding: 0 1.25rem; }
+
+  /* Top bar */
+  .top {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 1rem; flex-wrap: wrap; padding: 1.1rem 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .wordmark { font-weight: 700; font-size: 1.15rem; letter-spacing: 0.01em; color: var(--ink); text-decoration: none; }
+  .nav { display: flex; gap: 1.5rem; }
+  .nav a { color: var(--ink); font-weight: 600; text-decoration: none; padding: 0.4rem 0; min-height: 44px; display: inline-flex; align-items: center; }
+  .nav a:hover { text-decoration: underline; }
+
+  /* Hero: words on the left, the product's output on the right */
+  .hero {
+    display: grid; grid-template-columns: 1.05fr 1fr; gap: 3rem;
+    align-items: center; padding: 3.5rem 0 3rem;
+  }
+  .hero .lede { font-size: 1.2rem; margin: 0 0 1.5rem; }
+  .hero .version { color: var(--pencil); margin: 0 0 1.25rem; }
+  .actions { display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-height: 48px; padding: 0.7rem 1.4rem;
+    background: var(--green); color: #fff;
+    border: 2px solid var(--green); border-radius: 4px;
+    font-size: 1rem; font-weight: 600; cursor: pointer;
+  }
+  .btn:hover { background: #17492f; border-color: #17492f; }
+  @media (prefers-reduced-motion: no-preference) {
+    .btn { transition: background-color 150ms ease; }
+  }
+
+  /* The example invoice. Built from the same parts as a paper one. */
+  .sheet {
+    background: var(--sheet);
+    border: 1px solid var(--rule);
+    box-shadow: 0 1px 0 var(--rule);
+    padding: 1.4rem 1.5rem 1.2rem;
+    font-size: 0.95rem;
+    line-height: 1.45;
+    font-variant-numeric: tabular-nums;
+  }
+  .sheet .label { color: var(--pencil); font-size: 0.85rem; margin: 0 0 1rem; }
+  .sheet .head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin-bottom: 1rem; }
+  .sheet .head strong { font-size: 1.25rem; font-weight: 700; letter-spacing: 0.02em; }
+  .sheet .parties { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.1rem; }
+  .sheet .parties span { display: block; color: var(--pencil); font-size: 0.85rem; }
+  .sheet table { width: 100%; border-collapse: collapse; }
+  .sheet th, .sheet td { text-align: left; padding: 0.4rem 0; border-bottom: 1px solid var(--rule); }
+  .sheet th { font-weight: 600; color: var(--pencil); font-size: 0.85rem; }
+  .sheet th.num, .sheet td.num { text-align: right; white-space: nowrap; }
+  .sheet tr.total td { border-bottom: 2px solid var(--ink); font-weight: 700; }
+  .sheet tr.sum td { border-bottom: 0; }
+  .sheet .status { margin: 1rem 0 0; display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+  .sheet .stamp {
+    display: inline-block; padding: 0.2rem 0.6rem;
+    border: 2px solid var(--green); color: var(--green);
+    font-weight: 700; letter-spacing: 0.06em; border-radius: 3px;
+  }
+
+  /* Sections read like line items on a page: a ruled line, then content */
+  section.block { padding: 2.75rem 0; border-top: 1px solid var(--rule); }
+  .two { display: grid; grid-template-columns: 1fr 1.6fr; gap: 2rem 3rem; align-items: start; }
+
+  /* What you get: rows, not cards */
+  .rows { margin: 0; padding: 0; list-style: none; }
+  .rows li {
+    display: grid; grid-template-columns: 10rem 1fr; gap: 1rem;
+    padding: 0.9rem 0; border-bottom: 1px solid var(--rule); max-width: none;
+  }
+  .rows li:first-child { border-top: 1px solid var(--rule); }
+  .rows h3 { font-size: 1.05rem; font-weight: 600; margin: 0; }
+  .rows p { margin: 0; }
+
+  /* Price and the small print */
+  .qa { margin: 0; }
+  .qa dt { font-family: "IBM Plex Sans", Arial, sans-serif; font-weight: 600; margin-top: 1.1rem; }
+  .qa dd { margin: 0.25rem 0 0; }
+  .fill {
+    border: 2px dashed var(--pencil); border-radius: 4px;
+    padding: 0.6rem 0.9rem; color: var(--pencil);
+  }
+  .fill b { color: var(--ink); font-weight: 600; }
+
+  .start { padding: 2.75rem 0 3.5rem; border-top: 1px solid var(--rule); }
+
+  footer { border-top: 2px solid var(--ink); padding: 1.25rem 0 2rem; color: var(--pencil); font-size: 0.95rem; }
+  footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; }
+
+  @media (max-width: 46rem) {
+    .hero { grid-template-columns: 1fr; gap: 2rem; padding-top: 2.25rem; }
+    .two { grid-template-columns: 1fr; gap: 0.5rem; }
+    .rows li { grid-template-columns: 1fr; gap: 0.25rem; }
+    .sheet { padding: 1.1rem; font-size: 0.9rem; }
+    .sheet .parties { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="wrap top">
+  <a class="wordmark" href="#top" id="top">InvoiceFlow</a>
+  <nav class="nav" aria-label="Page sections">
+    <a href="#what-you-get">What you get</a>
+    <a href="#price">Price</a>
+  </nav>
+</header>
+
+<main class="wrap">
+
+  <section class="hero" aria-labelledby="headline">
+    <div>
+      <h1 id="headline">Write the invoice, send it, and see when it is paid.</h1>
+      <p class="lede">InvoiceFlow is billing software for teams. Every invoice, every
+        payment, and every client sit in one place, so nobody has to ask "did that one go out?"</p>
+      <p class="version">Version 2.0 is out. It adds AI features to the app.</p>
+      <div class="actions">
+        <button class="btn" type="button">Start using InvoiceFlow</button>
+        <a href="#what-you-get">See what you get</a>
+      </div>
+    </div>
+
+    <figure class="sheet" aria-label="Example invoice" style="margin:0">
+      <p class="label">Example invoice</p>
+      <div class="head">
+        <strong>INVOICE</strong>
+        <span>No. 2026-0187</span>
+      </div>
+      <div class="parties">
+        <div><span>From</span>Marlow &amp; Finch Studio</div>
+        <div><span>To</span>Harbourside Dental Ltd.</div>
+        <div><span>Issued</span>1 Aug 2026</div>
+        <div><span>Due</span>31 Aug 2026</div>
+      </div>
+      <table>
+        <thead>
+          <tr><th scope="col">Description</th><th scope="col" class="num">Qty</th><th scope="col" class="num">Amount</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Website redesign, phase 2</td><td class="num">1</td><td class="num">$4,800.00</td></tr>
+          <tr><td>Hosting, 12 months</td><td class="num">12</td><td class="num">$288.00</td></tr>
+          <tr><td>Support hours, July</td><td class="num">6</td><td class="num">$540.00</td></tr>
+          <tr class="sum"><td></td><td class="num">Subtotal</td><td class="num">$5,628.00</td></tr>
+          <tr class="sum"><td></td><td class="num">Tax 8%</td><td class="num">$450.24</td></tr>
+          <tr class="total"><td></td><td class="num">Total</td><td class="num">$6,078.24</td></tr>
+        </tbody>
+      </table>
+      <p class="status"><span class="stamp">PAID</span><span>Received 22 Aug 2026</span></p>
+    </figure>
+  </section>
+
+  <section class="block two" id="what-you-get" aria-labelledby="get-h">
+    <h2 id="get-h">What you get</h2>
+    <ul class="rows">
+      <li>
+        <h3>Quick to use</h3>
+        <p>The app is built to be fast. Writing and sending an invoice should not eat your afternoon.</p>
+      </li>
+      <li>
+        <h3>Any team size</h3>
+        <p>A two-person startup and a large company use the same tool. It grows with you.</p>
+      </li>
+      <li>
+        <h3>Secure</h3>
+        <p>Your billing data is protected to the standard large companies require.</p>
+      </li>
+    </ul>
+  </section>
+
+  <section class="block two" aria-labelledby="who-h">
+    <h2 id="who-h">Is it right for me?</h2>
+    <p>If your team sends invoices and wants to know what has been paid without
+      digging through email, yes. That is the whole job of the product. Company
+      size does not matter; the plan does.</p>
+  </section>
+
+  <section class="block two" id="price" aria-labelledby="price-h">
+    <h2 id="price-h">Price and the small print</h2>
+    <dl class="qa">
+      <dt>What does it cost?</dt>
+      <dd class="fill"><b>To fill in:</b> your price. Say whether it is per month, per seat, or per invoice, and whether there is a free trial.</dd>
+
+      <dt>Can I cancel anytime?</dt>
+      <dd class="fill"><b>To fill in:</b> your cancellation terms, and what happens to a customer's data after they leave.</dd>
+
+      <dt>Is my data secure?</dt>
+      <dd>Yes. InvoiceFlow keeps your data to the security standard large companies require.</dd>
+
+      <dt>What if I need help?</dt>
+      <dd>Support is available 24 hours a day, 7 days a week.</dd>
+    </dl>
+  </section>
+
+  <section class="start" aria-labelledby="start-h">
+    <h2 id="start-h">Ready when you are</h2>
+    <p>Open InvoiceFlow, add your first client, and send an invoice.</p>
+    <p><button class="btn" type="button">Start using InvoiceFlow</button></p>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 InvoiceFlow. All rights reserved.</span>
+    <span><a href="#top">Back to top</a></span>
+  </div>
+</footer>
+
+<!-- The testimonials, logo strip and user/uptime stats from the Lovable
+     page are saved in parked-content.md next to this file. Put them back
+     only if they are true and you have permission to quote. -->
+
+</body>
+</html>

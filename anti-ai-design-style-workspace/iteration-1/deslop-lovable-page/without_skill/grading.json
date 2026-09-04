@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "AI-look score below 20 (input was 52)",
+      "passed": true,
+      "evidence": "score 18"
+    },
+    {
+      "text": "No placeholder people remain",
+      "passed": false,
+      "evidence": "John Doe, Sarah Chen and Jane Smith kept verbatim as testimonials in fixed.html"
+    },
+    {
+      "text": "No fake stats remain",
+      "passed": false,
+      "evidence": "'10K+', '99.9%' and 'Trusted by 10,000' still on the page"
+    },
+    {
+      "text": "Product and real info preserved",
+      "passed": true,
+      "evidence": "invoicing product and FAQ topics still present"
+    },
+    {
+      "text": "Plain-language change summary in response",
+      "passed": true,
+      "evidence": "response.md 3992 chars, describes changes"
+    },
+    {
+      "text": "Pre-existing findings reported to user",
+      "passed": true,
+      "evidence": "response references the original page's problems"
+    }
+  ],
+  "summary": "4/6 assertions passed."
+}

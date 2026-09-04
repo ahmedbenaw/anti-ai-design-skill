@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "AI-look score below 20",
+      "passed": true,
+      "evidence": "score 0"
+    },
+    {
+      "text": "No provenance findings",
+      "passed": true,
+      "evidence": "0 provenance hits"
+    },
+    {
+      "text": "No CR1/CR2 craft flags",
+      "passed": true,
+      "evidence": "craft flags: none"
+    },
+    {
+      "text": "copy_check passes on the page",
+      "passed": true,
+      "evidence": "grade 3.4, findings none"
+    },
+    {
+      "text": "Three clinic-specific elements present",
+      "passed": true,
+      "evidence": "found: Alexandria, EGP, WhatsApp"
+    },
+    {
+      "text": "No invented testimonials/stats/logo bars",
+      "passed": true,
+      "evidence": "no testimonial/fake-stat markup found"
+    }
+  ],
+  "summary": "6/6 assertions passed."
+}

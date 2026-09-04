@@ -1,0 +1,691 @@
+{
+  "register_version": "2026.09",
+  "comment": "Machine-readable rules derived from reference/tells-register.md. Every rule id maps to a register entry. Weights follow the measured evidence in research file 04 (12 verified AI-generated repos) and the register's verification pass.",
+  "provenance": [
+    {
+      "id": "PR1",
+      "name": "Lovable scaffold",
+      "patterns": [
+        "lovable-tagger",
+        "componentTagger",
+        "lovable\\.dev/projects/[0-9a-f-]{36}",
+        "Welcome to your Lovable project"
+      ],
+      "points": 15,
+      "explain": "This is Lovable's own plumbing. It only appears in projects Lovable generated.",
+      "fix": "Nothing to fix by itself - but it proves the project is AI-generated, so run the full scan and fix what it finds."
+    },
+    {
+      "id": "PR2",
+      "name": "v0 placeholder images",
+      "patterns": [
+        "/placeholder\\.svg\\?height=\\d+&width=\\d+",
+        "placeholder-user\\.jpg"
+      ],
+      "points": 15,
+      "explain": "These exact placeholder image URLs are emitted by v0 (and sometimes Lovable). Humans use real images or picsum.",
+      "fix": "Replace every placeholder image with a real screenshot, photo, or a deliberately chosen illustration."
+    },
+    {
+      "id": "PR3",
+      "name": "v0 sync README",
+      "patterns": [
+        "Automatically synced with your \\[?v0",
+        "Built with \\[v0\\]"
+      ],
+      "points": 15,
+      "explain": "v0's default README text.",
+      "fix": "Write a README in your own words."
+    },
+    {
+      "id": "PR4",
+      "name": "Bolt template config",
+      "patterns": [
+        "\"template\"\\s*:\\s*\"bolt-"
+      ],
+      "points": 15,
+      "explain": "Bolt.new writes this template marker into config.json.",
+      "fix": "Proof of generation - run the full scan and fix what it finds."
+    },
+    {
+      "id": "PR5",
+      "name": "Replit Agent memory file",
+      "filenames": [
+        "replit.md"
+      ],
+      "patterns": [],
+      "points": 15,
+      "explain": "replit.md is the Replit Agent's memory file. (.replit alone only means Replit hosting.)",
+      "fix": "Proof of generation - run the full scan and fix what it finds."
+    },
+    {
+      "id": "PR6",
+      "name": "Generator comments/meta",
+      "patterns": [
+        "<!--\\s*Generated with",
+        "<meta[^>]+name=[\"']generator[\"'][^>]*(bolt|lovable|v0|framer)"
+      ],
+      "points": 15,
+      "explain": "The tool signed its work in a comment or meta tag.",
+      "fix": "Remove the comment/meta tag, then fix what the full scan finds."
+    },
+    {
+      "id": "PR7",
+      "name": "Chat residue in shipped text",
+      "patterns": [
+        "[Aa]s an AI language model",
+        "[Aa]s of my last knowledge update",
+        "\\[Describe the ",
+        "[Ll]orem ipsum"
+      ],
+      "points": 15,
+      "explain": "Text pasted straight from a chat window, or placeholder text that was never replaced.",
+      "fix": "Delete it and write the real content."
+    }
+  ],
+  "code_tells": [
+    {
+      "id": "CO1",
+      "name": "Legacy AI purple/indigo accent",
+      "patterns": [
+        "\\b(bg|text|from|to|via|border|ring)-indigo-(500|600)\\b",
+        "\\bviolet-500\\b",
+        "#6366f1",
+        "#4f46e5",
+        "#4338ca",
+        "#3730a3",
+        "#8b5cf6",
+        "#7c3aed",
+        "#a855f7"
+      ],
+      "points": 1,
+      "per_file": false,
+      "era": "2023-chat",
+      "explain": "The classic 'AI purple'. Real in older one-shot output, but measured at 0 of 12 modern AI repos - so it only scores 1 point.",
+      "fix": "Pick an accent colour that belongs to YOUR product (see the design brief template)."
+    },
+    {
+      "id": "CO2",
+      "name": "Gradient headline text",
+      "patterns": [
+        "bg-clip-text[^\"']*text-transparent",
+        "text-transparent[^\"']*bg-clip-text",
+        "-webkit-background-clip:\\s*text"
+      ],
+      "points": 4,
+      "explain": "Headline words filled with a gradient. Rare in hand-written code, common in AI output - and its contrast can't be verified for accessibility.",
+      "fix": "Use a solid text colour. If you want emphasis, change size or weight instead."
+    },
+    {
+      "id": "CO3",
+      "name": "Many two-hue gradient washes",
+      "patterns": [
+        "\\bfrom-[a-z]+-\\d00\\s+(?:via-[a-z]+-\\d00\\s+)?to-[a-z]+-\\d00\\b"
+      ],
+      "points": 4,
+      "min_distinct": 5,
+      "explain": "5 or more different colour-to-colour gradients in one project. The hues follow your topic, but the gradient reflex is the tell.",
+      "fix": "Keep at most one gradient, on one focal element - or none."
+    },
+    {
+      "id": "CO4",
+      "name": "Dark hero glass combo",
+      "combo": [
+        "\\bbg-(gray-900|slate-900|slate-950|zinc-950|black)\\b",
+        "\\bbg-white/(5|10|20)\\b",
+        "\\bborder-white/(10|20|30)\\b",
+        "\\bbackdrop-blur"
+      ],
+      "combo_min": 3,
+      "points": 4,
+      "explain": "Dark background + frosted white-glass cards + blur, together. This exact combination is the 'Claude dark hero' cluster.",
+      "fix": "If you want dark, build depth from typography and surface levels, not glow and glass."
+    },
+    {
+      "id": "CO5",
+      "name": "Glow blobs",
+      "patterns": [
+        "\\bblur-3xl\\b",
+        "blur\\(\\s*(4\\d|5\\d|\\d{3,})px",
+        "\\bblur-\\[1\\d\\dpx\\]"
+      ],
+      "points": 3,
+      "explain": "Big blurred colour blobs floating behind content. Almost never hand-written.",
+      "fix": "Delete the blob divs. Let the content carry the page."
+    },
+    {
+      "id": "CO6",
+      "name": "The 'tasteful cream' escape look",
+      "combo": [
+        "#f(af8f4|4f1ea|af9f5|5f1ea)",
+        "font-serif|Instrument Serif|Lora|Playfair",
+        "(terracotta|#e07a5f|#d97757|coral)"
+      ],
+      "combo_min": 2,
+      "points": 2,
+      "era": "2025-escape",
+      "explain": "Warm cream + serif + terracotta: the look AI tools fled to after purple was called out. Now a tell itself.",
+      "fix": "Nothing wrong with warm neutrals - but choose them for a reason you can name, and change at least the pairing."
+    },
+    {
+      "id": "TY2",
+      "name": "The 2025 slop font pairing",
+      "combo": [
+        "Space\\+?Grotesk",
+        "Instrument\\+?Serif|Bricolage"
+      ],
+      "combo_min": 1,
+      "extra": "Inter",
+      "points": 2,
+      "explain": "Inter + Space Grotesk or Inter + Instrument Serif is the recurring 2025-era AI pairing.",
+      "fix": "Pick a display face with a reason behind it, and name it in your design brief."
+    },
+    {
+      "id": "TY3",
+      "name": "Italic serif accent word in a sans hero",
+      "patterns": [
+        "<span[^>]*(font-serif[^>]*italic|italic[^>]*font-serif)"
+      ],
+      "points": 2,
+      "explain": "One italic-serif word dropped into a sans headline - the universal AI hero garnish.",
+      "fix": "Either commit to a serif system or drop the garnish."
+    },
+    {
+      "id": "TY5",
+      "name": "ALL-CAPS tracked eyebrow labels",
+      "patterns": [
+        "uppercase[^\"']*tracking-(wide|widest)",
+        "tracking-(wide|widest)[^\"']*uppercase"
+      ],
+      "points": 2,
+      "explain": "Tiny ALL-CAPS labels above every heading. Also harder to read for dyslexic users.",
+      "fix": "Delete eyebrows that say nothing. Keep at most one, only if it carries real information."
+    },
+    {
+      "id": "TY4",
+      "name": "Hero type sandwich",
+      "combo": [
+        "text-[45]xl[^\"']*(sm|md|lg):text-[567]xl",
+        "font-bold",
+        "tracking-tight"
+      ],
+      "combo_min": 3,
+      "points": 2,
+      "explain": "The exact 'huge bold tight-tracked responsive headline' recipe from every AI hero.",
+      "fix": "Scale, weight and tracking should come from YOUR type scale, not the template's."
+    },
+    {
+      "id": "LA13",
+      "name": "Untouched shadcn defaults",
+      "combo": [
+        "--radius:\\s*0\\.5rem",
+        "components/ui/",
+        "hsl\\(var\\(--"
+      ],
+      "combo_min": 2,
+      "points": 6,
+      "explain": "A full shadcn install with the stock radius and colour tokens. shadcn is fine - unchanged defaults are what make every AI site look identical.",
+      "fix": "Change the tokens: your own --primary, your own --radius, one token the defaults don't have."
+    },
+    {
+      "id": "LA3",
+      "name": "Icon tile above card heading",
+      "patterns": [
+        "\\bw-1[02] h-1[02][^\"']*rounded-(lg|xl)[^\"']*bg-[a-z]+-(100|500/10)|bg-primary/10[^\"']*rounded"
+      ],
+      "points": 3,
+      "explain": "The little rounded square holding an icon above every card title - 'the universal AI feature-card template'.",
+      "fix": "Ask what the icon adds. Usually: nothing. Use a real screenshot, a number, or just the words."
+    },
+    {
+      "id": "LA5",
+      "name": "Twin hero CTAs",
+      "combo": [
+        ">\\s*Get Started\\s*<",
+        ">\\s*Learn [Mm]ore\\s*<"
+      ],
+      "combo_min": 2,
+      "points": 2,
+      "explain": "'Get Started' next to 'Learn More' - the default button pair, and both labels tell the user nothing.",
+      "fix": "Name the action: 'Open an account', 'See pricing', 'Try the demo'."
+    },
+    {
+      "id": "LA6",
+      "name": "Round fake stats",
+      "patterns": [
+        "Trusted by [\\d,]+[KkMm]?\\+",
+        "\\b\\d+[KkMm]\\+ (users|customers|developers|teams|downloads)",
+        "99\\.9% uptime",
+        "10,000\\+"
+      ],
+      "points": 2,
+      "explain": "Round unverifiable numbers ('10K+ users', '99.9% uptime'). On a new product they read as invented.",
+      "fix": "Real number or no number. 'Show more, claim less.'"
+    },
+    {
+      "id": "LA8",
+      "name": "Side-stripe accent borders",
+      "patterns": [
+        "border-l-4 border-[a-z]+-[45]00",
+        "border-l-\\[3px\\]"
+      ],
+      "points": 3,
+      "explain": "Coloured left stripes on cards - 'almost as reliable a sign of AI design as em-dashes' - unless they encode real status.",
+      "fix": "Keep only where the colour MEANS something (error, warning). Delete decorative ones."
+    },
+    {
+      "id": "LA9",
+      "name": "Ghost card (border + big shadow)",
+      "patterns": [
+        "border[^\"']*border-(gray|slate|zinc)-200[^\"']*shadow-(lg|xl|2xl)",
+        "shadow-(lg|xl|2xl)[^\"']*border-(gray|slate|zinc)-200"
+      ],
+      "points": 2,
+      "explain": "A hairline border AND a big soft shadow on the same card - two competing depth systems at once.",
+      "fix": "Pick one: border OR shadow. Define 2-3 elevation levels and stick to them."
+    },
+    {
+      "id": "LA11",
+      "name": "min-h-screen on everything",
+      "patterns": [
+        "min-h-screen"
+      ],
+      "points": 2,
+      "min_count": 4,
+      "explain": "Humans set full-height once, on the root. AI repeats it on every section.",
+      "fix": "Keep it on the root wrapper only. Let sections be as tall as their content."
+    },
+    {
+      "id": "LA12",
+      "name": "Tailwind-UI container fossil",
+      "combo": [
+        "max-w-7xl mx-auto",
+        "px-4 sm:px-6 lg:px-8"
+      ],
+      "combo_min": 2,
+      "points": 1,
+      "era": "2023-chat",
+      "explain": "The exact wrapper from old Tailwind UI examples. Mostly gone from modern AI output; legacy signal.",
+      "fix": "Harmless alone; only matters in combination."
+    },
+    {
+      "id": "LA1",
+      "name": "The SaaS section skeleton",
+      "patterns": [
+        "(?:id=\"|href=\"#)(features|pricing|testimonials|faq)\\b"
+      ],
+      "points": 3,
+      "min_distinct": 3,
+      "explain": "features + pricing + testimonials + faq, always in the same order. Structure is where AI output converges hardest.",
+      "fix": "Cut every section that doesn't serve YOUR product. Reorder around what your visitor actually asks first."
+    },
+    {
+      "id": "IC1",
+      "name": "The cliche icon set",
+      "patterns": [
+        "\\b(Sparkles|Zap|Shield|Rocket)\\b"
+      ],
+      "points": 3,
+      "min_distinct": 3,
+      "explain": "Sparkles + Zap + Shield + Rocket from lucide, usually in a 3-card grid. The default 'features' iconography.",
+      "fix": "Icons only where they clarify. Product screenshots beat icon grids."
+    },
+    {
+      "id": "IC2",
+      "name": "Emoji as UI icons",
+      "patterns": [
+        "[\u2728\ud83d\ude80\ud83c\udfaf\u26a1\ud83d\udd25\ud83d\udca1\ud83d\udc96\ud83e\udd8b\ud83c\udf08]"
+      ],
+      "points": 2,
+      "unicode": true,
+      "explain": "Emoji standing in for designed icons. Screen readers announce them literally ('sparkles rocket fire').",
+      "fix": "Use a consistent icon set with text labels, or plain text."
+    },
+    {
+      "id": "IC5",
+      "name": "Placeholder people",
+      "patterns": [
+        "i\\.pravatar\\.cc",
+        "randomuser\\.me",
+        "ui-avatars\\.com",
+        "placehold\\.co",
+        "\\bJohn Doe\\b",
+        "\\bJane (Doe|Smith)\\b",
+        "\\bSarah (Johnson|Chen)\\b",
+        "\\bAcme\\b"
+      ],
+      "points": 4,
+      "explain": "Fake people and fake avatars. On a real site this is the single most damaging tell.",
+      "fix": "Real testimonials with permission, or none. Never invent people."
+    },
+    {
+      "id": "MO1",
+      "name": "Fade-up-on-scroll everywhere",
+      "patterns": [
+        "opacity-0[^\"']*translate-y",
+        "data-aos=",
+        "\\bIntersectionObserver\\b"
+      ],
+      "points": 2,
+      "min_count": 3,
+      "explain": "Every section fading in as you scroll. Research shows it delays and frustrates readers; the page is blank if JavaScript fails.",
+      "fix": "Animate at most the first hero view, once. Content should be readable with JavaScript off."
+    },
+    {
+      "id": "MO2",
+      "name": "hover:scale on everything",
+      "patterns": [
+        "hover:scale-10[5-9]|hover:scale-1[12]\\d"
+      ],
+      "points": 1,
+      "min_count": 3,
+      "explain": "Cards growing on hover, sitewide. Fine once; a tell everywhere.",
+      "fix": "Keep hover feedback subtle (opacity, border) and only on truly clickable things."
+    },
+    {
+      "id": "MO3",
+      "name": "Pulse on static things",
+      "patterns": [
+        "animate-pulse"
+      ],
+      "points": 2,
+      "exclude_context": "[Ss]keleton|[Ll]oading",
+      "explain": "Pulsing dots implying 'live' where nothing is live.",
+      "fix": "Animate only when data actually changes."
+    },
+    {
+      "id": "MO4",
+      "name": "Marquee / animated gradient",
+      "patterns": [
+        "animation:\\s*marquee",
+        "animate-marquee",
+        "background-size:\\s*[234]00%[^;]*;\\s*animation"
+      ],
+      "points": 2,
+      "explain": "Auto-scrolling logo strips and hue-shifting backgrounds demand attention and hide content.",
+      "fix": "A static row of real logos, or nothing."
+    }
+  ],
+  "copy_tells": {
+    "transformation_verbs": [
+      "elevate",
+      "unlock",
+      "unleash",
+      "empower",
+      "supercharge",
+      "revolutionize",
+      "revolutionise",
+      "streamline",
+      "transform your",
+      "effortless",
+      "seamless",
+      "seamlessly",
+      "game-changer",
+      "game changing",
+      "cutting-edge",
+      "next-generation",
+      "all-in-one",
+      "world-class"
+    ],
+    "ai_cadence": [
+      "it's not just",
+      "isn't just",
+      "in today's fast-paced",
+      "welcome to the future",
+      "say goodbye to",
+      "whether you're a",
+      "it's important to note",
+      "delve",
+      "testament to",
+      "tapestry",
+      "evolving landscape",
+      "plays a pivotal role",
+      "stands as a"
+    ],
+    "fake_proof_regex": [
+      "Trusted by [\\d,]+[KkMm]?\\+",
+      "\\b\\d+[KkMm]\\+ (?:users|customers|teams|developers)",
+      "99\\.9%",
+      "\\b\\d+,000\\+"
+    ],
+    "vague_ctas": [
+      "get started",
+      "learn more"
+    ],
+    "gamified": [
+      "let's go!",
+      "great job!",
+      "you're all set!",
+      "start now!"
+    ],
+    "notes": "transformation_verbs and vague_ctas are HIGH false-positive: humans wrote marketese long before AI (documented back to 1997). They score 1 point each (cap 4) on the AI axis but always appear on the craft axis as weak copy. ai_cadence items score only on density: 2+ distinct hits."
+  },
+  "craft_checks": {
+    "comment": "These are quality/accessibility failures, NOT proof of AI. They feed the craft score. Thresholds are cited in reference/accessibility.md.",
+    "checks": [
+      {
+        "id": "CR1",
+        "name": "Likely low-contrast body text",
+        "patterns": [
+          "text-(gray|slate|zinc|neutral|stone)-400\\b",
+          "color:\\s*#(9\\w\\w|a\\w\\w|b\\w\\w)\\b"
+        ],
+        "explain": "Light grey body text usually fails the 4.5:1 contrast minimum (WCAG 2.2, rule 1.4.3).",
+        "fix": "Darken to at least gray-600 on white (or gray-300 on near-black), then verify with a contrast checker."
+      },
+      {
+        "id": "CR2",
+        "name": "Animations without a reduced-motion path",
+        "requires": [
+          "animate-|animation:|transition|@keyframes"
+        ],
+        "missing": [
+          "prefers-reduced-motion"
+        ],
+        "explain": "The site animates but never checks the user's 'reduce motion' setting (WCAG 2.3.3 technique C39). Motion can cause dizziness and nausea.",
+        "fix": "Wrap non-essential animation in @media (prefers-reduced-motion: no-preference) { ... }"
+      },
+      {
+        "id": "CR3",
+        "name": "Focus outline removed",
+        "patterns": [
+          "outline:\\s*none",
+          "outline-none"
+        ],
+        "missing": [
+          "focus-visible|focus:ring|focus:outline"
+        ],
+        "explain": "Keyboard users can't see where they are (WCAG 2.4.7).",
+        "fix": "Never remove the outline without a visible replacement (e.g. focus-visible:ring-2)."
+      },
+      {
+        "id": "CR4",
+        "name": "Justified body text",
+        "patterns": [
+          "text-justify",
+          "text-align:\\s*justify"
+        ],
+        "explain": "Justified text creates uneven 'rivers' of space that are harder to read, especially for dyslexic readers (BDA guide; WCAG 1.4.8).",
+        "fix": "Left-align body copy."
+      },
+      {
+        "id": "CR5",
+        "name": "Tiny body text",
+        "patterns": [
+          "font-size:\\s*(1[0-3]px)",
+          "\\btext-xs\\b"
+        ],
+        "min_count": 4,
+        "explain": "Lots of very small text. Body copy should be at least 16px (BDA guide).",
+        "fix": "Reserve text-xs for true fine print; body at text-base (16px) or larger."
+      },
+      {
+        "id": "CR6",
+        "name": "Uppercase running text",
+        "patterns": [
+          "text-transform:\\s*uppercase"
+        ],
+        "min_count": 3,
+        "explain": "Uppercase removes the word shapes dyslexic readers rely on (BDA guide). Fine for tiny labels, not for sentences.",
+        "fix": "Use sentence case for anything longer than a word or two."
+      }
+    ]
+  },
+  "scoring": {
+    "ai_bands": [
+      [
+        0,
+        19,
+        "distinct - no meaningful AI-look signals"
+      ],
+      [
+        20,
+        39,
+        "leaning generic - fix the strongest findings"
+      ],
+      [
+        40,
+        100,
+        "reads as AI-generated - rework before shipping"
+      ]
+    ],
+    "rule": "No single non-provenance tell can push a page past a band boundary on its own; scoring is capped so bands are only crossed by co-occurrence. Provenance hits are reported separately as near-proof.",
+    "library_note": "library_misuse findings score on the AI axis and are reported in their own section. Correct use of any of the nine libraries scores zero."
+  },
+  "library_misuse": {
+    "comment": "Signatures for MISUSE of the nine ported libraries. Sources: reference/libraries/*.md, read from the live docs 2026-09-04. These score on the AI axis because each one is a documented route to a register tell. Correct use of the same library scores nothing.",
+    "rules": [
+      {
+        "id": "LB1",
+        "name": "animate.css entrance carpet",
+        "patterns": [
+          "animate__(fadeIn|fadeInUp|fadeInDown|slideInUp|zoomIn|backInUp|bounceIn)\\b"
+        ],
+        "min_count": 4,
+        "points": 3,
+        "explain": "Four or more animate.css entrance classes on one page. Every section fading in is the single most recognisable AI-motion tell, and the page is blank if JavaScript or the class fails.",
+        "fix": "Keep at most one entrance, on the hero, playing once. Delete the rest."
+      },
+      {
+        "id": "LB2",
+        "name": "animate.css infinite decoration",
+        "patterns": [
+          "animate__infinite"
+        ],
+        "points": 3,
+        "explain": "animate__infinite loops forever. Looping motion with no state behind it is decoration, and it is an attention trap for ADHD readers.",
+        "fix": "Remove it. Animate only when something actually changes."
+      },
+      {
+        "id": "LB3",
+        "name": "animate.css attention-seeker classes",
+        "patterns": [
+          "animate__(pulse|heartBeat|flash|tada|rubberBand|jello|wobble|swing|shakeX|shakeY|headShake|hinge|jackInTheBox)"
+        ],
+        "points": 2,
+        "explain": "Attention-seeker animations shake, wobble or flash the interface. They read as dated and they can trigger vestibular symptoms.",
+        "fix": "Use a colour or border change to draw attention instead."
+      },
+      {
+        "id": "LB4",
+        "name": "GSAP infinite tween",
+        "patterns": [
+          "repeat:\\s*-1"
+        ],
+        "points": 2,
+        "explain": "An infinite GSAP tween. Usually a marquee, a float or a pulse: motion that proves nothing except that the page is animating.",
+        "fix": "Delete it, or tie the tween to real state (loading, live data)."
+      },
+      {
+        "id": "LB5",
+        "name": "GSAP bounce/elastic easing",
+        "patterns": [
+          "ease:\\s*[\"'](back|elastic|bounce)[.(]",
+          "CustomBounce|CustomWiggle"
+        ],
+        "points": 1,
+        "explain": "Overshoot easing on interface elements. Fine for a physical object, dated on a button or card.",
+        "fix": "Use a plain ease-out under 300ms for interface motion."
+      },
+      {
+        "id": "LB6",
+        "name": "ScrollTrigger reveal carpet",
+        "patterns": [
+          "ScrollTrigger\\.batch\\s*\\(",
+          "scrollTrigger[^}]{0,200}stagger"
+        ],
+        "points": 3,
+        "explain": "Scroll-triggered reveals applied in bulk. Research shows this delays task-focused readers, and content is invisible until scrolled into view.",
+        "fix": "Reveal the hero once at most. Body content should be readable immediately."
+      },
+      {
+        "id": "LB7",
+        "name": "Scroll hijacking",
+        "patterns": [
+          "ScrollSmoother",
+          "new Lenis\\s*\\(",
+          "lenis/react"
+        ],
+        "points": 3,
+        "explain": "Smooth-scroll libraries override the user's native scrolling. On a reading page this breaks scroll speed expectations, keyboard paging and anchor jumps.",
+        "fix": "Remove it on content pages. If the page genuinely IS a scroll experience, gate it behind prefers-reduced-motion and keep keyboard scrolling native."
+      },
+      {
+        "id": "LB8",
+        "name": "anime.js scroll-reveal density",
+        "patterns": [
+          "autoplay:\\s*onScroll\\("
+        ],
+        "min_count": 3,
+        "points": 3,
+        "explain": "Three or more anime.js onScroll() animations. Same carpet problem as ScrollTrigger.",
+        "fix": "Cut to one, or none."
+      },
+      {
+        "id": "LB9",
+        "name": "anime.js infinite loop",
+        "patterns": [
+          "loop:\\s*true"
+        ],
+        "points": 2,
+        "explain": "An infinite anime.js loop, usually a decorative float or pulse.",
+        "fix": "Remove it, or drive it from real changing data."
+      },
+      {
+        "id": "LB10",
+        "name": "Decorative canvas / particle field",
+        "patterns": [
+          "new PIXI\\.Application|new Application\\(\\)[\\s\\S]{0,80}\\.init",
+          "particles|ParticleContainer|tsparticles"
+        ],
+        "points": 3,
+        "explain": "A WebGL canvas behind content. Screen readers see nothing inside a canvas, and a particle field is the clearest 'we had nothing to show' signal there is.",
+        "fix": "Delete it. If the canvas carries real content (a game, a data view), give it a text alternative and keyboard access."
+      },
+      {
+        "id": "LB11",
+        "name": "SplitText accessibility disabled",
+        "patterns": [
+          "splitText\\([^)]*accessible:\\s*false",
+          "aria-hidden=\"true\"[^>]*>[^<]{40,}"
+        ],
+        "points": 3,
+        "explain": "Text split into characters or words with the accessibility fallback turned off. Screen readers then read the heading letter by letter, or not at all.",
+        "fix": "Leave accessible:true (the default), or do not split the text."
+      },
+      {
+        "id": "LB12",
+        "name": "Leaflet map without attribution",
+        "requires": [
+          "L\\.tileLayer\\(|leaflet"
+        ],
+        "missing": [
+          "attribution"
+        ],
+        "points": 2,
+        "explain": "A Leaflet map with no attribution string. Tile providers require attribution, and OpenStreetMap has a usage policy with real limits.",
+        "fix": "Add the attribution option your tile provider requires. See reference/libraries/maps-forms.md."
+      }
+    ]
+  }
+}

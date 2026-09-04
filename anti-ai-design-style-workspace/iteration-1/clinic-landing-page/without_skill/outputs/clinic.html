@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Corniche Physio — Physiotherapy in Alexandria</title>
+<meta name="description" content="Physiotherapy clinic in Alexandria, Egypt. Three therapists, clear prices in EGP, book in one WhatsApp message.">
+
+<!--
+  ============================================================
+  HOW TO EDIT THIS FILE (no coding needed)
+  ------------------------------------------------------------
+  1. Search for "CHANGE ME" — every placeholder is marked.
+  2. Your WhatsApp number goes in ONE place: the line
+        const WHATSAPP_NUMBER = "20XXXXXXXXXX";
+     near the bottom. Country code first, no + sign, no spaces.
+  3. Prices, services, hours, therapist names are all plain
+     text in the sections below. Edit the words, save, upload.
+  ============================================================
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper:#f3ede2;
+    --paper-deep:#e9e0d0;
+    --ink:#17302e;
+    --ink-soft:#3f5654;
+    --sea:#1d5c58;
+    --sea-light:#d7e6e3;
+    --clay:#c65a32;
+    --clay-light:#f4d9cc;
+    --line:#c9bfae;
+    --wa:#128c7e;
+    --max:1120px;
+    --serif:"Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+    --sans:"IBM Plex Sans", "Segoe UI", Helvetica, Arial, sans-serif;
+    --arabic:"IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:17px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* subtle paper grain so flat colour doesn't look like a template */
+  body::before{
+    content:"";
+    position:fixed; inset:0; pointer-events:none; z-index:0;
+    background-image:radial-gradient(rgba(23,48,46,.06) 1px, transparent 1px);
+    background-size:5px 5px;
+    opacity:.45;
+  }
+  main, header, footer{position:relative; z-index:1}
+
+  a{color:inherit}
+  h1,h2,h3{font-family:var(--serif); font-weight:400; margin:0; line-height:1.05; letter-spacing:-.01em}
+  .wrap{max-width:var(--max); margin:0 auto; padding:0 clamp(18px,4vw,48px)}
+  .ar{font-family:var(--arabic); direction:rtl}
+
+  /* ---------- top bar ---------- */
+  header{
+    border-bottom:1.5px solid var(--ink);
+    background:var(--paper);
+    position:sticky; top:0; z-index:10;
+  }
+  .bar{
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+    height:64px;
+  }
+  .brand{
+    font-family:var(--serif); font-size:22px; text-decoration:none; letter-spacing:-.01em;
+    display:flex; align-items:baseline; gap:10px;
+  }
+  .brand small{font-family:var(--sans); font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft)}
+  nav{display:flex; gap:22px; font-size:14px; letter-spacing:.02em}
+  nav a{text-decoration:none; border-bottom:1.5px solid transparent; padding-bottom:2px}
+  nav a:hover{border-color:var(--clay)}
+  .status{
+    display:inline-flex; align-items:center; gap:8px; font-size:13px; font-weight:500;
+    padding:6px 12px; border:1.5px solid var(--ink); border-radius:999px; white-space:nowrap;
+  }
+  .status .dot{width:8px;height:8px;border-radius:50%;background:#7a8a88}
+  .status.open .dot{background:#2e9d5b; box-shadow:0 0 0 3px rgba(46,157,91,.2)}
+  .status.closed .dot{background:var(--clay)}
+  .status .short{display:none}
+  @media (max-width:760px){
+    nav{display:none}
+    .bar{gap:10px}
+    .brand{font-size:19px}
+    .brand small{display:none}
+    .status .long{display:none}
+    .status .short{display:inline}
+  }
+
+  /* ---------- buttons ---------- */
+  .btn{
+    display:inline-flex; align-items:center; gap:10px;
+    padding:14px 22px; border-radius:6px; text-decoration:none; font-weight:600; font-size:16px;
+    border:1.5px solid var(--ink); background:var(--ink); color:var(--paper);
+    transition:transform .12s ease, background .12s ease;
+  }
+  .btn:hover{transform:translateY(-1px); background:var(--sea); border-color:var(--sea)}
+  .btn.wa{background:var(--wa); border-color:var(--wa); color:#fff}
+  .btn.wa:hover{background:#0f7a6d}
+  .btn.ghost{background:transparent; color:var(--ink)}
+  .btn.ghost:hover{background:var(--ink); color:var(--paper)}
+  .btn svg{width:20px;height:20px;flex:none}
+
+  /* ---------- hero ---------- */
+  .hero{padding:clamp(48px,9vw,120px) 0 clamp(40px,7vw,90px); border-bottom:1.5px solid var(--ink)}
+  .hero-grid{display:grid; grid-template-columns:1.4fr 1fr; gap:48px; align-items:end}
+  .eyebrow{font-size:13px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:22px; display:flex; gap:14px; align-items:center}
+  .eyebrow::before{content:""; width:36px; height:1.5px; background:var(--clay)}
+  .hero h1{font-size:clamp(46px,8vw,104px); line-height:.95; font-weight:300}
+  .hero h1 em{font-style:italic; font-weight:400; color:var(--sea)}
+  .hero p.lead{font-size:clamp(18px,2vw,21px); max-width:46ch; color:var(--ink-soft); margin:28px 0 34px}
+  .hero-actions{display:flex; gap:12px; flex-wrap:wrap}
+  .hero-aside{
+    border:1.5px solid var(--ink); border-radius:10px; padding:22px 24px;
+    background:var(--paper-deep);
+    position:relative;
+  }
+  .hero-aside::after{ /* little folded corner */
+    content:""; position:absolute; right:-1.5px; top:-1.5px; width:26px; height:26px;
+    background:linear-gradient(225deg, var(--paper) 50%, var(--ink) 50%, var(--ink) calc(50% + 1.5px), var(--paper-deep) calc(50% + 1.5px));
+    border-radius:0 10px 0 0;
+  }
+  .hero-aside dl{margin:0; display:grid; grid-template-columns:auto 1fr; gap:10px 18px; font-size:15px}
+  .hero-aside dt{color:var(--ink-soft); letter-spacing:.06em; text-transform:uppercase; font-size:12px; padding-top:3px}
+  .hero-aside dd{margin:0}
+  .hero-aside dd strong{font-weight:600}
+  .hero-aside .ar{font-size:18px; margin-top:16px; padding-top:14px; border-top:1px dashed var(--line); color:var(--sea); text-align:right}
+  @media (max-width:860px){ .hero-grid{grid-template-columns:1fr; gap:32px} .hero-aside::after{display:none} }
+
+  /* ---------- section headings ---------- */
+  section{padding:clamp(56px,8vw,100px) 0; border-bottom:1.5px solid var(--ink)}
+  .sec-head{display:flex; align-items:baseline; justify-content:space-between; gap:24px; margin-bottom:clamp(28px,4vw,48px)}
+  .sec-head h2{font-size:clamp(34px,5vw,56px); font-weight:300}
+  .sec-head .num{font-family:var(--serif); font-style:italic; color:var(--clay); font-size:20px}
+  .sec-head p{margin:0; color:var(--ink-soft); max-width:36ch; text-align:right; font-size:15px}
+  @media (max-width:640px){ .sec-head{flex-direction:column; gap:8px} .sec-head p{text-align:left} }
+
+  /* ---------- services & prices: a menu, not cards ---------- */
+  .menu{list-style:none; margin:0; padding:0; border-top:1.5px solid var(--ink)}
+  .menu li{
+    display:grid; grid-template-columns:44px 1fr auto; gap:6px 20px; align-items:baseline;
+    padding:22px 0; border-bottom:1px solid var(--line);
+  }
+  .menu li:hover{background:linear-gradient(90deg, transparent, rgba(29,92,88,.05), transparent)}
+  .menu .idx{font-family:var(--serif); font-style:italic; color:var(--clay); font-size:18px}
+  .menu .name{font-family:var(--serif); font-size:clamp(22px,2.6vw,28px); line-height:1.15}
+  .menu .desc{grid-column:2; color:var(--ink-soft); font-size:15px; max-width:60ch}
+  .menu .dur{grid-column:2; font-size:13px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); margin-top:4px}
+  .menu .price{
+    grid-row:1 / span 3; grid-column:3; align-self:start;
+    font-family:var(--serif); font-size:clamp(24px,3vw,34px); white-space:nowrap; text-align:right;
+  }
+  .menu .price small{font-family:var(--sans); font-size:12px; letter-spacing:.12em; display:block; color:var(--ink-soft); font-weight:500}
+  .menu .price .from{font-family:var(--sans); font-size:12px; color:var(--ink-soft); display:block; letter-spacing:.06em}
+  .note{margin-top:22px; font-size:14px; color:var(--ink-soft); display:flex; gap:10px; align-items:flex-start}
+  .note::before{content:"※"; color:var(--clay)}
+  @media (max-width:560px){
+    .menu li{grid-template-columns:30px 1fr}
+    .menu .price{grid-row:auto; grid-column:2; text-align:left; margin-top:8px; font-size:24px}
+    .menu .price small, .menu .price .from{display:inline; margin-left:6px}
+  }
+
+  /* ---------- packages ---------- */
+  .packs{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:44px}
+  .pack{border:1.5px solid var(--ink); border-radius:10px; padding:22px 22px 20px; background:var(--paper)}
+  .pack.hi{background:var(--ink); color:var(--paper)}
+  .pack .k{font-size:12px; letter-spacing:.14em; text-transform:uppercase; opacity:.75}
+  .pack h3{font-size:30px; margin:8px 0 4px}
+  .pack .p{font-family:var(--serif); font-size:26px; margin:6px 0 10px}
+  .pack .p span{font-family:var(--sans); font-size:12px; letter-spacing:.1em; margin-left:6px; opacity:.75}
+  .pack p{margin:0; font-size:14px; opacity:.85}
+  .pack .save{display:inline-block; margin-top:12px; padding:3px 9px; border-radius:999px; font-size:12px; font-weight:600; background:var(--clay-light); color:var(--clay)}
+  .pack.hi .save{background:var(--clay); color:#fff}
+  @media (max-width:760px){ .packs{grid-template-columns:1fr} }
+
+  /* ---------- therapists ---------- */
+  .team{display:grid; grid-template-columns:repeat(3,1fr); gap:0; border:1.5px solid var(--ink); border-radius:12px; overflow:hidden}
+  .person{padding:28px 26px 30px; border-right:1.5px solid var(--ink); background:var(--paper)}
+  .person:last-child{border-right:0}
+  .person .mono{
+    width:64px; height:64px; border-radius:50%; display:grid; place-items:center;
+    font-family:var(--serif); font-size:26px; font-style:italic; color:var(--paper); background:var(--sea); margin-bottom:18px;
+  }
+  .person:nth-child(2) .mono{background:var(--clay)}
+  .person:nth-child(3) .mono{background:var(--ink)}
+  .person h3{font-size:26px}
+  .person .role{font-size:13px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); margin:6px 0 14px}
+  .person p{margin:0; font-size:15px; color:var(--ink-soft)}
+  .person .tags{margin-top:14px; display:flex; flex-wrap:wrap; gap:6px}
+  .person .tags span{font-size:12px; padding:4px 9px; border:1px solid var(--line); border-radius:999px}
+  @media (max-width:760px){
+    .team{grid-template-columns:1fr}
+    .person{border-right:0; border-bottom:1.5px solid var(--ink)}
+    .person:last-child{border-bottom:0}
+  }
+
+  /* ---------- hours + location ---------- */
+  .split{display:grid; grid-template-columns:1fr 1fr; gap:56px}
+  .hours{width:100%; border-collapse:collapse; font-size:16px}
+  .hours th, .hours td{padding:12px 4px; text-align:left; border-bottom:1px solid var(--line)}
+  .hours th{font-weight:500; font-family:var(--serif); font-size:19px; width:45%}
+  .hours td{font-variant-numeric:tabular-nums}
+  .hours tr.today th::after{content:"today"; margin-left:10px; font-family:var(--sans); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--clay); vertical-align:middle}
+  .hours tr.today{background:var(--sea-light)}
+  .hours tr.today th, .hours tr.today td{padding-left:10px; padding-right:10px}
+  .hours td.off{color:var(--clay); font-style:italic}
+  .addr{font-family:var(--serif); font-size:clamp(22px,2.6vw,28px); line-height:1.3; margin:0 0 6px}
+  .addr-sub{color:var(--ink-soft); margin:0 0 22px; font-size:15px}
+  .kv{display:grid; grid-template-columns:auto 1fr; gap:10px 18px; font-size:15px; margin-top:22px}
+  .kv dt{color:var(--ink-soft); letter-spacing:.06em; text-transform:uppercase; font-size:12px; padding-top:3px}
+  .kv dd{margin:0}
+  .map{margin-top:24px; border:1.5px solid var(--ink); border-radius:10px; overflow:hidden; background:var(--paper-deep); height:220px}
+  .map iframe{width:100%; height:100%; border:0; filter:grayscale(1) contrast(1.05) sepia(.25)}
+  @media (max-width:800px){ .split{grid-template-columns:1fr; gap:40px} }
+
+  /* ---------- booking ---------- */
+  .book{background:var(--ink); color:var(--paper); border-bottom:0}
+  .book .sec-head h2, .book .sec-head p{color:var(--paper)}
+  .book .sec-head p{opacity:.75}
+  .book-grid{display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:start}
+  .steps{list-style:none; margin:0; padding:0; counter-reset:s}
+  .steps li{counter-increment:s; display:grid; grid-template-columns:48px 1fr; gap:16px; padding:18px 0; border-top:1px solid rgba(243,237,226,.2)}
+  .steps li::before{content:counter(s, decimal-leading-zero); grid-row:1 / span 2; font-family:var(--serif); font-style:italic; font-size:26px; color:var(--clay-light)}
+  .steps b, .steps span{grid-column:2}
+  .steps b{display:block; font-family:var(--serif); font-size:22px; font-weight:400; margin-bottom:4px}
+  .steps span{font-size:15px; opacity:.8}
+  form{border:1.5px solid rgba(243,237,226,.35); border-radius:12px; padding:24px}
+  form .f{display:flex; flex-direction:column; gap:6px; margin-bottom:16px}
+  form label{font-size:12px; letter-spacing:.12em; text-transform:uppercase; opacity:.8}
+  form input, form select{
+    font:inherit; color:var(--paper); background:transparent;
+    border:0; border-bottom:1.5px solid rgba(243,237,226,.45); padding:10px 0; border-radius:0; outline:none;
+  }
+  form select option{color:var(--ink)}
+  form input:focus, form select:focus{border-color:var(--clay-light)}
+  form .row{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+  form .btn{width:100%; justify-content:center; margin-top:6px}
+  form .tiny{font-size:13px; opacity:.7; margin:12px 0 0; text-align:center}
+  .direct{margin-top:22px; font-size:15px; opacity:.85}
+  .direct a{color:var(--clay-light)}
+  @media (max-width:800px){ .book-grid{grid-template-columns:1fr; gap:32px} form .row{grid-template-columns:1fr} }
+
+  /* ---------- footer ---------- */
+  footer{background:var(--ink); color:var(--paper); padding:28px 0 40px; border-top:1px solid rgba(243,237,226,.2)}
+  .foot{display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; font-size:13px; opacity:.75; align-items:center}
+  .foot .ar{font-size:15px; opacity:1}
+
+  /* ---------- floating whatsapp on mobile ---------- */
+  .fab{
+    position:fixed; right:16px; bottom:16px; z-index:20;
+    display:none; align-items:center; gap:10px; padding:14px 18px; border-radius:999px;
+    background:var(--wa); color:#fff; text-decoration:none; font-weight:600; font-size:15px;
+    box-shadow:0 8px 24px rgba(0,0,0,.25);
+  }
+  .fab svg{width:22px;height:22px}
+  @media (max-width:760px){ .fab{display:inline-flex} }
+
+  @media print{ header, .fab{position:static} body::before{display:none} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap bar">
+    <a class="brand" href="#top">Corniche Physio <small>Alexandria</small></a>   <!-- CHANGE ME: clinic name -->
+    <nav aria-label="Sections">
+      <a href="#services">Services &amp; prices</a>
+      <a href="#team">Therapists</a>
+      <a href="#hours">Hours</a>
+      <a href="#book">Book</a>
+    </nav>
+    <span class="status" id="status"><span class="dot"></span><span class="long" id="status-text">Hours</span><span class="short" id="status-short">Hours</span></span>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ================= HERO ================= -->
+  <section class="hero" style="border-bottom:1.5px solid var(--ink)">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="eyebrow">Physiotherapy · Alexandria, Egypt</div>
+        <h1>Get back to <em>moving</em> the way you used to.</h1>
+        <p class="lead">
+          A small clinic with three physiotherapists and no waiting room theatre.
+          Honest prices, sessions that actually last the full time, and a plan you can understand.
+        </p>
+        <div class="hero-actions">
+          <a class="btn wa" href="#book">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4zM12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2z"/></svg>
+            Book on WhatsApp
+          </a>
+          <a class="btn ghost" href="#services">See prices</a>
+        </div>
+      </div>
+
+      <aside class="hero-aside" aria-label="Quick facts">
+        <dl>
+          <dt>Session</dt><dd><strong>from 350 EGP</strong> · 45 min</dd>          <!-- CHANGE ME -->
+          <dt>Hours</dt><dd>Sat – Thu from 10:00 · closed Friday</dd>                             <!-- CHANGE ME -->
+          <dt>Where</dt><dd>Smouha, Alexandria</dd>                                    <!-- CHANGE ME -->
+          <dt>Booking</dt><dd>One WhatsApp message. Same-day slots most days.</dd>
+        </dl>
+        <p class="ar">علاج طبيعي في الإسكندرية — احجز عبر واتساب</p>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ================= SERVICES & PRICES ================= -->
+  <section id="services">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2><span class="num">01 </span>Services &amp; prices</h2>
+        <p>Everything is listed. No "contact us for a quote". Prices include the assessment, in Egyptian pounds.</p>
+      </div>
+
+      <!-- CHANGE ME: edit names, descriptions, durations and prices freely. Copy an <li> block to add a service. -->
+      <ol class="menu">
+        <li>
+          <span class="idx">i</span>
+          <span class="name">First assessment</span>
+          <span class="desc">60 minutes with one therapist. History, movement testing, a diagnosis in plain words, and your first treatment the same visit.</span>
+          <span class="dur">60 min · new patients</span>
+          <span class="price">450<small>EGP</small></span>
+        </li>
+        <li>
+          <span class="idx">ii</span>
+          <span class="name">Follow-up session</span>
+          <span class="desc">Manual therapy, guided exercise and progress check. Most back, neck, knee and shoulder problems need 4 to 8 of these.</span>
+          <span class="dur">45 min</span>
+          <span class="price">350<small>EGP</small></span>
+        </li>
+        <li>
+          <span class="idx">iii</span>
+          <span class="name">Post-surgery rehabilitation</span>
+          <span class="desc">ACL, meniscus, rotator cuff, hip and knee replacement, fractures. We coordinate with your surgeon's protocol.</span>
+          <span class="dur">45 min</span>
+          <span class="price">400<small>EGP</small></span>
+        </li>
+        <li>
+          <span class="idx">iv</span>
+          <span class="name">Sports injury &amp; return to play</span>
+          <span class="desc">Sprains, strains, tendinopathy, running and football injuries. Includes a written return-to-sport plan.</span>
+          <span class="dur">45 min</span>
+          <span class="price">400<small>EGP</small></span>
+        </li>
+        <li>
+          <span class="idx">v</span>
+          <span class="name">Neurological rehab</span>
+          <span class="desc">Stroke, Parkinson's, MS and nerve injuries. Balance, gait and daily-function work, at your pace.</span>
+          <span class="dur">60 min</span>
+          <span class="price">500<small>EGP</small></span>
+        </li>
+        <li>
+          <span class="idx">vi</span>
+          <span class="name">Dry needling / electrotherapy add-on</span>
+          <span class="desc">Added to any session when it will actually help, not by default. Includes shockwave for stubborn tendon and heel pain.</span>
+          <span class="dur">+15 min</span>
+          <span class="price">150<small>EGP</small></span>
+        </li>
+        <li>
+          <span class="idx">vii</span>
+          <span class="name">Home visit</span>
+          <span class="desc">Within Alexandria. Best for post-surgery, elderly patients and anyone who can't travel yet.</span>
+          <span class="dur">45 min · Smouha, Sidi Gaber, Roushdy, Kafr Abdo, Loran, San Stefano</span>
+          <span class="price"><span class="from">from</span>650<small>EGP</small></span>
+        </li>
+      </ol>
+
+      <div class="packs">
+        <div class="pack">
+          <div class="k">Package</div>
+          <h3>5 sessions</h3>
+          <div class="p">1,600<span>EGP</span></div>
+          <p>Follow-up sessions, valid 2 months. Any therapist.</p>
+          <span class="save">save 150 EGP</span>
+        </div>
+        <div class="pack hi">
+          <div class="k">Most chosen</div>
+          <h3>10 sessions</h3>
+          <div class="p">3,000<span>EGP</span></div>
+          <p>Follow-up sessions, valid 4 months. Includes one free re-assessment.</p>
+          <span class="save">save 500 EGP</span>
+        </div>
+        <div class="pack">
+          <div class="k">Post-surgery</div>
+          <h3>12 sessions</h3>
+          <div class="p">4,200<span>EGP</span></div>
+          <p>Rehab sessions, valid 6 months. Written progress report for your surgeon.</p>
+          <span class="save">save 600 EGP</span>
+        </div>
+      </div>
+
+      <p class="note">Cash, Instapay and Vodafone Cash accepted. Cancel free up to 4 hours before your slot. Prices are current as of September 2026 and are the same for everyone.</p>
+    </div>
+  </section>
+
+  <!-- ================= THERAPISTS ================= -->
+  <section id="team">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2><span class="num">02 </span>Three therapists</h2>
+        <p>You'll always see the same person for your whole course of treatment. Ask for someone by name when you book.</p>
+      </div>
+
+      <!-- CHANGE ME: names, roles, bios, tags -->
+      <div class="team">
+        <div class="person">
+          <div class="mono">M</div>
+          <h3>Dr. Mariam El-Sayed</h3>
+          <div class="role">Founder · Musculoskeletal &amp; sports</div>
+          <p>BSc Physical Therapy, Alexandria University. 11 years in orthopaedic and sports rehab, formerly with a first-division football club.</p>
+          <div class="tags"><span>Back &amp; neck</span><span>Knee</span><span>Runners</span><span>Arabic · English</span></div>
+        </div>
+        <div class="person">
+          <div class="mono">K</div>
+          <h3>Dr. Karim Hassan</h3>
+          <div class="role">Post-surgical &amp; orthopaedic rehab</div>
+          <p>Specialises in getting people walking again after joint replacement and ligament surgery. Patient, methodical, slightly obsessed with gait.</p>
+          <div class="tags"><span>ACL</span><span>Hip &amp; knee replacement</span><span>Fractures</span><span>Arabic · English</span></div>
+        </div>
+        <div class="person">
+          <div class="mono">N</div>
+          <h3>Dr. Nour Abdelrahman</h3>
+          <div class="role">Neurological &amp; geriatric rehab</div>
+          <p>Stroke and Parkinson's rehabilitation, balance and falls prevention. Does most of our home visits.</p>
+          <div class="tags"><span>Stroke</span><span>Balance</span><span>Home visits</span><span>Arabic · English · French</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= HOURS & LOCATION ================= -->
+  <section id="hours">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2><span class="num">03 </span>Hours &amp; where to find us</h2>
+        <p>Last appointment starts one hour before closing. Friday is our day off; the clinic phone is still answered.</p>
+      </div>
+
+      <div class="split">
+        <div>
+          <!-- CHANGE ME: hours. Keep the data-day numbers (0 = Sunday ... 6 = Saturday). -->
+          <table class="hours" id="hours-table">
+            <tr data-day="6"><th>Saturday</th><td>10:00 – 21:00</td></tr>
+            <tr data-day="0"><th>Sunday</th><td>10:00 – 21:00</td></tr>
+            <tr data-day="1"><th>Monday</th><td>10:00 – 21:00</td></tr>
+            <tr data-day="2"><th>Tuesday</th><td>10:00 – 21:00</td></tr>
+            <tr data-day="3"><th>Wednesday</th><td>10:00 – 21:00</td></tr>
+            <tr data-day="4"><th>Thursday</th><td>10:00 – 18:00</td></tr>
+            <tr data-day="5"><th>Friday</th><td class="off">Closed</td></tr>
+          </table>
+          <p class="note">During Ramadan we open 12:00 – 16:00 and 20:30 – 00:30. We post the change on WhatsApp a week before.</p>
+        </div>
+
+        <div>
+          <!-- CHANGE ME: address -->
+          <p class="addr">14 Fawzi Moaz Street, 2nd floor<br>Smouha, Alexandria</p>
+          <p class="addr-sub">Above the pharmacy on the corner, opposite Smouha Club's north gate. Lift available. Street parking is usually fine after 4 pm.</p>
+
+          <dl class="kv">
+            <dt>WhatsApp</dt><dd><a href="#book" id="wa-inline">+20 1XX XXX XXXX</a></dd>     <!-- updated automatically from the number at the bottom -->
+            <dt>Phone</dt><dd><a href="tel:+2031234567">03 123 4567</a></dd>                   <!-- CHANGE ME -->
+            <dt>Email</dt><dd><a href="mailto:hello@cornichephysio.com">hello@cornichephysio.com</a></dd> <!-- CHANGE ME -->
+          </dl>
+
+          <div class="map">
+            <!-- CHANGE ME: paste your own Google Maps embed link in src (Google Maps -> Share -> Embed a map). -->
+            <iframe title="Map" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+              src="https://www.google.com/maps?q=Smouha,+Alexandria,+Egypt&output=embed"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= BOOKING ================= -->
+  <section id="book" class="book">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2><span class="num">04 </span>Book in one message</h2>
+        <p>No account, no app, no call queue. Fill this in and it opens WhatsApp with your message already written.</p>
+      </div>
+
+      <div class="book-grid">
+        <div>
+          <ol class="steps">
+            <li><b>Send us a message</b><span>Use the form or just write to us. Tell us what hurts and when you're free.</span></li>
+            <li><b>We reply with 2 or 3 slots</b><span>Usually within the hour during opening times. We'll suggest the right therapist for your problem.</span></li>
+            <li><b>Come in comfortable clothes</b><span>Bring any X-rays, MRI reports or surgeon's notes you have. Pay after the session.</span></li>
+          </ol>
+          <p class="direct">Prefer to type it yourself? Message us directly at <a id="wa-direct" href="#">+20 1XX XXX XXXX</a>.</p>
+        </div>
+
+        <form id="wa-form" novalidate>
+          <div class="f">
+            <label for="name">Your name</label>
+            <input id="name" name="name" type="text" autocomplete="name" placeholder="e.g. Ahmed">
+          </div>
+          <div class="f">
+            <label for="service">What do you need?</label>
+            <select id="service" name="service">
+              <option>First assessment</option>
+              <option>Follow-up session</option>
+              <option>Post-surgery rehabilitation</option>
+              <option>Sports injury</option>
+              <option>Neurological rehab</option>
+              <option>Home visit</option>
+              <option>Not sure — please advise</option>
+            </select>
+          </div>
+          <div class="row">
+            <div class="f">
+              <label for="day">Preferred day</label>
+              <select id="day" name="day">
+                <option>Any day</option>
+                <option>Saturday</option><option>Sunday</option><option>Monday</option>
+                <option>Tuesday</option><option>Wednesday</option><option>Thursday</option>
+              </select>
+            </div>
+            <div class="f">
+              <label for="time">Preferred time</label>
+              <select id="time" name="time">
+                <option>Any time</option>
+                <option>Morning (10 – 13)</option>
+                <option>Afternoon (13 – 17)</option>
+                <option>Evening (17 – 21)</option>
+              </select>
+            </div>
+          </div>
+          <div class="f">
+            <label for="issue">Briefly, what's the problem? (optional)</label>
+            <input id="issue" name="issue" type="text" placeholder="e.g. lower back pain for 3 weeks">
+          </div>
+          <button type="submit" class="btn wa">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4zM12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2z"/></svg>
+            Open WhatsApp with this message
+          </button>
+          <p class="tiny">Nothing is sent until you press send inside WhatsApp.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <span>© <span id="year"></span> Corniche Physio · Smouha, Alexandria</span>   <!-- CHANGE ME -->
+    <span class="ar">عيادة كورنيش للعلاج الطبيعي — سموحة، الإسكندرية</span>          <!-- CHANGE ME: Arabic name -->
+  </div>
+</footer>
+
+<a class="fab" id="fab" href="#book" aria-label="Book on WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4zM12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2z"/></svg>
+  Book
+</a>
+
+<script>
+  /* ============================================================
+     CHANGE ME: your WhatsApp number.
+     Country code first, digits only. Egypt mobile example: "201001234567"
+     ============================================================ */
+  const WHATSAPP_NUMBER = "20XXXXXXXXXX";
+
+  /* Opening hours used for the "Open now" badge. 24h clock, Cairo time.
+     Day numbers: 0 Sun, 1 Mon, 2 Tue, 3 Wed, 4 Thu, 5 Fri, 6 Sat. null = closed.
+     Keep this in sync with the table above. */
+  const HOURS = { 0:[10,21], 1:[10,21], 2:[10,21], 3:[10,21], 4:[10,18], 5:null, 6:[10,21] };
+
+  /* ---- helpers ---- */
+  const $ = (s) => document.querySelector(s);
+  const clean = WHATSAPP_NUMBER.replace(/\D/g, "");
+  const numberIsSet = !/X/i.test(WHATSAPP_NUMBER) && clean.length >= 10;
+  const pretty = numberIsSet ? "+" + clean.replace(/^(\d{2})(\d{3})(\d{3})(\d+)$/, "$1 $2 $3 $4") : "+20 1XX XXX XXXX";
+  const waLink = (text) => "https://wa.me/" + clean + (text ? "?text=" + encodeURIComponent(text) : "");
+
+  /* show the number in the two places it appears */
+  ["#wa-inline", "#wa-direct"].forEach(id => {
+    const a = $(id); if (!a) return;
+    a.textContent = pretty;
+    if (numberIsSet) { a.href = waLink("Hello, I'd like to book a physiotherapy session."); a.target = "_blank"; a.rel = "noopener"; }
+  });
+  if (numberIsSet) { $("#fab").href = waLink("Hello, I'd like to book a physiotherapy session."); $("#fab").target = "_blank"; }
+
+  /* ---- booking form -> WhatsApp ---- */
+  $("#wa-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const v = (id) => $(id).value.trim();
+    const lines = [
+      "Hello Corniche Physio, I'd like to book.",
+      "Name: " + (v("#name") || "—"),
+      "Service: " + v("#service"),
+      "Preferred: " + v("#day") + ", " + v("#time"),
+    ];
+    if (v("#issue")) lines.push("Problem: " + v("#issue"));
+    const msg = lines.join("\n");
+    if (!numberIsSet) {
+      alert("The clinic's WhatsApp number hasn't been added to this page yet.\n\nYour message would be:\n\n" + msg);
+      return;
+    }
+    window.open(waLink(msg), "_blank", "noopener");
+  });
+
+  /* ---- today highlight + open/closed badge, always in Cairo time ---- */
+  (function () {
+    let day, hour, minute;
+    try {
+      const parts = new Intl.DateTimeFormat("en-US", { timeZone: "Africa/Cairo", weekday: "short", hour: "numeric", minute: "numeric", hour12: false }).formatToParts(new Date());
+      const get = (t) => parts.find(p => p.type === t)?.value;
+      day = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].indexOf(get("weekday"));
+      hour = parseInt(get("hour"), 10) % 24; minute = parseInt(get("minute"), 10);
+    } catch (_) { const d = new Date(); day = d.getDay(); hour = d.getHours(); minute = d.getMinutes(); }
+
+    const row = document.querySelector('#hours-table tr[data-day="' + day + '"]');
+    if (row) row.classList.add("today");
+
+    const badge = $("#status"), txt = $("#status-text");
+    const h = HOURS[day];
+    const now = hour + minute / 60;
+    if (h && now >= h[0] && now < h[1]) {
+      badge.classList.add("open");
+      txt.textContent = "Open now · until " + h[1] + ":00";
+      $("#status-short").textContent = "Open now";
+    } else {
+      badge.classList.add("closed");
+      // find next opening
+      let n = day, label = "";
+      for (let i = 0; i < 7; i++) {
+        const hh = HOURS[n];
+        if (hh && (i > 0 || now < hh[0])) {
+          label = (i === 0 ? "today" : i === 1 ? "tomorrow" : ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][n]) + " " + hh[0] + ":00";
+          break;
+        }
+        n = (n + 1) % 7;
+      }
+      txt.textContent = "Closed · opens " + label;
+      $("#status-short").textContent = "Closed";
+    }
+  })();
+
+  $("#year").textContent = new Date().getFullYear();
+</script>
+</body>
+</html>

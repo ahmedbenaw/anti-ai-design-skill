@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "AI-look score below 20",
+      "passed": true,
+      "evidence": "score 0"
+    },
+    {
+      "text": "No CR1/CR2 craft flags",
+      "passed": true,
+      "evidence": "craft flags: ['CR5']"
+    },
+    {
+      "text": "Shows allowance, top-3 categories, log button",
+      "passed": true,
+      "evidence": "all three present"
+    },
+    {
+      "text": "Log button >= 44px tall",
+      "passed": true,
+      "evidence": ".fab { height: 58px } - the earlier automated check only looked for min-height and matched the phone frame (844px) instead."
+    },
+    {
+      "text": "No gradient card/glow/glass",
+      "passed": true,
+      "evidence": "colour tells: none"
+    },
+    {
+      "text": "Two+ student-context choices",
+      "passed": true,
+      "evidence": "EGP / campus / local-item references present"
+    }
+  ],
+  "summary": "6/6 assertions passed."
+}

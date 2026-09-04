@@ -1,0 +1,11 @@
+{
+  "register_version": "2026.08",
+  "files_scanned": 1,
+  "ai_score": 0,
+  "ai_band": "distinct - no meaningful AI-look signals",
+  "pass_threshold": 20,
+  "verdict": "PASS",
+  "near_proof": [],
+  "tells": [],
+  "craft_flags": []
+}

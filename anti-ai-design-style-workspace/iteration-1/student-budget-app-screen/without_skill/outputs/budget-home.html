@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Masrouf — Home</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #FBF5E9;
+    --card: #FFFDF8;
+    --ink: #1E2A22;
+    --ink-2: #5C665F;
+    --ink-3: #9AA39D;
+    --line: #E9E0CF;
+    --green: #1D7A4C;
+    --green-deep: #14593A;
+    --green-tint: #DCEFE3;
+    --sand: #F4B942;
+    --sand-tint: #FBEBC4;
+    --clay: #D9643C;
+    --clay-tint: #F9DED2;
+    --sky: #3A78B8;
+    --sky-tint: #D9E7F5;
+    --radius: 18px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    background: #DCD3C4;
+    font-family: "Rubik", -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- phone frame ---------- */
+  .stage {
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 28px 12px 40px;
+  }
+
+  .phone {
+    width: 390px;
+    max-width: 100%;
+    min-height: 844px;
+    background: var(--paper);
+    border-radius: 44px;
+    box-shadow: 0 30px 60px rgba(40, 30, 10, 0.25), 0 0 0 10px #171A18, 0 0 0 12px #3A3F3B;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    /* subtle notebook paper feel */
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(30,42,34,0.05) 1px, transparent 0);
+    background-size: 22px 22px;
+  }
+
+  .statusbar {
+    height: 54px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 0 30px 6px;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .statusbar .notch {
+    position: absolute;
+    top: 14px; left: 50%;
+    transform: translateX(-50%);
+    width: 122px; height: 34px;
+    background: #171A18;
+    border-radius: 20px;
+  }
+  .statusbar .right { display: flex; gap: 6px; align-items: center; }
+
+  .screen {
+    flex: 1;
+    padding: 6px 20px 120px;
+    overflow: hidden;
+  }
+
+  /* ---------- header ---------- */
+  .top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 8px;
+  }
+  .brand {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .brand .ar {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--green-deep);
+    letter-spacing: -0.5px;
+  }
+  .brand .en {
+    font-size: 13px;
+    color: var(--ink-3);
+    font-weight: 500;
+  }
+  .avatar {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: var(--sand);
+    color: var(--green-deep);
+    font-weight: 800;
+    display: grid;
+    place-items: center;
+    font-size: 15px;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 0 rgba(0,0,0,0.08);
+  }
+
+  .greet {
+    margin: 18px 0 14px;
+  }
+  .greet h1 {
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0 0 4px;
+  }
+  .greet p {
+    margin: 0;
+    color: var(--ink-2);
+    font-size: 14px;
+  }
+  .greet p b { color: var(--green); font-weight: 600; }
+
+  /* ---------- allowance card ---------- */
+  .allowance {
+    background: var(--green);
+    color: #fff;
+    border-radius: 24px;
+    padding: 20px 20px 18px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 24px rgba(29,122,76,0.28);
+  }
+  /* torn-ticket edge along the bottom, like a cafeteria coupon */
+  .allowance::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -6px;
+    height: 12px;
+    background: radial-gradient(circle, var(--paper) 5px, transparent 5.5px) 0 0 / 20px 12px repeat-x;
+  }
+  .allowance .label {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.85;
+    font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+  }
+  .allowance .label .ar { letter-spacing: 0; font-size: 13px; opacity: 1; }
+  .amount {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin: 6px 0 2px;
+  }
+  .amount .num {
+    font-size: 46px;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    line-height: 1;
+  }
+  .amount .cur {
+    font-size: 18px;
+    font-weight: 600;
+    opacity: 0.9;
+  }
+  .amount .of {
+    font-size: 13px;
+    opacity: 0.75;
+    margin-left: auto;
+  }
+
+  .bar {
+    margin-top: 14px;
+    height: 12px;
+    background: rgba(255,255,255,0.22);
+    border-radius: 999px;
+    position: relative;
+    overflow: visible;
+  }
+  .bar .fill {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 40%;
+    background: var(--sand);
+    border-radius: 999px;
+  }
+  /* today marker on the month timeline */
+  .bar .today {
+    position: absolute;
+    top: -6px;
+    left: 47%;
+    width: 2px; height: 24px;
+    background: #fff;
+    border-radius: 2px;
+  }
+  .bar .today::after {
+    content: "today";
+    position: absolute;
+    top: 26px; left: -14px;
+    font-size: 10px;
+    opacity: 0.85;
+    white-space: nowrap;
+  }
+  .bar .fill::after {
+    content: "";
+    position: absolute;
+    right: -1px; top: -3px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--sand);
+    border: 3px solid var(--green);
+  }
+  .bar-legend {
+    margin-top: 22px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    opacity: 0.85;
+  }
+
+  .stats {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .stat {
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 10px 12px;
+  }
+  .stat .k { font-size: 11px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; }
+  .stat .v { font-size: 18px; font-weight: 600; margin-top: 2px; }
+  .stat .v small { font-size: 12px; color: var(--ink-2); font-weight: 500; }
+  .stat.warn .v { color: var(--clay); font-size: 15px; }
+
+  /* ---------- section headings ---------- */
+  .sec {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin: 22px 0 10px;
+  }
+  .sec h2 {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0;
+  }
+  .sec h2 span { color: var(--ink-3); font-weight: 400; margin-left: 6px; font-size: 13px; }
+  .sec a { font-size: 13px; color: var(--green); text-decoration: none; font-weight: 500; }
+
+  /* ---------- categories ---------- */
+  .cats { display: flex; flex-direction: column; gap: 8px; }
+  .cat {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    display: grid;
+    grid-template-columns: 42px 1fr auto;
+    gap: 12px;
+    align-items: center;
+  }
+  .cat .ic {
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+  }
+  .cat .ic svg { width: 22px; height: 22px; }
+  .cat .name { font-weight: 600; font-size: 15px; }
+  .cat .sub { font-size: 12px; color: var(--ink-2); margin-top: 2px; }
+  .cat .amt { font-weight: 600; font-size: 16px; text-align: right; }
+  .cat .pct { font-size: 12px; color: var(--ink-3); text-align: right; margin-top: 2px; }
+  .cat .track {
+    grid-column: 2 / 4;
+    height: 5px;
+    background: var(--line);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .cat .track i { display: block; height: 100%; border-radius: 999px; }
+
+  .c-transport .ic { background: var(--sky-tint); color: var(--sky); }
+  .c-transport .track i { background: var(--sky); width: 44%; }
+  .c-food .ic { background: var(--clay-tint); color: var(--clay); }
+  .c-food .track i { background: var(--clay); width: 37%; }
+  .c-print .ic { background: var(--sand-tint); color: #A8730E; }
+  .c-print .track i { background: var(--sand); width: 15%; }
+
+  .rank {
+    font-size: 11px;
+    color: var(--ink-3);
+    font-weight: 500;
+    margin-right: 6px;
+  }
+
+  /* ---------- quick add chips ---------- */
+  .chips {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip {
+    flex: 0 0 auto;
+    background: var(--card);
+    border: 1.5px dashed #CFC4AD;
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    white-space: nowrap;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .chip b { color: var(--green); font-weight: 600; }
+
+  /* ---------- floating action ---------- */
+  .fab-wrap {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    padding: 20px 20px 22px;
+    background: linear-gradient(to top, var(--paper) 60%, rgba(251,245,233,0));
+  }
+  .fab {
+    width: 100%;
+    height: 58px;
+    border: none;
+    border-radius: 18px;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: inherit;
+    font-size: 17px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    box-shadow: 0 6px 0 var(--green-deep), 0 14px 24px rgba(30,42,34,0.25);
+    transform: translateY(-3px);
+  }
+  .fab:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--green-deep); }
+  .fab .plus {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: var(--sand);
+    color: var(--ink);
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1;
+  }
+  .fab .ar { font-size: 14px; opacity: 0.7; font-weight: 500; margin-left: 2px; }
+
+  .home-indicator {
+    width: 134px; height: 5px;
+    border-radius: 999px;
+    background: var(--ink);
+    opacity: 0.6;
+    margin: 12px auto 0;
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="phone">
+
+    <div class="statusbar">
+      <span>9:41</span>
+      <div class="notch"></div>
+      <div class="right">
+        <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+        <svg width="26" height="12" viewBox="0 0 26 12" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="21" height="10" rx="3"/><rect x="3" y="3" width="13" height="6" rx="1.5" fill="currentColor" stroke="none"/><path d="M24 4.5v3" stroke-linecap="round"/></svg>
+      </div>
+    </div>
+
+    <div class="screen">
+
+      <div class="top">
+        <div class="brand">
+          <span class="ar">مصروف</span>
+          <span class="en">masrouf</span>
+        </div>
+        <div class="avatar">N</div>
+      </div>
+
+      <div class="greet">
+        <h1>Sabah el-fol, Nour</h1>
+        <p>September · 16 days till the next masrouf. You're <b>a bit ahead</b> of pace.</p>
+      </div>
+
+      <section class="allowance">
+        <div class="label">
+          <span>Allowance left</span>
+          <span class="ar">الباقي من المصروف</span>
+        </div>
+        <div class="amount">
+          <span class="num">2,090</span>
+          <span class="cur">EGP</span>
+          <span class="of">of 3,500</span>
+        </div>
+        <div class="bar">
+          <div class="fill"></div>
+          <div class="today"></div>
+        </div>
+        <div class="bar-legend">
+          <span>1 Sep</span>
+          <span>Spent 1,410</span>
+          <span>30 Sep</span>
+        </div>
+      </section>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="k">Per day</div>
+          <div class="v">130 <small>EGP</small></div>
+        </div>
+        <div class="stat">
+          <div class="k">Spent today</div>
+          <div class="v">53 <small>EGP</small></div>
+        </div>
+        <div class="stat warn">
+          <div class="k">Coming up</div>
+          <div class="v">Midterms<br><small>in 9 days</small></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h2>Where it went <span>this month</span></h2>
+        <a href="#">All categories</a>
+      </div>
+
+      <div class="cats">
+        <div class="cat c-transport">
+          <div class="ic">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="15" rx="3"/><path d="M4 10h16M8 18v2M16 18v2"/><circle cx="8.5" cy="14" r="1" fill="currentColor"/><circle cx="15.5" cy="14" r="1" fill="currentColor"/></svg>
+          </div>
+          <div>
+            <div class="name"><span class="rank">#1</span>Mowaslat</div>
+            <div class="sub">Metro, microbus, 3 Ubers after late labs</div>
+          </div>
+          <div>
+            <div class="amt">620</div>
+            <div class="pct">44%</div>
+          </div>
+          <div class="track"><i></i></div>
+        </div>
+
+        <div class="cat c-food">
+          <div class="ic">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11h16l-1.5 8a2 2 0 0 1-2 1.6h-9a2 2 0 0 1-2-1.6L4 11z"/><path d="M6 11c0-3.5 2.7-6 6-6s6 2.5 6 6"/><path d="M12 5V3"/></svg>
+          </div>
+          <div>
+            <div class="name"><span class="rank">#2</span>Food</div>
+            <div class="sub">Koshary, foul &amp; ta3meya, the cafeteria</div>
+          </div>
+          <div>
+            <div class="amt">520</div>
+            <div class="pct">37%</div>
+          </div>
+          <div class="track"><i></i></div>
+        </div>
+
+        <div class="cat c-print">
+          <div class="ic">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V4h12v5"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v6H7z"/></svg>
+          </div>
+          <div>
+            <div class="name"><span class="rank">#3</span>Printing &amp; notes</div>
+            <div class="sub">Malazem, photocopies, one lab manual</div>
+          </div>
+          <div>
+            <div class="amt">210</div>
+            <div class="pct">15%</div>
+          </div>
+          <div class="track"><i></i></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h2>Log it fast <span>your usual</span></h2>
+      </div>
+      <div class="chips">
+        <div class="chip">Metro <b>8</b></div>
+        <div class="chip">Koshary <b>45</b></div>
+        <div class="chip">Microbus <b>12</b></div>
+        <div class="chip">Print 10 pages <b>15</b></div>
+        <div class="chip">Coffee <b>35</b></div>
+      </div>
+
+    </div>
+
+    <div class="fab-wrap">
+      <button class="fab">
+        <span class="plus">+</span>
+        Log an expense
+        <span class="ar">سجّل مصروف</span>
+      </button>
+      <div class="home-indicator"></div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

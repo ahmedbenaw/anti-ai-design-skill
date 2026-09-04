@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Masrouf: home</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Rubik:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  /* Palette from DESIGN.md: the lined kashkool notebook */
+  :root {
+    --paper: #FBFBF7;
+    --ink: #1F2A44;
+    --ink-2: #4B5563;
+    --margin-red: #B7271F;
+    --ruling: #C6D6E6;
+    --highlighter: #FFE57A;
+    --desk: #D9D6CC;
+    --row: 44px; /* one ruled line = one touch target */
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--desk);
+    color: var(--ink);
+    font-family: "IBM Plex Sans Arabic", system-ui, Tahoma, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Phone frame so the mockup previews at phone width on a laptop */
+  .phone {
+    width: 390px;
+    max-width: 100%;
+    min-height: 100vh;
+    margin: 0 auto;
+    background: var(--paper);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid #C5C2B8;
+    border-right: 1px solid #C5C2B8;
+  }
+  @media (min-width: 420px) {
+    .phone { min-height: 844px; margin: 24px auto; border: 1px solid #B9B6AC; }
+  }
+
+  h1, h2, .num { font-family: Rubik, "IBM Plex Sans Arabic", system-ui, Tahoma, sans-serif; }
+  h1, h2 { margin: 0; font-weight: 700; }
+  p { margin: 0; }
+
+  /* Header: app name in both scripts, and today's date */
+  .top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 20px 20px 8px 20px;
+  }
+  .brand { font-size: 22px; display: flex; gap: 10px; align-items: baseline; }
+  .brand [lang="ar"] { font-weight: 500; color: var(--ink-2); font-size: 20px; }
+  .date { font-size: 16px; color: var(--ink-2); }
+
+  /* The notebook page: red margin line on the left, ruled rows */
+  .page {
+    flex: 1;
+    padding: 0 20px 28px 0;
+  }
+  .page > section {
+    margin-left: 34px;
+    border-left: 2px solid var(--margin-red);
+    padding-left: 14px;
+  }
+  .page > section + section { margin-top: 28px; }
+  h2 {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--ink-2);
+    height: var(--row);
+    line-height: var(--row);
+    border-bottom: 1px solid var(--ruling);
+  }
+
+  /* 1. What is left */
+  .left-amount {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding-top: 10px;
+  }
+  .num { font-weight: 800; font-size: 56px; line-height: 1; letter-spacing: -0.5px; }
+  .mark {
+    /* one highlighter stroke over the number that matters */
+    background: linear-gradient(transparent 12%, var(--highlighter) 12%, var(--highlighter) 88%, transparent 88%);
+    padding: 0 6px;
+    margin-left: -6px;
+    border-radius: 2px;
+  }
+  .unit { font-family: Rubik, system-ui, sans-serif; font-size: 20px; font-weight: 500; }
+  .of { margin-top: 8px; color: var(--ink-2); }
+
+  .spend-bar {
+    margin-top: 16px;
+    height: 10px;
+    background: var(--ruling);
+    position: relative;
+  }
+  .spend-bar > span {
+    position: absolute; inset: 0 auto 0 0;
+    background: var(--ink);
+  }
+  .bar-key { display: flex; justify-content: space-between; margin-top: 6px; font-size: 14px; color: var(--ink-2); }
+
+  .next {
+    margin-top: 14px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .next div { border-top: 1px solid var(--ruling); padding-top: 8px; }
+  .next strong { display: block; font-family: Rubik, system-ui, sans-serif; font-size: 22px; font-weight: 700; }
+  .next span { color: var(--ink-2); font-size: 15px; }
+
+  /* 2. Where it went: a ledger, one category per ruled row */
+  .ledger { list-style: none; margin: 0; padding: 0; }
+  .ledger li {
+    border-bottom: 1px solid var(--ruling);
+    padding: 10px 0 12px;
+  }
+  .row1 { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .row1 .name { font-weight: 600; }
+  .row1 .amt { font-family: Rubik, system-ui, sans-serif; font-weight: 700; font-size: 18px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .what { color: var(--ink-2); font-size: 15px; }
+  .share {
+    margin-top: 8px;
+    display: grid;
+    grid-template-columns: 1fr 44px;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--ink-2);
+  }
+  .share i { display: block; height: 6px; background: var(--ruling); }
+  .share i b { display: block; height: 100%; background: var(--margin-red); }
+  .rest {
+    display: flex; justify-content: space-between; align-items: center;
+    min-height: var(--row);
+    color: var(--ink-2);
+  }
+  .rest a { color: var(--ink); font-weight: 600; white-space: nowrap; text-decoration: underline; text-underline-offset: 3px; min-height: var(--row); display: inline-flex; align-items: center; }
+
+  /* 3. Log it. Pinned to the bottom, in thumb reach */
+  .log {
+    position: sticky;
+    bottom: 0;
+    background: var(--paper);
+    border-top: 2px solid var(--ruling);
+    padding: 12px 20px 20px 20px;
+  }
+  .again { font-size: 14px; color: var(--ink-2); margin-bottom: 8px; }
+  .chips { display: flex; gap: 8px; margin-bottom: 12px; }
+  .chip {
+    flex: 1;
+    min-height: var(--row);
+    background: var(--paper);
+    color: var(--ink);
+    border: 1.5px solid var(--ink);
+    border-radius: 3px;
+    font: inherit;
+    font-size: 15px;
+    padding: 6px 8px;
+    cursor: pointer;
+    display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
+    line-height: 1.25;
+    text-align: left;
+  }
+  .chip b { font-family: Rubik, system-ui, sans-serif; font-weight: 700; }
+  .primary {
+    width: 100%;
+    min-height: 52px;
+    background: var(--margin-red);
+    color: #fff;
+    border: 0;
+    border-radius: 6px;
+    font: inherit;
+    font-family: Rubik, system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    cursor: pointer;
+  }
+  .primary .plus { display: inline-block; width: 1.2em; text-align: left; font-weight: 800; }
+  .last { margin-top: 10px; font-size: 14px; color: var(--ink-2); }
+
+  /* Keyboard focus is always visible */
+  :focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+  .primary:focus-visible { outline-color: var(--margin-red); outline-offset: 3px; }
+
+  /* Press feedback, only for people who have not asked for less motion */
+  @media (prefers-reduced-motion: no-preference) {
+    .primary, .chip { transition: transform 80ms ease-out; }
+    .primary:active, .chip:active { transform: translateY(1px); }
+  }
+  .chip:hover { background: #F1F1EA; }
+  .primary:hover { background: #A32219; }
+
+  .sample {
+    font-size: 14px;
+    color: var(--ink-2);
+    text-align: center;
+    padding: 10px 20px;
+  }
+</style>
+</head>
+<body>
+
+<div class="phone">
+
+  <header class="top">
+    <h1 class="brand">Masrouf <span lang="ar" dir="rtl">مصروف</span></h1>
+    <p class="date"><time datetime="2026-09-20">Sun 20 Sept</time></p>
+  </header>
+
+  <main class="page">
+
+    <!-- 1. How much is left, and how long must it last -->
+    <section aria-labelledby="h-left">
+      <h2 id="h-left">Left this month</h2>
+      <p class="left-amount">
+        <span class="num"><span class="mark">1,140</span></span>
+        <span class="unit">EGP</span>
+      </p>
+      <p class="of">Out of the 3,000 that came in on 1 Sept.</p>
+
+      <div class="spend-bar" role="img" aria-label="Spent 1,860 of 3,000 EGP, 62 percent">
+        <span style="width:62%"></span>
+      </div>
+      <div class="bar-key" aria-hidden="true">
+        <span>Spent 1,860</span>
+        <span>Left 1,140</span>
+      </div>
+
+      <div class="next">
+        <div>
+          <strong>11 days</strong>
+          <span>until the next masrouf, Wed 1 Oct.</span>
+        </div>
+        <div>
+          <strong>103 EGP</strong>
+          <span>a day, if you spread it evenly.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Where it went -->
+    <section aria-labelledby="h-top">
+      <h2 id="h-top">Where it went, top 3</h2>
+      <ol class="ledger">
+        <li>
+          <div class="row1">
+            <span class="name">Food and cafeteria</span>
+            <span class="amt">690 EGP</span>
+          </div>
+          <p class="what">Koshary, foul and taameya sandwiches, campus cafeteria.</p>
+          <div class="share">
+            <i aria-hidden="true"><b style="width:37%"></b></i>
+            <span>37%</span>
+          </div>
+        </li>
+        <li>
+          <div class="row1">
+            <span class="name">Getting to campus</span>
+            <span class="amt">520 EGP</span>
+          </div>
+          <p class="what">Metro tickets, microbus.</p>
+          <div class="share">
+            <i aria-hidden="true"><b style="width:28%"></b></i>
+            <span>28%</span>
+          </div>
+        </li>
+        <li>
+          <div class="row1">
+            <span class="name">Notes and printing</span>
+            <span class="amt">310 EGP</span>
+          </div>
+          <p class="what">Photocopy shop sheets, one lab manual.</p>
+          <div class="share">
+            <i aria-hidden="true"><b style="width:17%"></b></i>
+            <span>17%</span>
+          </div>
+        </li>
+      </ol>
+      <p class="rest">
+        <span>Everything else: 340 EGP.</span>
+        <a href="#all-spending">See all</a>
+      </p>
+    </section>
+
+  </main>
+
+  <!-- 3. Log what you just spent -->
+  <div class="log">
+    <p class="again">Log again with one tap.</p>
+    <div class="chips" role="group" aria-label="Log a repeat expense">
+      <button class="chip" type="button">Metro ticket<b>10 EGP</b></button>
+      <button class="chip" type="button">Koshary<b>45 EGP</b></button>
+      <button class="chip" type="button">Notes<b>30 EGP</b></button>
+    </div>
+    <button class="primary" type="button"><span class="plus" aria-hidden="true">+</span>Log an expense</button>
+    <p class="last">Last logged today: Metro ticket, 10 EGP, 11:40.</p>
+  </div>
+
+</div>
+
+<p class="sample">Mockup with sample numbers. Amounts are examples, not a real account.</p>
+
+</body>
+</html>

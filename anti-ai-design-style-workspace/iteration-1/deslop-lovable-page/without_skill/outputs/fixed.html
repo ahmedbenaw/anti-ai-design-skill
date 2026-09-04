@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>InvoiceFlow — Invoicing for teams</title>
+<meta name="description" content="InvoiceFlow helps teams create and send invoices without the busywork. Now with AI-powered features in v2.0.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f6f4ee;
+    --paper-2: #ecE9e0;
+    --ink: #1c1b18;
+    --ink-2: #4d4a43;
+    --ink-3: #7b776d;
+    --rule: #d9d5ca;
+    --accent: #1f5a3a;
+    --accent-ink: #163f29;
+    --sans: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  h1, h2, h3 { margin: 0; font-weight: 500; letter-spacing: -0.01em; }
+  p { margin: 0; }
+  ul { margin: 0; padding: 0; list-style: none; }
+
+  .wrap { width: min(1120px, calc(100% - 48px)); margin: 0 auto; }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  /* ---------- nav ---------- */
+  .nav {
+    border-bottom: 1px solid var(--rule);
+  }
+  .nav .wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+  .brand {
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 17px;
+  }
+  .brand .mark {
+    width: 22px; height: 22px;
+    border: 2px solid var(--ink);
+    border-radius: 3px;
+    position: relative;
+  }
+  .brand .mark::after {
+    content: "";
+    position: absolute;
+    left: 4px; right: 4px; top: 5px;
+    height: 2px;
+    background: var(--ink);
+    box-shadow: 0 4px 0 var(--ink);
+  }
+  .nav ul { display: flex; gap: 28px; }
+  .nav ul a { text-decoration: none; font-size: 15px; color: var(--ink-2); }
+  .nav ul a:hover { color: var(--ink); }
+  .nav-cta { display: flex; align-items: center; gap: 20px; }
+  .nav-cta .link { font-size: 15px; text-decoration: none; color: var(--ink-2); }
+
+  /* ---------- buttons ---------- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 500;
+    padding: 11px 18px;
+    border-radius: 4px;
+    border: 1px solid var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+    text-decoration: none;
+    cursor: pointer;
+    line-height: 1.2;
+  }
+  .btn:hover { background: #000; border-color: #000; }
+  .btn.secondary {
+    background: transparent;
+    color: var(--ink);
+  }
+  .btn.secondary:hover { background: var(--paper-2); }
+  .btn.small { padding: 8px 14px; font-size: 14px; }
+  .arrow-link {
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 2px;
+  }
+  .arrow-link:hover { border-color: var(--ink); }
+
+  /* ---------- hero ---------- */
+  .hero { padding: 88px 0 72px; }
+  .hero .wrap {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: 64px;
+    align-items: center;
+  }
+  .hero .new {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent-ink);
+    text-decoration: none;
+    margin-bottom: 28px;
+  }
+  .hero .new .tag {
+    background: var(--accent);
+    color: #fff;
+    padding: 2px 7px;
+    border-radius: 3px;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .hero h1 {
+    font-size: clamp(38px, 5.2vw, 60px);
+    line-height: 1.06;
+    letter-spacing: -0.025em;
+    max-width: 12ch;
+  }
+  .hero .lede {
+    margin-top: 24px;
+    font-size: 19px;
+    color: var(--ink-2);
+    max-width: 44ch;
+  }
+  .hero .actions {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-top: 36px;
+    flex-wrap: wrap;
+  }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    gap: 40px;
+    justify-content: start;
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+  }
+  .stats dt {
+    font-family: var(--mono);
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .stats dd {
+    margin: 4px 0 0;
+    font-size: 14px;
+    color: var(--ink-3);
+  }
+
+  /* decorative invoice */
+  .invoice {
+    background: #fff;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 28px;
+    box-shadow: 0 1px 2px rgba(28,27,24,0.05), 0 12px 32px -16px rgba(28,27,24,0.18);
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-3);
+    position: relative;
+  }
+  .invoice .head {
+    display: flex;
+    padding-right: 72px;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .invoice .head strong { color: var(--ink); font-weight: 500; font-size: 14px; }
+  .invoice .row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--paper-2);
+  }
+  .invoice .bar {
+    height: 8px;
+    border-radius: 2px;
+    background: var(--paper-2);
+  }
+  .invoice .amt { color: var(--ink-2); }
+  .invoice .total {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 18px;
+    color: var(--ink);
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .invoice .stamp {
+    position: absolute;
+    right: 28px;
+    top: 22px;
+    border: 2px solid var(--accent);
+    color: var(--accent);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 4px 8px;
+    border-radius: 3px;
+    transform: rotate(-8deg);
+    background: rgba(255,255,255,0.9);
+  }
+
+  /* ---------- sections ---------- */
+  section { padding: 88px 0; }
+  section + section { border-top: 1px solid var(--rule); }
+  .section-head {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 32px;
+    align-items: baseline;
+    margin-bottom: 48px;
+  }
+  .section-head h2 {
+    font-size: clamp(26px, 3vw, 34px);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+  .section-head .sub { margin-top: 10px; color: var(--ink-2); max-width: 52ch; }
+
+  /* features */
+  .features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+  }
+  .feature { border-top: 2px solid var(--ink); padding-top: 20px; }
+  .feature .num { font-family: var(--mono); font-size: 12px; color: var(--ink-3); }
+  .feature h3 { font-size: 20px; margin-top: 12px; }
+  .feature p { margin-top: 8px; color: var(--ink-2); font-size: 16px; }
+
+  /* testimonials */
+  .quotes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+  }
+  .quote { border-left: 2px solid var(--rule); padding-left: 20px; }
+  .quote blockquote {
+    margin: 0;
+    font-size: 19px;
+    line-height: 1.4;
+    letter-spacing: -0.005em;
+  }
+  .quote figcaption { margin-top: 18px; font-size: 14px; }
+  .quote figcaption .name { font-weight: 500; }
+  .quote figcaption .role { color: var(--ink-3); }
+
+  .logos {
+    margin-top: 64px;
+    padding-top: 28px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .logos .label { font-size: 13px; color: var(--ink-3); margin-right: 8px; }
+  .logos ul { display: flex; gap: 36px; flex-wrap: wrap; }
+  .logos li {
+    font-family: var(--mono);
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+
+  /* pricing */
+  .pricing-row {
+    display: grid;
+    grid-template-columns: 200px 1fr auto;
+    gap: 32px;
+    align-items: center;
+  }
+  .pricing-row h2 { font-size: clamp(26px, 3vw, 34px); letter-spacing: -0.02em; }
+  .pricing-row p { color: var(--ink-2); max-width: 48ch; }
+
+  /* faq */
+  .faq {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 32px;
+  }
+  .faq h2 { font-size: clamp(26px, 3vw, 34px); letter-spacing: -0.02em; line-height: 1.2; }
+  .faq ul { max-width: 640px; }
+  .faq li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    padding: 18px 0;
+    border-top: 1px solid var(--rule);
+    font-size: 18px;
+  }
+  .faq li:last-child { border-bottom: 1px solid var(--rule); }
+  .faq li a { font-size: 14px; color: var(--ink-3); text-decoration: none; white-space: nowrap; }
+  .faq li a:hover { color: var(--ink); }
+  .faq .after { margin-top: 28px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+
+  /* footer */
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: 32px 0;
+    font-size: 14px;
+    color: var(--ink-3);
+  }
+  footer .wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  footer ul { display: flex; gap: 24px; }
+  footer a { text-decoration: none; }
+  footer a:hover { color: var(--ink); }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 900px) {
+    .hero .wrap { grid-template-columns: 1fr; gap: 48px; }
+    .invoice { max-width: 440px; }
+    .features, .quotes { grid-template-columns: 1fr; gap: 32px; }
+    .section-head, .faq, .pricing-row { grid-template-columns: 1fr; gap: 16px; }
+    .pricing-row .btn { justify-self: start; }
+  }
+  @media (max-width: 640px) {
+    body { font-size: 16px; }
+    .wrap { width: calc(100% - 40px); }
+    .nav ul { display: none; }
+    .nav-cta .link { display: none; }
+    .nav .wrap { height: 56px; }
+    .hero { padding: 56px 0 48px; }
+    .hero h1 { max-width: none; }
+    .stats { grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .stats dt { font-size: 18px; }
+    section { padding: 64px 0; }
+    .faq li { font-size: 16px; flex-direction: column; align-items: flex-start; gap: 6px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#"><span class="mark" aria-hidden="true"></span>InvoiceFlow</a>
+    <nav aria-label="Primary">
+      <ul>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#testimonials">Customers</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+    </nav>
+    <div class="nav-cta">
+      <a class="link" href="#features">Learn more</a>
+      <a class="btn small" href="#pricing">Get started</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero" aria-labelledby="hero-title" style="border-top:0">
+    <div class="wrap">
+      <div>
+        <a class="new" href="#features"><span class="tag">New</span> AI-powered features in v2.0</a>
+        <h1 id="hero-title">Invoicing that stays out of your way.</h1>
+        <p class="lede">InvoiceFlow gives teams a straightforward way to create and send invoices, and keeps billing tidy as the team grows.</p>
+        <div class="actions">
+          <a class="btn" href="#pricing">Get started</a>
+          <a class="arrow-link" href="#features">Learn more &rarr;</a>
+        </div>
+        <dl class="stats">
+          <div><dt>10K+</dt><dd>Happy users</dd></div>
+          <div><dt>99.9%</dt><dd>Uptime</dd></div>
+          <div><dt>24/7</dt><dd>Support</dd></div>
+        </dl>
+      </div>
+
+      <div class="invoice" aria-hidden="true">
+        <div class="head">
+          <strong>Invoice</strong>
+          <span>No. 00412</span>
+        </div>
+        <div class="row"><div class="bar" style="width:62%"></div><span class="amt">1,200.00</span></div>
+        <div class="row"><div class="bar" style="width:44%"></div><span class="amt">350.00</span></div>
+        <div class="row"><div class="bar" style="width:71%"></div><span class="amt">890.00</span></div>
+        <div class="row"><div class="bar" style="width:38%"></div><span class="amt">160.00</span></div>
+        <div class="total"><span>Total due</span><span>2,600.00</span></div>
+        <span class="stamp">Paid</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="features" aria-labelledby="features-title">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Features</span>
+        <div>
+          <h2 id="features-title">Everything you need, and not much else.</h2>
+          <p class="sub">The parts of invoicing that matter, done properly.</p>
+        </div>
+      </div>
+      <div class="features">
+        <div class="feature">
+          <span class="num">01</span>
+          <h3>Fast</h3>
+          <p>Built to be quick, so creating and sending an invoice doesn't slow the rest of your work down.</p>
+        </div>
+        <div class="feature">
+          <span class="num">02</span>
+          <h3>Scales with you</h3>
+          <p>Works the same whether you're a two-person startup or a large enterprise with many clients.</p>
+        </div>
+        <div class="feature">
+          <span class="num">03</span>
+          <h3>Secure</h3>
+          <p>Enterprise-grade security, without extra setup on your side.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="testimonials" aria-labelledby="testimonials-title">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Customers</span>
+        <div>
+          <h2 id="testimonials-title">What teams say</h2>
+          <p class="sub">Trusted by 10,000+ teams worldwide.</p>
+        </div>
+      </div>
+      <div class="quotes">
+        <figure class="quote">
+          <blockquote>“InvoiceFlow transformed our billing. A total game-changer!”</blockquote>
+          <figcaption><span class="name">John Doe</span><br><span class="role">CEO, Acme</span></figcaption>
+        </figure>
+        <figure class="quote">
+          <blockquote>“Seamless. Effortless. Revolutionary.”</blockquote>
+          <figcaption><span class="name">Sarah Chen</span><br><span class="role">CTO, TechCorp</span></figcaption>
+        </figure>
+        <figure class="quote">
+          <blockquote>“It's not just software, it's a revolution in invoicing.”</blockquote>
+          <figcaption><span class="name">Jane Smith</span><br><span class="role">CFO, StartupX</span></figcaption>
+        </figure>
+      </div>
+      <div class="logos">
+        <span class="label">Used by teams at</span>
+        <ul>
+          <li>Acme</li>
+          <li>TechCorp</li>
+          <li>StartupX</li>
+          <li>GlobalSoft</li>
+          <li>Nexus</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing" aria-labelledby="pricing-title">
+    <div class="wrap">
+      <div class="pricing-row">
+        <span class="eyebrow">Pricing</span>
+        <div>
+          <h2 id="pricing-title">Simple pricing</h2>
+          <p style="margin-top:10px">Get started and we'll walk you through the plan that fits your team.</p>
+        </div>
+        <a class="btn" href="#">Get started</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" aria-labelledby="faq-title">
+    <div class="wrap">
+      <div class="faq">
+        <div>
+          <span class="eyebrow">FAQ</span>
+          <h2 id="faq-title" style="margin-top:10px">Frequently asked questions</h2>
+        </div>
+        <div>
+          <ul>
+            <li>Is InvoiceFlow right for me? <a href="#">Ask us &rarr;</a></li>
+            <li>Can I cancel anytime? <a href="#">Ask us &rarr;</a></li>
+            <li>Is my data secure? <a href="#">Ask us &rarr;</a></li>
+          </ul>
+          <div class="after">
+            <a class="btn" href="#">Get started</a>
+            <span style="font-size:14px;color:var(--ink-3)">Support is available 24/7.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>&copy; 2026 InvoiceFlow. All rights reserved.</span>
+    <ul>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,139 @@
+{
+  "register_version": "2026.08",
+  "files_scanned": 1,
+  "ai_score": 18,
+  "ai_band": "distinct - no meaningful AI-look signals",
+  "pass_threshold": 20,
+  "verdict": "PASS",
+  "near_proof": [],
+  "tells": [
+    {
+      "id": "IC5",
+      "name": "Placeholder people",
+      "points": 4,
+      "files": [
+        "deslop-lovable-page/without_skill/outputs/fixed.html"
+      ],
+      "evidence": [
+        "John Doe",
+        "Jane Smith",
+        "Sarah Chen"
+      ],
+      "why_it_matters": "Fake people and fake avatars. On a real site this is the single most damaging tell.",
+      "fix": "Real testimonials with permission, or none. Never invent people.",
+      "kind": "tell"
+    },
+    {
+      "id": "CP3",
+      "name": "Fake-looking proof",
+      "points": 4,
+      "files": [
+        "deslop-lovable-page/without_skill/outputs/fixed.html"
+      ],
+      "evidence": [
+        "Trusted by 10,000+",
+        "99.9%",
+        "10,000+"
+      ],
+      "why_it_matters": "Round unverifiable numbers read as invented and destroy trust.",
+      "fix": "Use a real number you can back up, or drop the claim.",
+      "kind": "tell"
+    },
+    {
+      "id": "LA1",
+      "name": "The SaaS section skeleton",
+      "points": 3,
+      "files": [
+        "deslop-lovable-page/without_skill/outputs/fixed.html"
+      ],
+      "evidence": [
+        "href=\"#features",
+        "href=\"#testimonials",
+        "href=\"#pricing"
+      ],
+      "why_it_matters": "features + pricing + testimonials + faq, always in the same order. Structure is where AI output converges hardest.",
+      "fix": "Cut every section that doesn't serve YOUR product. Reorder around what your visitor actually asks first.",
+      "kind": "tell"
+    },
+    {
+      "id": "CP1",
+      "name": "Buzzword copy",
+      "points": 3,
+      "files": [
+        "deslop-lovable-page/without_skill/outputs/fixed.html"
+      ],
+      "evidence": [
+        "effortless",
+        "game-changer",
+        "seamless"
+      ],
+      "why_it_matters": "Words like these fit 500 other products, which is exactly the problem - and they are the words AI reaches for first.",
+      "fix": "Replace each with the specific thing your product does ('saves you re-typing invoices' beats 'streamlines workflows').",
+      "kind": "tell"
+    },
+    {
+      "id": "LA6",
+      "name": "Round fake stats",
+      "points": 2,
+      "files": [
+        "deslop-lovable-page/without_skill/outputs/fixed.html"
+      ],
+      "evidence": [
+        "Trusted by 10,000+",
+        "10,000+"
+      ],
+      "why_it_matters": "Round unverifiable numbers ('10K+ users', '99.9% uptime'). On a new product they read as invented.",
+      "fix": "Real number or no number. 'Show more, claim less.'",
+      "kind": "tell"
+    },
+    {
+      "id": "CP2",
+      "name": "AI writing cadence",
+      "points": 2,
+      "files": [
+        "deslop-lovable-page/without_skill/outputs/fixed.html"
+      ],
+      "evidence": [
+        "it's not just",
+        "whether you're a"
+      ],
+      "why_it_matters": "Two or more classic AI phrasings together ('it's not just X...', 'in today's fast-paced world').",
+      "fix": "Read it aloud. Rewrite in the words you'd say to a customer.",
+      "kind": "tell"
+    }
+  ],
+  "craft_flags": [
+    {
+      "id": "CR5",
+      "name": "Tiny body text",
+      "points": 0,
+      "files": [
+        "deslop-lovable-page/without_skill/outputs/fixed.html"
+      ],
+      "evidence": [
+        "font-size: 12px",
+        "font-size: 13px",
+        "font-size: 11px"
+      ],
+      "why_it_matters": "Lots of very small text. Body copy should be at least 16px (BDA guide).",
+      "fix": "Reserve text-xs for true fine print; body at text-base (16px) or larger.",
+      "kind": "craft"
+    },
+    {
+      "id": "CR6",
+      "name": "Uppercase running text",
+      "points": 0,
+      "files": [
+        "deslop-lovable-page/without_skill/outputs/fixed.html"
+      ],
+      "evidence": [
+        "text-transform: uppercase",
+        "text-transform: uppercase",
+        "text-transform: uppercase"
+      ],
+      "why_it_matters": "Uppercase removes the word shapes dyslexic readers rely on (BDA guide). Fine for tiny labels, not for sentences.",
+      "fix": "Use sentence case for anything longer than a word or two.",
+      "kind": "craft"
+    }
+  ]
+}
