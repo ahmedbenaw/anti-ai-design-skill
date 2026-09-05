@@ -14,7 +14,7 @@ One further repo, `Aditya27T/Smart-Ndelik-5.0-react-native`, has a valid `bolt-e
 
 **Headline findings**
 
-1. **The React-era tells do not transfer.** Purple→pink gradients: **0 occurrences in 19/19 web-and-RN repos scanned for it.** Indigo utility classes: 0 in 18/19. `bg-clip-text`: 0 in 17/19. `blur-3xl`: 0 in 17/19. `hover:scale-105`: 0 in 15/19. Bolt's Vue output in particular carries almost none of the visual clichés its React output is famous for.
+1. **The React-era tells do not transfer.** Purple→pink gradients: **0 occurrences in 19/19 web-and-RN repos scanned for it.** Indigo utility classes: 0 in 18/19. `bg-clip-text`: 0 in 17/19. `blur-3xl`: 0 in 17/19. `hover:scale-105`: 0 in 16/19. Bolt's Vue output in particular carries almost none of the visual clichés its React output is famous for.
 2. **A striking geometric constant that turns out NOT to be an AI tell.** In React Native and Flutter every generated shadow is straight down: `shadowOffset: { width: 0, ... }` in **123 of 123 occurrences across 6 RN repos**, `Offset(0, N)` in **72 of 72 occurrences across 4 LLM-Flutter repos**. Not one sample offset a shadow horizontally. But the FlutterFlow control group — where a human picked every shadow in a visual editor — is **49 of 49** on the same measure. It is mobile/Material idiom, not generation. Recorded here as a negative result so nobody else spends the same day on it (see T1).
 3. **The strongest genuinely new tell is chromatic: Tailwind's default palette leaks into non-Tailwind languages.** Dart and React Native `StyleSheet` files carry literal Tailwind hexes (`#3B82F6`, `#16A34A`, `#EF4444`, `0xFF7C3AED`) in **5 of 11** RN/Flutter samples — and in **0 of 3** FlutterFlow samples. Flutter has no Tailwind; this is training-data bleed, and it is much more specific than any Tailwind-class regex.
 4. **Current-generation (2026) Lovable is a fixed-size scaffold:** `src/components/ui/` contains **exactly 49 files in 4 of 4** repos created March 2026, with `public/placeholder.svg` present in 4/4 (unreferenced in 2/4).
@@ -147,7 +147,7 @@ All 27 owners are distinct accounts, so no two rows are the same author's habits
   - **13 of the repo's 14 six-digit hex colours are literal Tailwind defaults** (`#F97316 #F8FAFC #F59E0B #EF4444 #E5E7EB #9CA3AF …`) in a project with no Tailwind dependency in use.
   - Icons: `Ionicons` ×83 from `@expo/vector-icons` (×12), `lucide-react-native` ×1.
 - **Tags:** `[AVOID: Tailwind hexes in StyleSheet]` `[AVOID: identical inline shadow block per card]` `[EVIDENCE-ONLY]`
-- **Feeds:** Straight-down shadow constant; Tailwind palette bleed into non-web code
+- **Feeds:** Tailwind palette bleed into non-web code (the straight-down shadow constant is refuted - see T1)
 
 ### K25 — Vikas17187/MediFill_FSD (Bolt.new, Expo / React Native)
 - **Source:** Vikas17187, GitHub repo, snapshot 2026-09-05. https://github.com/Vikas17187/MediFill_FSD
@@ -167,7 +167,7 @@ All 27 owners are distinct accounts, so no two rows are the same author's habits
   - `LinearGradient` ×72 — by far the heaviest gradient use in the RN set. `Ionicons` ×134. `fontWeight: '700'` ×89 / `'600'` ×78.
   - **0 of its 137 hex colours are Tailwind defaults** — a counter-example to K24/K25, so the palette-bleed tell is ~3/5 in RN, not universal.
 - **Tags:** `[AVOID: gradient on every surface]` `[EVIDENCE-ONLY]`
-- **Feeds:** Straight-down shadow constant
+- **Feeds:** - (straight-down shadow constant refuted, see T1)
 
 ### K27 — msoheib/makeen (Bolt.new Expo + Claude Code)
 - **Source:** msoheib, GitHub repo, snapshot 2026-09-05. https://github.com/msoheib/makeen
@@ -177,7 +177,7 @@ All 27 owners are distinct accounts, so no two rows are the same author's habits
   - `borderRadius`: 8 ×120, 12 ×104, 16 ×64, 20 ×24. `fontWeight: '600'` ×372 — 40% of all weight declarations.
   - `#FFFFFF` ×1268; 29 Tailwind-default hexes; `lucide-react-native` ×81; `placeholder_people` strings ×8; `✨|🚀` in UI copy ×6.
 - **Tags:** `[AVOID: SHOUTING_SNAKE_CASE.md litter at repo root]` `[AVOID: fontWeight '600' as the universal emphasis]` `[EVIDENCE-ONLY]`
-- **Feeds:** Straight-down shadow constant; the `600` weight monoculture
+- **Feeds:** The `600` weight monoculture
 
 ### K28 — midlaj-muhammed/CalorAI (Replit Agent, Expo / React Native)
 - **Source:** midlaj-muhammed, GitHub repo, snapshot 2026-09-05. https://github.com/midlaj-muhammed/CalorAI
@@ -188,7 +188,7 @@ All 27 owners are distinct accounts, so no two rows are the same author's habits
   - `borderRadius: (20|24)` ×61 vs `(12|16)` ×36 — a rounder 2026 dialect than the 2025 Bolt samples. `Ionicons` ×150, `LinearGradient` ×13, `gap: (12|16)` ×42.
   - Zero purple, zero indigo, zero banned hexes.
 - **Tags:** `[AVOID: Inter on every text style]` `[AVOID: 20-24pt radius everywhere]` `[EVIDENCE-ONLY]`
-- **Feeds:** Inter monoculture (2026 RN); straight-down shadow constant
+- **Feeds:** Inter monoculture (2026 RN)
 
 ### K29 — davidhoang/tapestry (Replit Agent, Expo + web monorepo)
 - **Source:** davidhoang, GitHub repo, snapshot 2026-09-05. https://github.com/davidhoang/tapestry
@@ -213,7 +213,7 @@ All 27 owners are distinct accounts, so no two rows are the same author's habits
 - **Source:** pratit989, GitHub repo, snapshot 2026-09-05. https://github.com/pratit989/Rinse
 - **Context:**
   - Provenance: `lib/flutter_flow/flutter_flow_theme.dart` and siblings (`flutter_flow_count_controller.dart`, `flutter_flow_google_map.dart`); `FFAppState()` ×78 in generated pages.
-  - 57 generated `.dart` files (FlutterFlow runtime excluded). `BorderRadius.circular(` ×89 of which `(12|16)` ×57; `BoxShadow(` ×29 and `blurRadius:` ×29 — one blur per shadow, no spread variation.
+  - 57 generated `.dart` files (FlutterFlow runtime excluded). `BorderRadius.circular(` ×89 of which `(12|16)` ×57; `BoxShadow(` ×29 and `blurRadius:` ×29 — one blur per shadow, no spread variation. Shadow `offset:` is `Offset(0, …)` in 29 of 29 — the human-configured control that refutes T1.
   - Palette is entirely project-specific greys chosen in the visual editor (`0xFF818181` ×107, `0xFFBBBBBB` ×31, `0xFF073131` ×18). **0 Tailwind-default hexes of 296 hex literals.**
 - **Tags:** `[EVIDENCE-ONLY]`
 - **Feeds:** FlutterFlow provenance is not a design tell (counter-evidence)
@@ -223,7 +223,7 @@ All 27 owners are distinct accounts, so no two rows are the same author's habits
 - **Context:**
   - Provenance: `lib/flutter_flow/` export tree; `FlutterFlowTheme.of(context)` ×534 in 67 generated files (≈8 per file).
   - `GoogleFonts.` ×111, all reached through FlutterFlow's own `GoogleFonts.asMap` indirection rather than a named family — so the font choice is invisible to a `GoogleFonts.inter` regex.
-  - `BorderRadius.circular(` ×145; `elevation:` ×40; `LinearGradient(` ×14. **0 Tailwind-default hexes of 82.** Top colours `0xFFB1B1B1`, `0xFFE6A0FF`, `0xFF9AE1FF` — editor-picked, unlike anything in the LLM samples.
+  - `BorderRadius.circular(` ×145; `elevation:` ×40; `LinearGradient(` ×14. Shadow `offset:` is `Offset(0, …)` in 20 of 20 — second half of the T1 control group. **0 Tailwind-default hexes of 82.** Top colours `0xFFB1B1B1`, `0xFFE6A0FF`, `0xFF9AE1FF` — editor-picked, unlike anything in the LLM samples.
 - **Tags:** `[EVIDENCE-ONLY]`
 - **Feeds:** FlutterFlow provenance is not a design tell (counter-evidence)
 
@@ -242,10 +242,10 @@ All 27 owners are distinct accounts, so no two rows are the same author's habits
   - Provenance: `replit.md` at root with the Agent's standard "Overview / User Preferences" section structure.
   - 62 `.dart` files. `ColorScheme.fromSeed` ×2 and `useMaterial3: true` ×2 — the LLM reaches for the Material 3 seed API that FlutterFlow never uses (0/3 there).
   - `Card(` ×79, `EdgeInsets.all(16` ×54, `SizedBox(height: 8|12|16|20|24)` ×145 — spacing is expressed as literal `SizedBox` spacers rather than a spacing scale.
-  - `BorderRadius.circular(12|16)` ×21 of 44. Shadow `offset:` values are `Offset(0, 10)` ×2 and `Offset(0, 1)` ×1 — **x is 0 in all 3**.
+  - `BorderRadius.circular(12|16)` ×21 of 44. Shadow `offset:` values are `Offset(0, 10)` ×2, `Offset(0, 1)` ×1 and one more — x is 0 in all 4 (see T1: this turns out not to be an AI tell).
   - `Colors.deepPurple` ×0 — the `flutter create` template default does not appear.
 - **Tags:** `[AVOID: SizedBox spacer instead of a spacing scale]` `[EVIDENCE-ONLY]`
-- **Feeds:** ColorScheme.fromSeed + Material 3 as an LLM-Flutter marker; straight-down shadow constant
+- **Feeds:** ColorScheme.fromSeed + Material 3 as an LLM-Flutter marker
 
 ### K35 — ViaXTrace/Viax-Trace (Replit Agent, Flutter)
 - **Source:** ViaXTrace, GitHub repo, snapshot 2026-09-05. https://github.com/ViaXTrace/Viax-Trace
@@ -253,7 +253,7 @@ All 27 owners are distinct accounts, so no two rows are the same author's habits
   - Provenance: `replit.md` at root describing a pnpm monorepo with "a Flutter Android app".
   - 31 `.dart` files. **38 of its 87 `Color(0xFF…)` literals are exact Tailwind defaults**: `0xFF0EA5E9 0xFF10B981 0xFF16A34A 0xFF1D4ED8 0xFF22C55E 0xFF3B82F6 0xFF7C3AED 0xFFA855F7 0xFFD97706 0xFFEAB308 0xFFEF4444 0xFFF59E0B 0xFFF97316`. Seven are banned violet hexes (`0xFF7C3AED` ×6, `0xFFA855F7` ×1) and `0xFF7C3AED` is the single most-used colour in the app (×8).
   - `GoogleFonts.poppins` ×7. `FontWeight.w600|w700` ×102 vs `FontWeight.bold` ×0. `BorderRadius.circular(` ×112. `BoxDecoration(` ×113 across 31 files.
-  - Shadow `offset:` = `Offset(0, 3)` ×3, `Offset(0, 8)` ×1 — **x is 0 in all 4**.
+  - Shadow `offset:` = `Offset(0, 3)` ×3, `Offset(0, 8)` ×1 — x is 0 in all 4.
 - **Tags:** `[AVOID: Tailwind hexes in Dart]` `[AVOID: 0xFF7C3AED as primary]` `[EVIDENCE-ONLY]`
 - **Feeds:** Tailwind palette bleed into non-web code; violet survives in Dart even where it died in CSS
 
@@ -263,9 +263,9 @@ All 27 owners are distinct accounts, so no two rows are the same author's habits
   - Provenance: `replit.md` at root ("Mezanya - Personal Financial Management App").
   - 65 `.dart` files, 659 hex literals — **69 are exact Tailwind defaults** (`0xFF0284C7 0xFF059669 0xFF0891B2 0xFF0D9488 0xFF15803D 0xFF16A34A 0xFF1D4ED8 0xFF22C55E 0xFF2563EB 0xFF7C3AED 0xFFD97706 0xFFDB2777 0xFFDC2626`), including 4 banned violet. The *dominant* colours, however, are a custom brand (`0xFF165B47` ×63, `0xFFC65D2E` ×50) — so Tailwind hexes are the fill-in colours, not the brand.
   - `BorderRadius.circular(` ×553 across 65 files (≈8.5 per file); `(12|16)` ×125, `(20|24)` ×99. `BoxDecoration(` ×453. `FontWeight.w600|w700` ×258 vs `FontWeight.bold` ×6.
-  - Shadow `offset:` = `Offset(0, 10)` ×12, `Offset(0, 8)` ×11, `Offset(0, 4)` ×8, `Offset(0, 12)` ×7 — **x is 0 in all 38**.
+  - Shadow `offset:` = `Offset(0, 10)` ×12, `Offset(0, 8)` ×11, `Offset(0, 4)` ×8, `Offset(0, 12)` ×7 and 22 others — x is 0 in all 60.
 - **Tags:** `[AVOID: Tailwind hexes in Dart]` `[AVOID: rounding every container]` `[EVIDENCE-ONLY]`
-- **Feeds:** Tailwind palette bleed into non-web code; straight-down shadow constant
+- **Feeds:** Tailwind palette bleed into non-web code
 
 ### K37 — Ameer-Mahmoud/Space-App (Replit Agent, Flutter web)
 - **Source:** Ameer-Mahmoud, GitHub repo, snapshot 2026-09-05. https://github.com/Ameer-Mahmoud/Space-App
@@ -402,13 +402,13 @@ What generated code in each framework actually looks like, with regex-matchable 
 
 ## Candidate tells
 
-### T1 — Straight-down shadow constant (`width: 0` / `Offset(0, N)`)
-- **Description:** In generated React Native and Flutter, every elevation shadow is offset purely vertically. Human mobile code varies (side-lit cards, inset shadows, shared shadow utilities); generated code re-derives the same downward block per component.
-- **Supporting IDs:** K24, K25, K26, K27, K28, K29 (RN, 97/97 occurrences), K34, K35, K36, K37 (Flutter, 23/23 occurrences).
-- **Draft regex:** RN — `shadowOffset:\s*\{\s*width:\s*0\s*,\s*height:\s*\d+`; Flutter — `offset:\s*(const\s*)?Offset\(\s*0\s*,`. Score when the count of x=0 offsets is ≥5 **and** the count of non-zero-x offsets is 0.
-- **Era:** 2025–2026, both Bolt and Replit Agent.
-- **False positives:** Material Design's own guidance is a downward key light, so a *few* downward shadows are normal. The tell is the **absence of any variation across a whole app** plus the block being inlined rather than shared. Mitigate by requiring ≥5 declarations and a 0% non-zero-x rate.
-- **Verdict:** **Passes** — 10 independent repos, 120/120 occurrences.
+### T1 — Straight-down shadow constant (`width: 0` / `Offset(0, N)`) — **REFUTED**
+- **Description:** The hypothesis was that generated mobile code never offsets a shadow horizontally, whereas human code varies.
+- **Supporting IDs:** K24 (17/17), K25 (3/3), K26 (21/21), K27 (56/56), K28 (24/24), K29 (2/2) — RN, **123 of 123**. K34 (4/4), K35 (4/4), K36 (60/60), K37 (4/4) — LLM-Flutter, **72 of 72**.
+- **Draft regex:** RN — `shadowOffset:\s*\{\s*width:\s*0\s*,\s*height:\s*\d+`; Flutter — `offset:\s*(const\s*)?Offset\(\s*0[,.]`.
+- **Era:** 2025-2026, both Bolt and Replit Agent.
+- **False-positive note / why it fails:** the FlutterFlow control group, where a human set every shadow by hand in a visual editor, scores **49 of 49** on the identical measure (K31 29/29, K32 20/20). A 100% rate on both sides of the AI/human line means the pattern measures Material Design's downward key light, not generation. The *inlining* of the same shadow block per component (equal `shadowColor`/`shadowOpacity`/`elevation` counts, 4/7 RN samples) may still carry signal, but I have no human RN control for it.
+- **Verdict:** **Fails the bar - indistinguishable from ordinary framework idiom.** Do not add to the register except as a co-occurrence multiplier. Recorded as a deliberate negative result: this was the most visually striking constant in the corpus and it is worthless.
 
 ### T2 — Tailwind default palette hexes in non-Tailwind code
 - **Description:** Dart and React Native `StyleSheet` files carry literal Tailwind v3 default hexes. Flutter has no Tailwind; RN outside NativeWind has none either. This is training-data bleed and is essentially inexplicable in hand-written code.
@@ -495,11 +495,12 @@ Negative results, measured across the 19 web-and-RN repos that could structurall
 | **The seven banned indigo/violet hexes** | 0 in 16/19 web/RN repos (present in K16 ×7 via the config alias, K27 ×3, K29 ×8). In Dart: present in 2/8 (K35 ×7, K36 ×4) — and in K35 `0xFF7C3AED` is the app's most-used colour. | **Partly alive, but it has migrated to Dart.** Violet died in CSS and survived in `Color(0xFF…)`. A CSS-only scanner will miss it entirely. |
 | **Gradient-clipped headline text** (`bg-clip-text` + `text-transparent`) | 0 in 17/19; exactly 1 occurrence each in K39 and K42. | Almost gone from Lovable output; absent from Vue and RN. Downgrade further. |
 | **`blur-3xl` glow blobs** | 0 in 17/19; K41 ×1, K42 ×2. | Rare, and only in Lovable. Do not expect it outside React. |
-| **`hover:scale-105`** | 0 in 15/19; K39 ×2, K41 ×3. | Much weaker than the register implies. |
-| **Inter via Google Fonts** | 0 in 13/19 web/RN. But K28 uses `Inter_*` **224 times** and K29 uses Inter ×17 + Poppins ×4. | Not a web tell any more; **it has become a React Native tell.** The 2026 Replit Agent RN sample names Inter on essentially every text style. |
+| **`hover:scale-105`** | 0 in 16/19; K39 ×2, K41 ×3, K29 ×2. | Much weaker than the register implies. |
+| **Inter via Google Fonts** | 0 in 11/19 (K22 ×1, K19 ×1, K27 ×5, K39 ×9, K41 ×2, K42 ×3 are all single-digit). But K28 uses `Inter_*` **224 times** and K29 uses Inter ×17 + Poppins ×4. | Not a web tell any more; **it has become a React Native tell.** The 2026 Replit Agent RN sample names Inter on essentially every text style. |
 | **"Trusted by N+" / vanity stats** | **0 occurrences in 19/19.** | Does not replicate outside marketing-landing-page prompts. |
 | **`Colors.deepPurple` / the `flutter create` default theme** | **0 in 8/8 Flutter repos**, LLM and FlutterFlow alike. | The most commonly repeated "AI Flutter" claim in blog posts. It did not appear once. |
 | **FlutterFlow output has a recognisable look** | `FlutterFlowTheme.of(context)` fires 484–534 times per repo (near-perfect provenance) but the palettes are entirely project-specific: `0xFF818181`/`0xFF073131` (K31), `0xFFE6A0FF`/`0xFF9AE1FF` (K32), `0xFFFF79CB`/`0xFFFFDF6B` (K33), with **0 Tailwind hexes across 413 literals** and **0 `ColorScheme.fromSeed`**. Even radius habits diverge (K33 prefers 8, K31 prefers 12/16). | **FlutterFlow provenance is not a design tell.** It proves a tool was used and predicts nothing about how the result looks — because a human picked every colour in a visual editor. This is the cleanest control group in the corpus and it is what makes T2 credible. |
+| **"Generated mobile code never offsets a shadow sideways"** (my own hypothesis, T1) | True — 123/123 in RN, 72/72 in LLM-Flutter. But **49/49 in the human-configured FlutterFlow control**. | Refuted. A 100% rate on both sides of the line measures Material Design, not generation. |
 | **shadcn-vue / radix-vue in generated Vue** | 0/8. | The component-library dump is a React-only phenomenon in this corpus. |
 | **`text-muted-foreground` as a cross-framework tell** | 4/4 in 2026 Lovable (×88–×363) but **0/8 in Vue** and 0/7 in RN. | Confirmed strong for React, worthless elsewhere. |
 | **`max-w-7xl mx-auto` + `px-4 sm:px-6 lg:px-8`** (the Tailwind-UI container fossil) | 3/19 and 1/19 respectively. | Remains the low-prevalence, high-specificity minor signal K1–K15 described. No change. |

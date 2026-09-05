@@ -54,7 +54,40 @@ def _json_cmd(cmd):
         return None
 
 
-def gather(paths, brand_dir, max_grade=9.0):
+def render_result(paths, enabled):
+    """Run the rendered check if it can run at all.
+
+    It is optional by design, and a missing browser must not fail the build:
+    most of this skill works without one. But "not installed" and "installed
+    and failing" have to look different in the proof line, or a skipped check
+    reads as a passed one.
+    """
+    if not enabled:
+        return {"state": "SKIPPED", "detail": "not requested"}
+    html = [p for p in paths if p.lower().endswith((".html", ".htm"))]
+    if not html:
+        return {"state": "SKIPPED", "detail": "no HTML files given"}
+    try:
+        import playwright  # noqa: F401
+    except ImportError:
+        return {"state": "SKIPPED", "detail": "playwright not installed"}
+    worst = "PASS"
+    fails = 0
+    for f in html:
+        data = _json_cmd([sys.executable,
+                          os.path.join(HERE, "render_check.py"), "--json", f])
+        if data is None:
+            return {"state": "ERROR", "detail": "render_check did not run"}
+        fails += data.get("aa_failures", 0)
+        if data["verdict"] == "INCONCLUSIVE":
+            worst = "INCONCLUSIVE"
+        elif data["verdict"] == "FAIL" and worst != "INCONCLUSIVE":
+            worst = "FAIL"
+    return {"state": worst, "detail": "{} WCAG AA failures".format(fails),
+            "aa_failures": fails}
+
+
+def gather(paths, brand_dir, max_grade=9.0, render=False):
     """Run the guards and collect what each one reported.
 
     brand_dir is passed in rather than looked up here so the fail-closed path
@@ -71,7 +104,8 @@ def gather(paths, brand_dir, max_grade=9.0):
         brand = _json_cmd([sys.executable,
                            os.path.join(brand_dir, "scripts", "audit_file.py"),
                            "--json"] + list(paths))
-    return {"scan": scan, "copy": copy, "brand": brand}
+    return {"scan": scan, "copy": copy, "brand": brand,
+            "render": render_result(paths, render)}
 
 
 def summarise(results, rules):
@@ -113,8 +147,15 @@ def summarise(results, rules):
              "verdict": brand["verdict"],
              "fingerprint": brand.get("exclusion_fingerprint")}
 
-    return {"scan": s, "copy": c, "brand": b,
-            "passed": s["ok"] and c["ok"] and b["ok"]}
+    # A skipped render check does not fail the run: it is optional, and
+    # unlike the brand guard it measures craft the other scanners already
+    # partly cover. An INCONCLUSIVE or failing one does fail, because that
+    # means it ran and found something.
+    r = results.get("render") or {"state": "SKIPPED", "detail": "not run"}
+    r_ok = r["state"] in ("PASS", "SKIPPED")
+
+    return {"scan": s, "copy": c, "brand": b, "render": r,
+            "passed": s["ok"] and c["ok"] and b["ok"] and r_ok}
 
 
 def proof_line(summary):
@@ -129,13 +170,15 @@ def proof_line(summary):
     craft = s["craft"] if s["craft"] is not None else "?"
     lib = s["lib"] if s["lib"] is not None else "?"
     grade = c["grade"] if c["grade"] is not None else "not run"
+    r = summary.get("render") or {"state": "SKIPPED"}
     return ("{verdict}: AI-look {score} ({band}), craft flags {craft}, "
-            "library misuse {lib}, copy grade {grade}, brand distance {brand} "
-            "| register {reg}, rules {rf}, brand rules {bf}").format(
+            "library misuse {lib}, copy grade {grade}, brand distance {brand}, "
+            "rendered {render} | register {reg}, rules {rf}, brand rules {bf}"
+            ).format(
         verdict="PASS" if summary["passed"] else "FAIL",
         score=score, band=s["band"], craft=craft, lib=lib, grade=grade,
-        brand=b["verdict"], reg=s["register"], rf=s["fingerprint"],
-        bf=b["fingerprint"] or "-")
+        brand=b["verdict"], render=r["state"], reg=s["register"],
+        rf=s["fingerprint"], bf=b["fingerprint"] or "-")
 
 
 def selftest():
@@ -147,6 +190,7 @@ def selftest():
                  "rules_fingerprint": "abc123"},
         "copy": {"page.html": {"grade": 4.6, "findings": []}},
         "brand": {"verdict": "COMPLIANT", "exclusion_fingerprint": "def456"},
+        "render": {"state": "PASS", "detail": "0 WCAG AA failures"},
     }
     checks = []
 
@@ -181,6 +225,20 @@ def selftest():
     checks.append(("a NON-COMPLIANT brand verdict fails the gate",
                    not summarise(noncompliant, rules)["passed"]))
 
+    skipped = dict(good, render={"state": "SKIPPED",
+                                 "detail": "playwright not installed"})
+    sk = summarise(skipped, rules)
+    checks.append(("a skipped render check does not fail the run", sk["passed"]))
+    checks.append(("the line still says the render check was skipped",
+                   "rendered SKIPPED" in proof_line(sk)))
+
+    r_fail = dict(good, render={"state": "FAIL", "detail": "2 WCAG AA failures"})
+    checks.append(("a failing render check fails the run",
+                   not summarise(r_fail, rules)["passed"]))
+    r_inc = dict(good, render={"state": "INCONCLUSIVE", "detail": "styles blocked"})
+    checks.append(("an inconclusive render check fails the run",
+                   not summarise(r_inc, rules)["passed"]))
+
     dead = {"scan": None, "copy": None, "brand": None}
     checks.append(("every guard missing fails the gate",
                    not summarise(dead, rules)["passed"]))
@@ -199,6 +257,9 @@ def main():
     ap.add_argument("--max-grade", type=float, default=9.0)
     ap.add_argument("--json", action="store_true",
                     help="print the full summary as JSON as well")
+    ap.add_argument("--render", action="store_true",
+                    help="also load the page in a browser and measure craft. "
+                         "Needs playwright; skipped cleanly without it")
     ap.add_argument("--selftest", action="store_true")
     args = ap.parse_args()
 
@@ -208,8 +269,8 @@ def main():
         ap.error("give me at least one file to check")
 
     brand_dir = locate()
-    summary = summarise(gather(args.paths, brand_dir, args.max_grade),
-                        load_rules())
+    summary = summarise(gather(args.paths, brand_dir, args.max_grade,
+                               render=args.render), load_rules())
     if args.json:
         print(json.dumps(summary, indent=2))
     print(proof_line(summary))

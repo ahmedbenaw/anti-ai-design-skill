@@ -112,13 +112,18 @@ Then scan everything you made or edited. One command runs every guard:
 python3 scripts/verify_all.py <files or folder>
 ```
 
+Add `--render` to also load the page in a real browser and measure contrast,
+tap-target size, focus and reduced motion. That needs Playwright. Without it
+the line says `rendered SKIPPED` and nothing fails, because most of this skill
+works without a browser.
+
 It prints one line, and that line is what you quote when you present. It ends
 in two fingerprints, so anyone can tell which rules produced the verdict:
 
 ```
 PASS: AI-look 0/100 (distinct), craft flags 0, library misuse 0, copy grade
-4.6, brand distance COMPLIANT | register 2026.09, rules ddc695bb17c64215,
-brand rules 5697117fa1b27195
+4.6, brand distance COMPLIANT, rendered PASS | register 2026.09,
+rules 3b9aa5d25679d4e8, brand rules 5697117fa1b27195
 ```
 
 Exit code 0 means every guard ran and passed. If the brand guard is missing,
