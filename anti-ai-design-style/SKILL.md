@@ -106,7 +106,26 @@ Once per conversation, prove the tools work.
 python3 scripts/ai_tell_scan.py --selftest     # must print SELFTEST: PASS
 ```
 
-Then scan everything you made or edited.
+Then scan everything you made or edited. One command runs every guard:
+
+```
+python3 scripts/verify_all.py <files or folder>
+```
+
+It prints one line, and that line is what you quote when you present. It ends
+in two fingerprints, so anyone can tell which rules produced the verdict:
+
+```
+PASS: AI-look 0/100 (distinct), craft flags 0, library misuse 0, copy grade
+4.6, brand distance COMPLIANT | register 2026.09, rules ddc695bb17c64215,
+brand rules 5697117fa1b27195
+```
+
+Exit code 0 means every guard ran and passed. If the brand guard is missing,
+the line says `brand distance NOT RUN` and the verdict is FAIL. A check that
+did not happen never counts as a check that passed.
+
+Want the findings themselves? Run the tools one at a time.
 
 ```
 python3 scripts/ai_tell_scan.py <files or folder>
@@ -119,11 +138,14 @@ brand, and fixing one can cause the other. Warm cream plus a bookish serif
 plus a terracotta accent passes this scanner and lands on Claude's own design
 language. That is exactly what happened to the first version of
 `examples/fixed-example.html`, which scored 0 here and NON-COMPLIANT there.
-So also run:
+`verify_all.py` runs it for you, and fails when it cannot find it. Run it
+directly to see the replacement hex values it suggests:
 
 ```
 python3 <anti-antropik-design>/scripts/audit_file.py <files> --suggest
 ```
+
+If that path is unknown, `python3 scripts/find_brand_guard.py` prints it.
 
 Do not choose colours by hand. Generate them:
 `generate_palette.py --hue N --temp warm|neutral|cool --chroma low|medium|high`

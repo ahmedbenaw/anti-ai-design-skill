@@ -8,13 +8,19 @@ The user wants to know whether their design reads as AI-generated.
 
 1. Determine what to scan: use `$ARGUMENTS` if given; otherwise the UI files
    changed in this session; otherwise ask which folder in ONE short question.
-2. Run both scanners from the anti-ai-design-style skill directory:
+2. Run every guard with one command:
+   `python3 <skill-path>/scripts/verify_all.py $ARGUMENTS`
+   It prints a single verdict line. Quote that line. Do not write your own
+   summary of it. A hand-written summary is where a failed guard quietly
+   turns into a passing sentence.
+   Then run these for the findings:
    - `python3 <skill-path>/scripts/ai_tell_scan.py $ARGUMENTS`
    - `python3 <skill-path>/scripts/copy_check.py $ARGUMENTS` (pages and docs)
    - `python3 <anti-antropik-design>/scripts/audit_file.py $ARGUMENTS --suggest`
-     (brand distance; required, see reference/brand-distance.md)
+     (only when brand distance failed; it prints replacement hex values)
 3. Report back in plain language, for a non-technical reader:
-   - Start with the verdict and the AI-look score in one sentence.
+   - Start with the verify_all line exactly as printed, then one sentence
+     saying what it means.
    - Then a numbered list of at most 7 findings, worst first. For each:
      what it is (no jargon), why it matters (one line), and the exact fix.
    - If there were near-proof findings (generator plumbing), say plainly:
