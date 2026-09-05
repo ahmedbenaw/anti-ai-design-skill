@@ -11,7 +11,7 @@ conditions:
 
 This session touched UI files. Before you finish, one check has to have run.
 
-- [ ] `python3 <skill-path>/scripts/verify_all.py <changed files>` → a line
+- [ ] `python3 "${CLAUDE_PLUGIN_ROOT}"/scripts/verify_all.py <changed files>` → a line
       starting with `PASS:` and exit code 0. It runs all three guards.
       `brand distance NOT RUN` in that line is a FAIL, not a pass.
       4 of 4 skill-generated pages passed the AI-look scan and failed the

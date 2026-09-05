@@ -20,4 +20,4 @@ Do this instead: state the specific thing the product does, in words you
 would say to a customer. "Saves you re-typing invoices" beats `streamlines
 your workflow`.
 
-Then check: `python3 <skill-path>/scripts/copy_check.py <this file>`
+Then check: `python3 "${CLAUDE_PLUGIN_ROOT}"/scripts/copy_check.py <this file>`

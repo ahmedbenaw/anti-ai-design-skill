@@ -23,4 +23,4 @@ Do this instead:
 - Glow blobs: delete the blurred decorative divs
 - Gradient: use the accent colour named in the project's DESIGN.md
 
-Then run: `python3 <skill-path>/scripts/ai_tell_scan.py <this file>`
+Then run: `python3 "${CLAUDE_PLUGIN_ROOT}"/scripts/ai_tell_scan.py <this file>`

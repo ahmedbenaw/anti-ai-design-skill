@@ -31,7 +31,7 @@ your product's world to steal colours and textures from.]
 ## 4. Colours: generated, then named
 Do not pick hex codes by hand. Hand-picked "warm and tasteful" palettes land on
 Claude's own design system (measured: 4 of 4 pages did). Run this instead:
-`python3 <anti-antropik-design>/scripts/generate_palette.py --hue [0-360] --temp warm|neutral|cool --chroma low|medium|high --name [Name] --css`
+`python3 "$(python3 ../scripts/find_brand_guard.py)"/scripts/generate_palette.py --hue [0-360] --temp warm|neutral|cool --chroma low|medium|high --name [Name] --css`
 It prints VERDICT: COMPLIANT and 16 ready colours. Paste the ones you use here:
 - Background: [#______] (name it, e.g. "slate")
 - Text:       [#______]

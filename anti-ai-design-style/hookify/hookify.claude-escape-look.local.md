@@ -20,5 +20,5 @@ drifts into Anthropic's palette. Measured: 4 of 4 skill-generated pages
 failed `anti-antropik-design` until that guard became a gate.
 
 Do this: generate the palette instead of picking it:
-`python3 <anti-antropik-design>/scripts/generate_palette.py --hue N --temp neutral --chroma high --name X --css`
-Then verify: `python3 <anti-antropik-design>/scripts/audit_file.py <this file>`
+`python3 "$(python3 "${CLAUDE_PLUGIN_ROOT}"/scripts/find_brand_guard.py)"/scripts/generate_palette.py --hue N --temp neutral --chroma high --name X --css`
+Then verify: `python3 "$(python3 "${CLAUDE_PLUGIN_ROOT}"/scripts/find_brand_guard.py)"/scripts/audit_file.py <this file>`

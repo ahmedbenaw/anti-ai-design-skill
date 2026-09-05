@@ -16,7 +16,7 @@ One further repo, `Aditya27T/Smart-Ndelik-5.0-react-native`, has a valid `bolt-e
 
 1. **The React-era tells do not transfer.** Purple→pink gradients: **0 occurrences in 19/19 web-and-RN repos scanned for it.** Indigo utility classes: 0 in 18/19. `bg-clip-text`: 0 in 17/19. `blur-3xl`: 0 in 17/19. `hover:scale-105`: 0 in 16/19. Bolt's Vue output in particular carries almost none of the visual clichés its React output is famous for.
 2. **A striking geometric constant that turns out NOT to be an AI tell.** In React Native and Flutter every generated shadow is straight down: `shadowOffset: { width: 0, ... }` in **123 of 123 occurrences across 6 RN repos**, `Offset(0, N)` in **72 of 72 occurrences across 4 LLM-Flutter repos**. Not one sample offset a shadow horizontally. But the FlutterFlow control group — where a human picked every shadow in a visual editor — is **49 of 49** on the same measure. It is mobile/Material idiom, not generation. Recorded here as a negative result so nobody else spends the same day on it (see T1).
-3. **The strongest genuinely new tell is chromatic: Tailwind's default palette leaks into non-Tailwind languages.** Dart and React Native `StyleSheet` files carry literal Tailwind hexes (`#3B82F6`, `#16A34A`, `#EF4444`, `0xFF7C3AED`) in **5 of 11** RN/Flutter samples — and in **0 of 3** FlutterFlow samples. Flutter has no Tailwind; this is training-data bleed, and it is much more specific than any Tailwind-class regex.
+3. **The strongest genuinely new tell is chromatic: Tailwind's default palette leaks into non-Tailwind languages.** Dart and React Native `StyleSheet` files carry literal Tailwind hexes (`#3B82F6`, `#16A34A`, `#EF4444`, `0xFF7C3AED`) in **5 of 12** RN/Flutter samples (3 of 7 RN, 2 of 5 LLM-Flutter) — and in **0 of 3** FlutterFlow samples. Flutter has no Tailwind; this is training-data bleed, and it is much more specific than any Tailwind-class regex.
 4. **Current-generation (2026) Lovable is a fixed-size scaffold:** `src/components/ui/` contains **exactly 49 files in 4 of 4** repos created March 2026, with `public/placeholder.svg` present in 4/4 (unreferenced in 2/4).
 
 ---
@@ -39,7 +39,7 @@ One further repo, `Aditya27T/Smart-Ndelik-5.0-react-native`, has a valid `bolt-e
 | K27 | msoheib/makeen | Bolt.new (Expo/RN) + Claude Code | `{"template": "bolt-expo"}` in `.bolt/config.json`; `CLAUDE.md` at root | 2025-10-20 / 2025-12-07 | 2026-09-05 | https://github.com/msoheib/makeen |
 | K28 | midlaj-muhammed/CalorAI | Replit Agent (Expo/RN) | `replit.md` titled "CalorAI - Replit Agent Guide", dated changelog entries "Mar 06, 2026" | 2026-03-11 / 2026-03-11 | 2026-09-05 | https://github.com/midlaj-muhammed/CalorAI |
 | K29 | davidhoang/tapestry | Replit Agent (Expo/RN + web monorepo) | `replit.md` at root | 2025-06-20 / 2026-06-29 | 2026-09-05 | https://github.com/davidhoang/tapestry |
-| K30 | BoomchainLabs/earn-app | Bolt.new (Expo/RN) | `{"template": "bolt-expo"}` in `.bolt/config.json` | — | 2026-09-05 | https://github.com/BoomchainLabs/earn-app |
+| K30 | BoomchainLabs/earn-app | Bolt.new (Expo/RN) | `{"template": "bolt-expo"}` in `.bolt/config.json` | 2025-08-12 / 2026-09-04 | 2026-09-05 | https://github.com/BoomchainLabs/earn-app |
 | K31 | pratit989/Rinse | FlutterFlow | `lib/flutter_flow/flutter_flow_theme.dart` + `FFAppState()` ×78 | 2021-10-20 / 2024-01-12 | 2026-09-05 | https://github.com/pratit989/Rinse |
 | K32 | alexkocodes/Fitegy-App | FlutterFlow | `lib/flutter_flow/` export tree; `FlutterFlowTheme.of(context)` ×534 | 2022-10-11 / 2023-07-22 | 2026-09-05 | https://github.com/alexkocodes/Fitegy-App |
 | K33 | nomadkaraoke/karaokehunt-app | FlutterFlow | `lib/flutter_flow/` export tree; `FlutterFlowTheme.of(context)` ×484 | 2023-02-17 / 2026-04-20 | 2026-09-05 | https://github.com/nomadkaraoke/karaokehunt-app |
@@ -47,14 +47,14 @@ One further repo, `Aditya27T/Smart-Ndelik-5.0-react-native`, has a valid `bolt-e
 | K35 | ViaXTrace/Viax-Trace | Replit Agent (Flutter + web) | `replit.md` at root | 2026-04-16 / 2026-09-02 | 2026-09-05 | https://github.com/ViaXTrace/Viax-Trace |
 | K36 | albasuny9/Mezanya_LastFrist | Replit Agent (Flutter) | `replit.md` at root | 2026-05-12 / 2026-08-11 | 2026-09-05 | https://github.com/albasuny9/Mezanya_LastFrist |
 | K37 | Ameer-Mahmoud/Space-App | Replit Agent (Flutter web) | `replit.md` at root | 2025-10-01 / 2026-06-14 | 2026-09-05 | https://github.com/Ameer-Mahmoud/Space-App |
-| K38 | Chaka12/remittance-epay | Replit Agent (Flutter) | `replit.md` at root | — | 2026-09-05 | https://github.com/Chaka12/remittance-epay |
+| K38 | Chaka12/remittance-epay | Replit Agent (Flutter) | `replit.md` at root | 2025-12-02 / 2026-07-17 | 2026-09-05 | https://github.com/Chaka12/remittance-epay |
 | K39 | MrChartist/Funda-Scanner-Base-Project | Lovable (2026) | `lovable-tagger` in `vite.config.ts` | 2026-03-23 / 2026-04-06 | 2026-09-05 | https://github.com/MrChartist/Funda-Scanner-Base-Project |
 | K40 | Ank1t0327/sleepypig | Lovable (2026) | `lovable-tagger` in `vite.config.ts` | 2026-03-10 / 2026-03-15 | 2026-09-05 | https://github.com/Ank1t0327/sleepypig |
 | K41 | davoodepb/artesanal-fio-alma | Lovable (2026) | `lovable-tagger` in `vite.config.ts` | 2026-03-13 / 2026-05-09 | 2026-09-05 | https://github.com/davoodepb/artesanal-fio-alma |
 | K42 | D4C1-Labs/Flipper-ARF-Website | Lovable (2026) | `lovable-tagger` in `vite.config.ts` | 2026-03-14 / 2026-07-12 | 2026-09-05 | https://github.com/D4C1-Labs/Flipper-ARF-Website |
 
 All 27 owners are distinct accounts, so no two rows are the same author's habits.
-`created_at` was not recorded for K30 and K38 (they were cloned from the code-search list without a metadata call); their era claims are therefore not made.
+All 27 rows carry a creation date.
 
 **Bolt template vocabulary, established empirically** (fetched `.bolt/config.json` from 22 repos): `bolt-vite-react-ts`, `nextjs-shadcn`, `vite-react-typescript`, `vite-vue`, `vite-vue-ts`, `nuxt`, `vite-svelte`, `slidev`, `nativescript-react`, `nativescript-javascript`, `bolt-expo`. Note there is **no** `bolt-vue`/`bolt-nuxt`/`bolt-expo-starter` string — a scanner keyed on those would miss every Vue and Expo Bolt project. The Vue/Nuxt/Svelte templates drop the `bolt-` prefix entirely.
 
@@ -186,9 +186,9 @@ All 27 owners are distinct accounts, so no two rows are the same author's habits
   - `shadowOffset` ×24, **all `width: 0`**; `shadowColor` ×30 / `shadowOpacity` ×25 / `elevation` ×25.
   - `Inter_` (the `@expo-google-fonts/inter` naming convention, e.g. `Inter_600SemiBold`) appears **224 times** — Inter is not just loaded, it is named on nearly every text style.
   - `borderRadius: (20|24)` ×61 vs `(12|16)` ×36 — a rounder 2026 dialect than the 2025 Bolt samples. `Ionicons` ×150, `LinearGradient` ×13, `gap: (12|16)` ×42.
-  - Zero purple, zero indigo, zero banned hexes.
-- **Tags:** `[AVOID: Inter on every text style]` `[AVOID: 20-24pt radius everywhere]` `[EVIDENCE-ONLY]`
-- **Feeds:** Inter monoculture (2026 RN)
+  - Zero purple, zero indigo, zero banned hexes — but **18 of its 133 hex literals are Tailwind defaults**, in `constants/colors.ts` and two detail screens.
+- **Tags:** `[AVOID: Inter on every text style]` `[AVOID: Tailwind hexes in StyleSheet]` `[AVOID: 20-24pt radius everywhere]` `[EVIDENCE-ONLY]`
+- **Feeds:** Inter monoculture (2026 RN); Tailwind palette bleed into non-web code
 
 ### K29 — davidhoang/tapestry (Replit Agent, Expo + web monorepo)
 - **Source:** davidhoang, GitHub repo, snapshot 2026-09-05. https://github.com/davidhoang/tapestry
@@ -242,7 +242,7 @@ All 27 owners are distinct accounts, so no two rows are the same author's habits
   - Provenance: `replit.md` at root with the Agent's standard "Overview / User Preferences" section structure.
   - 62 `.dart` files. `ColorScheme.fromSeed` ×2 and `useMaterial3: true` ×2 — the LLM reaches for the Material 3 seed API that FlutterFlow never uses (0/3 there).
   - `Card(` ×79, `EdgeInsets.all(16` ×54, `SizedBox(height: 8|12|16|20|24)` ×145 — spacing is expressed as literal `SizedBox` spacers rather than a spacing scale.
-  - `BorderRadius.circular(12|16)` ×21 of 44. Shadow `offset:` values are `Offset(0, 10)` ×2, `Offset(0, 1)` ×1 and one more — x is 0 in all 4 (see T1: this turns out not to be an AI tell).
+  - `BorderRadius.circular(12|16)` ×21 of 44. Shadow `offset:` values are `const Offset(0, 10)` ×2, `Offset(0, 1)` ×1 and `Offset(0, elevation / 2)` ×1 — x is 0 in all 4 (see T1: this turns out not to be an AI tell).
   - `Colors.deepPurple` ×0 — the `flutter create` template default does not appear.
 - **Tags:** `[AVOID: SizedBox spacer instead of a spacing scale]` `[EVIDENCE-ONLY]`
 - **Feeds:** ColorScheme.fromSeed + Material 3 as an LLM-Flutter marker
@@ -358,7 +358,7 @@ What generated code in each framework actually looks like, with regex-matchable 
 | Modal shadow parameters | `\{ *width: 0, *height: 2 *\}`, `shadowOpacity: 0\.(05\|1\|15)`, `shadowRadius: (4\|8)` | 4/7 |
 | `fontWeight: '600'` as universal emphasis | `fontWeight: ['"]600['"]` | 5/7; the plurality weight in 3/7 (×47, ×372, ×30) |
 | 8 / 12 / 16 radius family | `borderRadius: (8\|12\|16)` | 6/7 |
-| Tailwind default hexes in `StyleSheet` | `#(3B82F6\|16A34A\|EF4444\|F59E0B\|0F172A\|6B7280\|F8FAFC\|…)` | **3/5 with any hex** (13/14, 17/30, 29/560) |
+| Tailwind default hexes in `StyleSheet`/`constants/*.ts` | `#(3B82F6\|16A34A\|EF4444\|F59E0B\|0F172A\|6B7280\|F8FAFC\|…)` | **3/7** at a meaningful ratio (13/14, 17/30, 18/133); 0/137 and 0/0 are clean negatives |
 | lucide-react-native | `lucide-react-native` | 6/7 |
 | Ionicons via `@expo/vector-icons` | `Ionicons` | 4/7 (×83, ×134, ×150) |
 | Expo Router tab scaffold | `Tabs\.Screen` | 6/7 |
@@ -412,14 +412,15 @@ What generated code in each framework actually looks like, with regex-matchable 
 
 ### T2 — Tailwind default palette hexes in non-Tailwind code
 - **Description:** Dart and React Native `StyleSheet` files carry literal Tailwind v3 default hexes. Flutter has no Tailwind; RN outside NativeWind has none either. This is training-data bleed and is essentially inexplicable in hand-written code.
-- **Supporting IDs:** K24 (13 of 14 hexes), K25 (17 of 30), K27 (29 of 560), K35 (38 of 87 Dart literals), K36 (69 of 659).
+- **Supporting IDs (with the file the hexes live in, checked so that no NativeWind/Tailwind file is counted):** K24 — 13 of 14, in `constants/Colors.ts`; K25 — 17 of 30, in `constants/theme.ts` and `components/DateTimePicker.tsx`; K28 — 18 of 133, in `constants/colors.ts` plus `app/recipe-detail.tsx` / `app/exercise-detail.tsx`; K35 — 38 of 87 Dart literals, in `artifacts/viax-mobile/lib/screens/*.dart` and `lib/widgets/analysis_chart.dart`; K36 — 69 of 659 Dart literals. **Below threshold, flagged not counted:** K27 — 29 of 560 (5%), and the repo does carry a `tailwind.config.js`, so the bleed is not clean. **Excluded:** K29 — its 24 Tailwind hexes sit in `artifacts/tapestry/src/pages/DocsPage.tsx`, a *web* React page inside the monorepo, i.e. legitimately Tailwind. **Negative controls within the corpus:** K26 (0 of 137 hexes), K30 (0 of 0), K34 (0 of 16), K37 (0 of 20), K38 (0 of 0), and FlutterFlow K31/K32/K33 (0 of 413).
+- **Denominator:** **5 clean positives of 12 mobile samples** — 3 of 7 React Native, 2 of 5 LLM-Flutter — against 8 clean negatives, with no false positive in the human-driven FlutterFlow control.
 - **Draft regex:** `(#|0xFF)(EF4444|DC2626|F97316|EA580C|F59E0B|D97706|EAB308|22C55E|16A34A|15803D|10B981|059669|14B8A6|0D9488|0EA5E9|0284C7|3B82F6|2563EB|1D4ED8|6366F1|4F46E5|8B5CF6|7C3AED|A855F7|DB2777|64748B|475569|1E293B|0F172A|94A3B8|CBD5E1|E2E8F0|F1F5F9|F8FAFC|6B7280|4B5563|374151|1F2937|111827|9CA3AF|D1D5DB|E5E7EB|F3F4F6|F9FAFB)\b` restricted to `*.dart` and RN `*.tsx|*.ts|*.js` files.
 - **Era:** 2025–2026.
-- **False positives:** a team that genuinely ported a Tailwind design system to mobile; a designer who used Tailwind's palette as a reference. Mitigate by scoring the **ratio** (Tailwind hexes / all hexes) rather than the raw count — 93% and 57% in K24/K25 are not a coincidence, 5% would be.
-- **Verdict:** **Passes** — 5 independent repos across two frameworks and two generators, with a clean control group (0 of 413 hex literals in the three FlutterFlow repos).
+- **False positives:** a team that genuinely ported a Tailwind design system to mobile; a designer who used Tailwind's palette as a reference; a monorepo whose web half is Tailwind (K29). Mitigate three ways: (i) score the **ratio**, not the raw count — 93% (K24) and 57% (K25) and 44% (K35) are not coincidence, the 5% in K27 is; (ii) exclude any file under a directory that also contains web React/Tailwind sources; (iii) exclude the repo if `tailwind.config.*` or `nativewind` is actually in use for the file in question.
+- **Verdict:** **Passes** — 5 independent repos across two frameworks and two generators, every hit located in a genuinely non-Tailwind style file, with a clean control group (0 of 413 hex literals in the three FlutterFlow repos).
 
 ### T3 — The 49-file shadcn dump
-- **Description:** Current-generation Lovable ships `src/components/ui/` with exactly 49 stock shadcn files regardless of what the app needs, and `cn(` occurrence counts cluster at 198–211 because almost all of them come from the dump rather than the app.
+- **Description:** Current-generation Lovable ships `src/components/ui/` with exactly 49 stock shadcn files regardless of what the app needs, and `cn(` occurrence counts cluster at 198–211 because almost all of them come from the dump rather than the app — measured in K39: **196 of its 199 `cn(` calls are inside `src/components/ui/`, 3 in the rest of `src/`**.
 - **Supporting IDs:** K39, K40, K41, K42 (4/4).
 - **Draft regex / test:** count files in `**/components/ui/` == 49 **and** `\bcn\(` count in the 190–215 band **and** `lovable-tagger|componentTagger` present. Weaker version without the tagger: 49-file dump + ratio of imported-to-present ui components < 0.5.
 - **Era:** 2026 (Lovable). K1–K9 recorded 30–50 files in 2025; 49 is the current fixed number.
@@ -478,7 +479,7 @@ What generated code in each framework actually looks like, with regex-matchable 
 - **Description:** Generated Vue ships hand-written inline `<svg>` paths instead of importing an icon package — the inverse of the lucide fingerprint in generated React.
 - **Supporting IDs:** K16 (55 inline `<svg>`), K17 (28), K18 (3), K20 (2), and 8/8 with no icon dependency in `package.json`.
 - **Draft regex / test:** `.vue` files contain ≥10 inline `<svg` AND `package.json` matches none of `lucide-vue-next|@heroicons/vue|@iconify|nuxt-icon|@vicons`.
-- **Era:** 2024–2026 (Bolt).
+- **Era:** 2024–2025 (Bolt); the newest Vue sample in the corpus was created 2025-11, so no 2026 claim is made.
 - **False positives:** moderate — plenty of humans inline SVGs. And the *absence* of a dependency is weak evidence on its own.
 - **Verdict:** **Passes weakly** as a framework-dialect fact rather than a slop tell. Its main value is defensive: it tells a scanner not to expect lucide in Vue.
 

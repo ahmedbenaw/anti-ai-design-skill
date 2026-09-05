@@ -147,7 +147,7 @@ language. That is exactly what happened to the first version of
 directly to see the replacement hex values it suggests:
 
 ```
-python3 <anti-antropik-design>/scripts/audit_file.py <files> --suggest
+python3 "$(python3 scripts/find_brand_guard.py)"/scripts/audit_file.py <files> --suggest
 ```
 
 If that path is unknown, `python3 scripts/find_brand_guard.py` prints it.

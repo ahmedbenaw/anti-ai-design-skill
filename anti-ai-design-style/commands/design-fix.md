@@ -9,10 +9,10 @@ The user wants the AI-look findings fixed, not just listed.
 1. If no scan ran this session, run `/design-check` logic first.
 2. Before changing anything, check for a `DESIGN.md` (or design brief) in the
    project. If none exists, ask the user the 3 fastest brief questions from
-   `<skill-path>/templates/design-brief.md`. They are: who is it for; three
+   `"${CLAUDE_PLUGIN_ROOT}"/templates/design-brief.md`. They are: who is it for; three
    things only this product could show; the feeling in their words. Write
    their answers into a new `DESIGN.md`. Do not invent answers for them.
-3. Fix every finding using `<skill-path>/reference/fixes.md`, in this order:
+3. Fix every finding using `"${CLAUDE_PLUGIN_ROOT}"/reference/fixes.md`, in this order:
    provenance residue → copy tells → colour/type tells → layout tells →
    motion tells → craft flags. Respect the DESIGN.md at every step.
    Never delete or weaken the scanner's rules to make it pass.

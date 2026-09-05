@@ -27,7 +27,7 @@ Re-check any time. Both guards:
 ```
 python3 ../scripts/ai_tell_scan.py slop-example.html
 python3 ../scripts/ai_tell_scan.py fixed-example.html
-python3 <anti-antropik-design>/scripts/audit_file.py fixed-example.html
+python3 "$(python3 ../scripts/find_brand_guard.py)"/scripts/audit_file.py fixed-example.html
 ```
 
 ## What changed, in five moves

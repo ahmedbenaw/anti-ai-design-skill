@@ -23,8 +23,12 @@ SKILL_DIR = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
 from find_brand_guard import locate  # noqa: E402
 
-SKILL_TOKEN = "<skill-path>"
-BRAND_TOKEN = "<anti-antropik-design>"
+# One token set, two install modes. The plugin loader expands
+# ${CLAUDE_PLUGIN_ROOT} itself. This script does the same job for people who
+# copy the files into a project instead of installing a plugin, so a command
+# file works either way and there is only one thing to keep correct.
+SKILL_TOKEN = "${CLAUDE_PLUGIN_ROOT}"
+BRAND_TOKEN = "${ANTI_ANTROPIK_ROOT}"
 
 EXIT_OK = 0
 EXIT_ERROR = 1
@@ -71,9 +75,16 @@ def fill(text, skill_dir, brand_dir):
     wrong path would look installed and fail at run time; an untouched
     placeholder is visibly unfinished, which is the honest state.
     """
-    text = text.replace(SKILL_TOKEN, shell_safe(skill_dir))
-    if brand_dir:
-        text = text.replace(BRAND_TOKEN, shell_safe(brand_dir))
+    # The tokens are written already wrapped in quotes, because the plugin
+    # loader substitutes a bare path and the shell needs those quotes. So
+    # replace the token WITH its surrounding quotes, or the result ends up
+    # double-quoted ("" around the path), which the shell splits right back
+    # apart at the first space.
+    for token, value in ((SKILL_TOKEN, skill_dir), (BRAND_TOKEN, brand_dir)):
+        if value is None:
+            continue
+        text = text.replace('"%s"' % token, shell_safe(value))
+        text = text.replace(token, shell_safe(value))
     return text
 
 
@@ -142,10 +153,10 @@ def selftest():
         os.makedirs(os.path.join(skill, "hookify"))
         os.makedirs(os.path.join(skill, "commands"))
         with open(os.path.join(skill, "hookify", "hookify.x.local.md"), "w") as f:
-            f.write("run {}/scripts/s.py and {}/scripts/a.py\n".format(
-                SKILL_TOKEN, BRAND_TOKEN))
+            f.write('run python3 "{}"/scripts/s.py and "{}"/scripts/a.py\n'
+                    .format(SKILL_TOKEN, BRAND_TOKEN))
         with open(os.path.join(skill, "commands", "c.md"), "w") as f:
-            f.write("see {}/templates/t.md\n".format(SKILL_TOKEN))
+            f.write('see "{}"/templates/t.md\n'.format(SKILL_TOKEN))
 
         target = os.path.join(root, "proj")
         brand = os.path.join(root, "brand")
@@ -164,6 +175,10 @@ def selftest():
                        BRAND_TOKEN not in rule + cmd))
         checks.append(("real paths substituted",
                        skill in rule and brand in rule and skill in cmd))
+        # A doubled quote means the path was quoted twice and the shell will
+        # split it at the first space, which is the whole bug this guards.
+        checks.append(('no doubled quotes around a substituted path',
+                       '""' not in rule + cmd))
 
         bare = os.path.join(root, "proj2")
         code = install(bare, skill, None, out=io.StringIO())
@@ -180,9 +195,10 @@ def selftest():
         install(spaced, spacey_skill, spacey_brand, out=io.StringIO())
         rule3 = open(os.path.join(spaced, ".claude",
                                   "hookify.x.local.md")).read()
-        checks.append(("paths with spaces are quoted",
+        checks.append(("paths with spaces are quoted exactly once",
                        '"{}"/scripts/s.py'.format(spacey_skill) in rule3 and
-                       '"{}"/scripts/a.py'.format(spacey_brand) in rule3))
+                       '"{}"/scripts/a.py'.format(spacey_brand) in rule3 and
+                       '""' not in rule3))
         checks.append(("paths without spaces are left bare",
                        '"' not in open(os.path.join(
                            target, ".claude", "commands", "c.md")).read()))

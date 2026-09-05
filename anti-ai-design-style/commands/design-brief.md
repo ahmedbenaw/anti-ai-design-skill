@@ -6,7 +6,7 @@ allowed-tools: Read, Write, AskUserQuestion
 The user wants a design direction file so generated designs stop looking
 like everyone else's.
 
-Interview them using `<skill-path>/templates/design-brief.md` as the script.
+Interview them using `"${CLAUDE_PLUGIN_ROOT}"/templates/design-brief.md` as the script.
 Rules for the interview:
 
 - One question at a time. Wait for the answer before the next.

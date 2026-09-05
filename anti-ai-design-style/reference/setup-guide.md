@@ -66,15 +66,16 @@ Needs: Claude Code with the **hookify** plugin installed.
 These make Claude warn itself the moment it writes an AI-looking pattern.
 
 1. Run the installer, which does steps 1 and 2 for you:
-   `python3 "<skill-path>"/scripts/install.py .`
-   Keep the quotes. Folder names often have spaces in them, and without
-   quotes the command stops at the first space.
+   `python3 "/path/to/anti-ai-design-style/scripts/install.py" .`
+   Put the real folder path where it says `/path/to/`. Keep the quotes.
+   Folder names often have spaces in them. Without quotes the command
+   stops at the first space.
    Add `--dry-run` first if you want to see what it would do.
    To do it by hand instead: copy all five files from the skill's
    `hookify/` folder into your project's `.claude/` folder.
-2. If you copied by hand, replace `<skill-path>` in each file with the
-   real path to the skill folder on your computer. The installer
-   already does this.
+2. If you copied by hand, replace `${CLAUDE_PLUGIN_ROOT}` in each file with
+   the real path to the skill folder, keeping the quotes around it. The
+   installer already does this for you.
 3. That's it. Rules load on the next tool use, no restart needed.
    *You'll see:* when Claude writes something like gradient headline text,
    a warning appears in its context and it corrects itself.
@@ -111,7 +112,8 @@ Two things worth knowing about how these work:
 
 1. Copy the three files from the skill's `commands/` folder into
    `.claude/commands/` in your project (create the folder if needed).
-2. Replace `<skill-path>` in each file with the skill folder's real path.
+2. Replace `${CLAUDE_PLUGIN_ROOT}` in each file with the skill folder's real
+   path, keeping the quotes around it. The installer does this for you.
    *You'll see:* three new commands when you type `/` in Claude Code:
    - `/design-check`: scan and explain in plain words
    - `/design-fix`: fix everything found, prove it with a rescan
