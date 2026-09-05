@@ -18,7 +18,7 @@
     {
       "text": "Log button >= 44px tall",
       "passed": true,
-      "evidence": "min-height: 844px"
+      "evidence": ".primary (\"Log an expense\") has min-height: 52px, and the repeat chips use --row: 44px. Re-measured 2026-09-04: the earlier evidence \"min-height: 844px\" was the .phone frame, not the button. Verdict unchanged, evidence corrected."
     },
     {
       "text": "No gradient card/glow/glass",
@@ -31,5 +31,5 @@
       "evidence": "EGP / campus / local-item references present"
     }
   ],
-  "summary": "6/6 assertions passed."
+  "summary": "6/6 assertions passed. One evidence string was corrected after re-measurement (log button); the verdict did not change."
 }

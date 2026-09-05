@@ -29,6 +29,11 @@ import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+
+# One loader, used by both run() and selftest(). They read the same rule file
+# as ai_tell_scan.py, so a copy tell and a code tell can never drift apart.
+sys.path.insert(0, HERE)
+from ai_tell_scan import load_rules, fingerprint  # noqa: E402
 VOWELS = "aeiouy"
 
 
@@ -174,8 +179,7 @@ def check_text(name, raw, rules, max_grade):
 
 
 def run(paths, max_grade, as_json=False):
-    with open(os.path.join(HERE, "rules.json"), encoding="utf-8") as f:
-        rules = json.load(f)
+    rules = load_rules()
     files = []
     for p in paths:
         if os.path.isdir(p):
@@ -230,8 +234,7 @@ It costs 120 EGP a month. The first month is free."""
 
 
 def selftest():
-    with open(os.path.join(HERE, "rules.json"), encoding="utf-8") as f:
-        rules = json.load(f)
+    rules = load_rules()
     g1, f1 = check_text("slop.txt", SLOP_COPY, rules, 9)
     g2, f2 = check_text("clean.txt", CLEAN_COPY, rules, 9)
     problems = []

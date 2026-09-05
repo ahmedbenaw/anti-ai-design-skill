@@ -65,10 +65,14 @@ install it from python.org and choose "Add to PATH" when asked).
 Needs: Claude Code with the **hookify** plugin installed.
 These make Claude warn itself the moment it writes an AI-looking pattern.
 
-1. Copy the four files from the skill's `hookify/` folder into your
-   project's `.claude/` folder.
-2. In each file, replace `<skill-path>` with the real path to the skill
-   folder on your computer.
+1. Run the installer, which does steps 1 and 2 for you:
+   `python3 <skill-path>/scripts/install.py .`
+   Add `--dry-run` first if you want to see what it would do.
+   To do it by hand instead: copy all five files from the skill's
+   `hookify/` folder into your project's `.claude/` folder.
+2. If you copied by hand, replace `<skill-path>` in each file with the
+   real path to the skill folder on your computer. The installer
+   already does this.
 3. That's it. Rules load on the next tool use, no restart needed.
    *You'll see:* when Claude writes something like gradient headline text,
    a warning appears in its context and it corrects itself.

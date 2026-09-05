@@ -37,6 +37,7 @@ import json
 import os
 import re
 import sys
+import hashlib
 from collections import defaultdict
 
 SCAN_EXTENSIONS = {".html", ".htm", ".css", ".scss", ".less", ".js", ".jsx",
@@ -49,8 +50,25 @@ AI_SCORE_CAP = 100
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 
+def rules_path():
+    return os.path.join(HERE, "rules.json")
+
+
+def fingerprint(path=None):
+    """Short hash of the rule data itself.
+
+    Two scans quoting the same fingerprint provably ran against the same
+    rules. It hashes rules.json, not this file, because the rules are what
+    a verdict actually depends on - editing a threshold changes the answer,
+    and the fingerprint changes with it. Same idea as the brand guard's
+    fingerprint over its derived colour set.
+    """
+    with open(path or rules_path(), "rb") as f:
+        return hashlib.sha256(f.read()).hexdigest()[:16]
+
+
 def load_rules():
-    with open(os.path.join(HERE, "rules.json"), encoding="utf-8") as f:
+    with open(rules_path(), encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -270,6 +288,7 @@ def report(prov, tells, craft, lib, rules, max_ai, as_json=False, scanned=0):
     verdict_fail = bool(prov) or ai_score >= max_ai
     result = {
         "register_version": rules["register_version"],
+        "rules_fingerprint": fingerprint(),
         "files_scanned": scanned,
         "ai_score": ai_score,
         "ai_band": band_for(ai_score, rules),
@@ -284,7 +303,8 @@ def report(prov, tells, craft, lib, rules, max_ai, as_json=False, scanned=0):
         print(json.dumps(result, indent=2))
         return verdict_fail
 
-    print(f"\n=== AI-look scan (register {rules['register_version']}) ===")
+    print(f"\n=== AI-look scan (register {rules['register_version']},"
+          f" fingerprint {result['rules_fingerprint']}) ===")
     print(f"Files scanned: {scanned}")
     print(f"\nAI-look score: {ai_score}/100  ->  {result['ai_band']}")
     if prov:
@@ -325,7 +345,9 @@ def report(prov, tells, craft, lib, rules, max_ai, as_json=False, scanned=0):
     else:
         print("Next step: present it, with the proof line:"
               f' "AI-look score {ai_score}/100 ({result["ai_band"]}),'
-              f' register {rules["register_version"]}."')
+              f' register {rules["register_version"]},'
+              f' fingerprint {result["rules_fingerprint"]}."'
+              "\n  (Full proof line, all guards: python3 scripts/verify_all.py <files>)")
     return verdict_fail
 
 
@@ -397,6 +419,11 @@ LIB_MISUSE_FIXTURE = """
   ScrollTrigger.batch(".card", { onEnter: b => gsap.from(b, { y: 60, opacity: 0 }) });
   const app = new PIXI.Application();
   L.tileLayer("https://tile.example/{z}/{x}/{y}.png").addTo(L.map("map"));
+  animate(".a", { opacity: [0, 1], autoplay: onScroll({ container: "#s" }) });
+  animate(".b", { y: [40, 0], autoplay: onScroll({ container: "#s" }) });
+  animate(".c", { scale: [0.9, 1], autoplay: onScroll({ container: "#s" }) });
+  animate(".float", { y: -12, loop: true, alternate: true });
+  const { chars } = splitText("h1", { chars: true, accessible: false });
 </script>
 </body></html>
 """
@@ -414,7 +441,8 @@ def selftest():
     missing = expect_in_slop - ids1
     prov3, tells3, craft3, lib3 = scan_texts({"libs.html": LIB_MISUSE_FIXTURE}, rules)
     lib_ids = {f.rule_id for f in lib3}
-    expect_lib = {"LB1", "LB2", "LB3", "LB4", "LB5", "LB6", "LB7", "LB10", "LB12"}
+    expect_lib = {"LB1", "LB2", "LB3", "LB4", "LB5", "LB6", "LB7", "LB8",
+                  "LB9", "LB10", "LB11", "LB12"}
     missing_lib = expect_lib - lib_ids
 
     problems = []
