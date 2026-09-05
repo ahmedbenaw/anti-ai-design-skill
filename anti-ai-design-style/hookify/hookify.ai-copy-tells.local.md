@@ -6,7 +6,7 @@ conditions:
   - field: file_path
     operator: regex_match
     pattern: \.(html|jsx|tsx|vue|svelte|md|mdx)$
-  - field: new_text
+  - field: content
     operator: regex_match
     pattern: (?i)(elevate your|unlock the|seamless(ly)?|supercharge|game.chang|in today's fast-paced|it'?s not just|revolutioni[sz]e your)
 ---

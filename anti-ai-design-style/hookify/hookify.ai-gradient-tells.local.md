@@ -6,7 +6,7 @@ conditions:
   - field: file_path
     operator: regex_match
     pattern: \.(html|css|scss|jsx|tsx|js|ts|vue|svelte|astro)$
-  - field: new_text
+  - field: content
     operator: regex_match
     pattern: bg-clip-text[^"']*text-transparent|blur-3xl|from-(purple|indigo|violet)-\d00\s+to-(pink|purple|blue)-\d00
 ---

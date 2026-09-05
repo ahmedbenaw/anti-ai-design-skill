@@ -82,6 +82,31 @@ These make Claude warn itself the moment it writes an AI-looking pattern.
 To turn a rule off: open its file and change `enabled: true` to
 `enabled: false`.
 
+### What each rule does, and when it fires
+
+Checked on 2026-09-05 by running each rule through hookify's own engine.
+You can re-run that check yourself: `python3 scripts/hookify_check.py`.
+
+| Rule | Fires when Claude writes | Checked |
+|---|---|---|
+| `ai-gradient-tells` | gradient headline text, big blur blobs, purple-to-pink | fires |
+| `ai-copy-tells` | "unlock the", "seamless", "elevate your" and friends | fires |
+| `ai-fake-proof` | a fake avatar, "John Doe", "Trusted by 10,000+" | fires |
+| `claude-escape-look` | cream backgrounds with a bookish serif | fires |
+| `design-scan-before-done` | you finish a session that touched UI files | fires |
+
+All five stay quiet on a page with nothing wrong with it. That matters as
+much as firing: a rule that cries wolf gets switched off within a day.
+
+Two things worth knowing about how these work:
+
+1. They only see edits made with Claude's file tools. If Claude writes a file
+   through a shell command instead, no rule fires. That is a limit of hookify,
+   not a setting you can change.
+2. A broken rule fails quietly. It loads, it never fires, and nothing tells
+   you. Both bugs found on 2026-09-05 were exactly this. If you edit a rule,
+   run `hookify_check.py` afterwards.
+
 ## Part 4 — Slash commands for Claude Code (optional, 2 minutes)
 
 1. Copy the three files from the skill's `commands/` folder into

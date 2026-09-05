@@ -6,7 +6,7 @@ conditions:
   - field: file_path
     operator: regex_match
     pattern: \.(html|css|scss|jsx|tsx|vue|svelte|astro)$
-  - field: new_text
+  - field: content
     operator: regex_match
     pattern: (?i)#f[0-9a-f]f[0-9a-f]f[0-9a-f]\b|#fa[f9][0-9a-f]f[0-9a-f]|font-family:[^;]*(georgia|lora|merriweather|playfair|source serif|crimson|libre baskerville|poppins|montserrat|jost|futura)
 ---

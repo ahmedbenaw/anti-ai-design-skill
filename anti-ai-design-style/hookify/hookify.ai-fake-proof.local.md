@@ -4,7 +4,7 @@ enabled: true
 event: file
 action: warn
 conditions:
-  - field: new_text
+  - field: content
     operator: regex_match
     pattern: i\.pravatar\.cc|randomuser\.me|ui-avatars\.com|John Doe|Jane (Doe|Smith)|Trusted by [\d,]+\+|99\.9% uptime|10,000\+ (users|customers|teams)
 ---
