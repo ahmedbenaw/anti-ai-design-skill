@@ -2,7 +2,7 @@
 
 **Topic:** What practitioners say actually gives AI-generated design away, in their own words. Reddit-first, Hacker News second.
 **Sweep date:** 2026-09-05
-**Route used:** WebSearch / WebFetch route (Exa MCP not authorized this session). In practice the productive channels were plain HTTP fetches via Bash: the Hacker News Algolia API (`hn.algolia.com/api/v1/*`) and the **Arctic Shift Reddit archive** (`arctic-shift.photon-reddit.com/api/*`). WebFetch itself is domain-blocked for `www.reddit.com`.
+**Route used:** WebSearch / WebFetch route authorized (Exa MCP not authorized this session). In fact **WebSearch was never invoked** and **WebFetch was invoked once** (blocked at the domain layer). In practice the productive channels were plain HTTP fetches via Bash: the Hacker News Algolia API (`hn.algolia.com/api/v1/*`) and the **Arctic Shift Reddit archive** (`arctic-shift.photon-reddit.com/api/*`). WebFetch itself is domain-blocked for `www.reddit.com`.
 
 ## Was Reddit reachable?
 
@@ -26,8 +26,8 @@ Exactly what was tried against live Reddit, all failed:
 
 Also blocked this session: **Bluesky** public AppView (`public.api.bsky.app/xrpc/app.bsky.feed.searchPosts`) returned **HTTP 403** for every query. No Bluesky or Mastodon sources are included. See Gaps.
 
-**Threads actually opened (full comment trees fetched and read): 14.**
-8 Reddit (r/web_design ×4, r/UI_Design ×3, r/lovable ×1) + 6 Hacker News.
+**Threads actually opened (full comment trees fetched and read): 15.**
+9 Reddit (r/web_design ×4, r/UI_Design ×3, r/lovable ×1, r/vibecoding ×1) + 6 Hacker News.
 
 ---
 
@@ -43,12 +43,13 @@ Also blocked this session: **Bluesky** public AppView (`public.api.bsky.app/xrpc
 | C32 | Anyone feel like this UI looks too AI generated? | r/UI_Design | 2026-05-28 | 12 pts, 22 comments | https://www.reddit.com/r/UI_Design/comments/1tq8u5r/ |
 | C33 | The trashy, vibe-coded design of my app is unanimously preferred over the carefully crafted one | r/UI_Design | 2026-05-17 | 0 pts, 7 comments | https://www.reddit.com/r/UI_Design/comments/1tfr0sc/ |
 | C34 | How I fixed the "AI-built this" look on my Lovable site | r/lovable | 2026-05-15 | 5 pts, 12 comments | https://www.reddit.com/r/lovable/comments/1tdw9yc/ |
-| C35 | Slightly reducing the sloppiness of AI generated front end | Hacker News | 2026-06-12 | 219 pts, ~120 comments | https://news.ycombinator.com/item?id=48504912 |
+| C35 | Slightly reducing the sloppiness of AI generated front end | Hacker News | 2026-06-12 | 219 pts, 135 comments in fetched tree | https://news.ycombinator.com/item?id=48504912 |
 | C36 | Hallmark – Anti-AI-Slop Design Skill for Claude Code, Cursor, and Codex | Hacker News | 2026-07-26 | 7 pts, 9 comments | https://news.ycombinator.com/item?id=49058547 |
 | C37 | Join Me in Jamverse | Hacker News | 2026-08-06 | (comment subthread) | https://news.ycombinator.com/item?id=49199867 |
 | C38 | Launch HN: ProvenMetal (YC S26) | Hacker News | 2026-08-06 | (comment) | https://news.ycombinator.com/item?id=49199220 |
 | C39 | We scanned 131 AI-built websites, and the "AI look" wasn't the biggest tell | Hacker News | 2026-06-11 | 4 pts, 4 comments | https://news.ycombinator.com/item?id=48489797 |
 | C40 | The annotated PyTorch training loop (AI-design accusation subthread) | Hacker News | 2026-06-22 | 81 pts (story) | https://news.ycombinator.com/item?id=48679076 |
+| C41 | I audited an interface I built with AI and found about 30 things that gave it away | r/vibecoding | 2026-08-02 | 25 pts, 10 comments | https://www.reddit.com/r/vibecoding/comments/1vdp2nw/ |
 
 Reddit rows were read through the archive endpoint `https://arctic-shift.photon-reddit.com/api/comments/tree?link_id=<id>&limit=150`; the canonical permalinks are given above.
 
@@ -61,7 +62,7 @@ Reddit rows were read through the archive endpoint `https://arctic-shift.photon-
 - **Context:**
   - The single most-detailed answer, u/inthebinary, gives a stacking list rather than a single tell: cards with a left-only border, hero "eyebrow" headers, no real privacy/terms page, purple/green/blue gradients, italics used for emphasis, 15–20px border radius throughout, Poppins, and "basically default Shadcn/ui stuff." They note the shadcn look predates agentic coding.
   - Three separate commenters independently name the **left-side colored border on boxes** (u/inthebinary, u/thestaffstation, u/masaIafries). u/masaIafries calls it "the strange artifact of a border on the left-hand side" alongside cream/beige palettes and mixed serif/sans/mono in one headline.
-  - u/derpystuff_ (29 pts, joint-highest substantive answer): "That stupid chip at the top with a pulsating 'live' indicator, overuse of gradients."
+  - u/derpystuff_ (29 pts): "That stupid chip at the top with a pulsating 'live' indicator, overuse of gradients."
   - u/fonster_mox names a time-stamped trend: "At the moment it's those tiny all-caps pixel font headings." u/come2thecabaret adds an even smaller eyebrow line above it, grey on dark.
   - Dissent inside the thread: u/jroberts67 (20 pts) argues there is no reliable tell because Claude will clone any site you point it at; u/ngmcs8203 says "skills that can be used to remove any slop indicators"; u/buildwithaiVineet argues "AI isn't the giveaway—generic thinking is."
 - **Tags:** `[AVOID: single-side colored card border]` `[AVOID: all-caps letterspaced eyebrow]` `[AVOID: pulsing "live" status chip]` `[AVOID: uniform 15-20px radius]` `[CONTESTED]`
@@ -105,7 +106,7 @@ Reddit rows were read through the archive endpoint `https://arctic-shift.photon-
   - The densest single tell-list in the sweep, u/idolikeglitter: giant bold centred h1, "BIG WORDS ABOVE HEADLINES," serif headline over sans paragraph, "boxes in boxes in boxes," text boxes with a left colored border, three counters side by side, teaser boxes with icon top-left, heavy icon and emoji use.
   - u/ThirdEyesOfTheWorld gives an independent and largely non-overlapping 2026 list: eyebrow text inside pill-shaped rounded borders, vertical colored borders on one side of boxes, **numbers set in serif with oldstyle figures**, rounded icon boxes, "very faint monospaced font for descriptors."
   - Two commenters converge on a specific typeface: u/justynmx7 names "that one serif font that every AI startup seems to be using"; u/jufs_ guesses Instrument Sans; u/justynmx7 replies with a screenshot and u/Embarrassed_Finger34 calls it "Claude codes fav choice."
-  - u/SleepingCod (19 pts, top) argues the failure mode is not AI-specific: poor hierarchy, no spacing system, inconsistency — "the same that makes beginner designers bad." u/beikbeikbeik refines this into the actual discriminator: AI pairs "impeccable icon and font pairing, with the most amateur spacing" — mastery of hard things alongside failure at basic ones.
+  - u/SleepingCod (19 pts) argues the failure mode is not AI-specific: poor hierarchy, no spacing system, inconsistency — "the same that makes beginner designers bad." u/beikbeikbeik refines this into the actual discriminator: AI pairs "impeccable icon and font pairing, with the most amateur spacing" — mastery of hard things alongside failure at basic ones.
   - u/jzdesign relocates the tell to process: "The problem is people accept the first output, which is the median of the training data... 'First draft = final' is the actual tell."
   - u/Kibric and u/klumpp both push back that it is "template-like" rather than AI-like; u/Limp-Confidence5612 says the examples "look like every website starting around 2015."
 - **Tags:** `[AVOID: oldstyle-figure serif numerals]` `[AVOID: eyebrow-in-pill]` `[AVOID: faint mono descriptors]` `[AVOID: nested boxed containers]` `[ADOPT: deliberate emphasis over even spacing]` `[CONTESTED]`
@@ -142,9 +143,9 @@ Reddit rows were read through the archive endpoint `https://arctic-shift.photon-
 - **Feeds:** fake-testimonial fingerprint; platform-level convergence acknowledged by users
 
 ### C35 — Slightly reducing the sloppiness of AI generated front end
-- **Source:** Hacker News, front-page discussion, 2026-06-12, 219 pts / ~120 comments. https://news.ycombinator.com/item?id=48504912
+- **Source:** Hacker News, front-page discussion, 2026-06-12, 219 pts / 135 comments in fetched tree. https://news.ycombinator.com/item?id=48504912
 - **Context:**
-  - The largest and most argumentative thread found. The article's finding — prompting for a Qt-app look strips most of the slop feeling — produced a mechanistic explanation that several commenters reached independently: u/Xotic007 ("Slop is basically what you get when there's nothing specific to copy and so the AI just averages every web style together"), u/flo_r ("the model has a very specific grammar to pull from instead of averaging over everything web-related"), u/voxleone ("'Qt app' is almost like a named distribution"), u/AmareshHebbar. This is a **causal account of the AI look as distributional averaging**, not a style list.
+  - The largest and most argumentative thread found. The article's finding — prompting for a Qt-app look strips most of the slop feeling — produced a mechanistic explanation that several commenters reached independently: u/Xotic007 ("Slop is basically what you get when there's nothing specific to copy and so the AI it just averages every web style together" [sic]), u/flo_r ("the model has a very specific grammar to pull from instead of averaging over everything web-related"), u/voxleone ("'Qt app' is almost like a named distribution"), u/AmareshHebbar. This is a **causal account of the AI look as distributional averaging**, not a style list.
   - u/LucidLynx gives the 2026 visual canon: "Everything is in blue or mauve gradient, with a white background, and a single JavaScript-heavy page that lags as soon as you scroll a little," plus lots of 404s and credentials leaking in HTML comments.
   - u/LZ_Khan: "rounded corner cards with slight shadow, and sans serif font. Also full caps / overemphasis on text that doesn't need it." u/nozzlegear: dark theme, rich purples, huge headings. u/the_lucifer adds the current variant: "thin and tall serif fonts, with one singular italicized word in the title."
   - Model-specific claims: u/unleaded says "Claude's is pretty distinct" and that DeepSeek copies it; u/smusamashah reports "so many brown sites that look all the same"; u/gunapologist99 on Claude output, "really is in love with browns and oranges." Claude's palette shift away from purple is named by three separate commenters.
@@ -204,39 +205,56 @@ Reddit rows were read through the archive endpoint `https://arctic-shift.photon-
 - **Tags:** `[AVOID: all-caps letterspaced microcopy]` `[AVOID: one-side colored card border]` `[AVOID: italic serif subtitle]`
 - **Feeds:** the 2026 tell triad — letterspaced caps eyebrow + single-side card border + italic serif subtitle
 
+
+### C41 — I audited an interface I built with AI and found about 30 things that gave it away
+- **Source:** r/vibecoding, self-audit writeup by u/lfehskoob, 2026-08-02, 25 pts / 10 comments. https://www.reddit.com/r/vibecoding/comments/1vdp2nw/
+- **Context:**
+  - **The strongest builder-side source in this sweep.** The author shipped an AI-built site, could not initially articulate why it looked like every other one, then spent three days auditing it in six passes (accessibility, layout, typography, colour, copy, general UI) and posted ~30 tells with fixes. This is a practitioner reverse-engineering their own output, not a critic listing grievances.
+  - Typography tells with named remedies: default typefaces (Inter, Roboto, Arial, Open Sans) — "not bad fonts, default fonts," and changing the typeface was "the single biggest visual improvement I made"; arbitrary off-scale sizes like `text-[15px]`; italics used for emphasis (use a weight step instead); Title Case On Everything; orphaned words in headings, fixed with `text-wrap: balance` / `pretty` instead of manual `<br>`.
+  - Colour and layout: "Purple to indigo gradients. Most recognizable AI fingerprint there is" — with a diagnosis, that reaching for them means "a texture problem," remedied by SVG `feTurbulence` grain at ~0.06 opacity. Also: the purple/indigo/blue startup palette; three equal cards in a row; **everything centred** — "Symmetry is what you get when nobody decided"; misaligned card grids where pricing-table titles, prices, feature lists and CTAs all start at different heights; `height: 100vh` instead of `min-height: 100dvh`.
+  - Accessibility as the most reliable channel — "the set AI skips most reliably": `<header>` nested inside `<main>`; auto-moving content with no pause control (WCAG 2.2.2), found twice; no `prefers-reduced-motion` fallback; scroll listeners instead of `IntersectionObserver` for reveal animations; and missing hover, active, focus, loading, empty and error states — "Generated interfaces almost always ship the happy path only."
+  - Copy: em dashes, hype verbs (elevate, seamless, unleash, supercharge), "Learn more" / "Submit" buttons, industry-generic slogans, and round invented numbers like 99.9%. The author separates one category as an ethical rather than aesthetic problem: invented testimonials and star ratings — "A generated five-star review on that tradesperson's real site is a lie told to a customer."
+  - In the comments, u/krunal_builds adds two independent tells: emoji in every heading, "the one that gives it away fastest to me, before i even read the copy," and uniform border-radius "applied everywhere... instead of varying by what the element actually is." u/97689456489564 disputes the result — the fixed version "still looks very AI-generated," citing the headline as "a Claudeism"; the author concedes the point.
+- **Tags:** `[AVOID: default typeface stack]` `[AVOID: off-scale arbitrary type sizes]` `[AVOID: purple-to-indigo gradient]` `[AVOID: everything centred]` `[AVOID: happy-path-only states]` `[AVOID: emoji in headings]` `[AVOID: uniform border-radius]` `[ADOPT: audit in separate single-concern passes]` `[CONTESTED]`
+- **Feeds:** default-font fingerprint; centred-symmetry-as-non-decision; missing interaction states; misaligned card-grid baselines; the audit-pass method
+
 ---
 
 ## What practitioners name
 
-Ranked by number of **distinct threads** in which the tell was raised independently. Counts are out of 14 opened threads. This is a tally of opinion frequency, not a measurement — a tell named in six threads is a widely held belief, nothing more. Where a tell was named by only one person in a thread, that thread still counts as one.
+Ranked by number of **distinct threads** in which the tell was raised independently. Counts are out of 15 opened threads. This is a tally of opinion frequency, not a measurement — a tell named in six threads is a widely held belief, nothing more. Where a tell was named by only one person in a thread, that thread still counts as one.
 
 | Rank | Tell | Distinct threads | Sources |
 |---|---|---|---|
-| 1 | **Purple / blue / mauve gradients** (still the most-named, but see Disagreements — the canon is already drifting) | 6 | C27, C28, C29, C30, C31, C35 |
+| 1 | **Gradients** — most often named as purple/blue/indigo/mauve; C30 says only "gradient filled" | 7 | C27, C28, C29, C30, C31, C35, C41 |
 | 2 | **All-caps letter-spaced "eyebrow" microcopy** above headings, often stacked with a second, smaller eyebrow | 5 | C27, C29, C31, C35, C40 |
-| 3 | **The copy is the tell, not the visuals** — generic marketing voice, vague claims, fake testimonials, no point of view | 5 | C27, C28, C29, C38, C39 |
-| 4 | **Serif/italic misuse**: italic serif subtitles, one italicised word in a bold headline, serif headline over sans body | 4 | C27, C31, C35, C40 |
-| 5 | **Rounded-corner cards with soft drop shadow**, uniform 15–20px radius throughout | 4 | C27, C30, C31, C35 |
+| 3 | **The copy is the tell, not the visuals** — generic marketing voice, hype verbs, vague claims, no point of view | 6 | C27, C28, C29, C38, C39, C41 |
+| 4 | **Italics used for emphasis / serif-italic misuse**: italic serif subtitles, one italicised word in a bold headline | 5 | C27, C31, C35, C40, C41 |
+| 5 | **Rounded-corner cards with soft drop shadow**, uniform radius applied regardless of element | 5 | C27, C30, C31, C35, C41 |
 | 6 | **Card/box with a colored border on one side only** (almost always the left) | 3 | C27, C31, C40 |
 | 7 | **Broken navigation language / interaction dead-ends** — polished screens that do not connect, dead CTAs, placeholder text left in | 3 | C27, C28, C29 |
 | 8 | **Uniform section rhythm and flat emphasis** — every section the same weight, canonical hero→3-feature-grid→testimonials→pricing beat | 3 | C28, C29, C31 |
 | 9 | **Warm neutral / cream / brown-orange palettes** (named specifically as Claude's current default, displacing purple) | 3 | C27, C31, C35 |
 | 10 | **Faint monospace descriptors and subtitles** | 3 | C27, C30, C31 |
 | 11 | **Tailwind / shadcn defaults visible in output and source** | 3 | C27, C28, C35 |
-| 12 | **Fake or recurring synthetic testimonials** ("Sarah Chen, Head of Ops"), stock people, no real product screenshots | 3 | C27, C29, C34 |
-| 13 | **Icon and emoji overuse**, icons that do not match their labels | 3 | C27, C28, C31 |
-| 14 | **Pulsing "live"/status pill chip** at the top of the hero | 2 | C27, C31 |
+| 12 | **Fake or recurring synthetic testimonials** ("Sarah Chen, Head of Ops"), stock people, invented star ratings | 4 | C27, C29, C34, C41 |
+| 13 | **Icon and emoji overuse**, emoji in every heading, icons that do not match their labels | 4 | C27, C28, C31, C41 |
+| 14 | **Pulsing "live"/status pill chip** at the top of the hero | 1 | C27 |
 | 15 | **Cramped, over-filled density** — every inch occupied, repetitive information | 2 | C31, C35 |
 | 16 | **Three-counter / three-stat row** below the hero | 2 | C29, C31 |
 | 17 | **Glassmorphism / translucent nav surfaces** | 2 | C27, C31 |
-| 18 | **Reveal animation on every section**, infinite marquees, typewriter effects, scrolljacking | 2 | C27, C29 |
-| 19 | **Em dashes in copy** | 2 | C27, C28 |
+| 18 | **Reveal animation on every section**, infinite marquees, typewriter effects, scrolljacking | 3 | C27, C29, C41 |
+| 19 | **Em dashes in copy** | 3 | C27, C28, C41 |
 | 20 | **Numbers in serif with oldstyle figures** | 1 | C31 |
+| 21 | **Missing interaction states** — hover/active/focus/loading/empty/error; happy path only | 1 | C41 |
+| 22 | **Default typeface stack** (Inter, Roboto, Arial, Open Sans) and off-scale type sizes | 1 | C41 |
+| 23 | **Everything centred / symmetrical** as a substitute for a layout decision | 1 | C41 |
 
 Two tells worth flagging despite low counts, because they are *mechanistic* rather than stylistic:
 
 - **Competence inversion** (C31, u/beikbeikbeik; C35, u/chorkpop): expert-level icon and font pairing sitting next to amateur spacing. AI "masters some hard things while failing at basic stuff." A human beginner fails uniformly. This is the only proposed discriminator in the sweep that would separate AI output from a bad human designer rather than merging them.
 - **First-draft-as-final** (C31, u/jzdesign): the artefact is the median of the training distribution because nobody iterated. "'First draft = final' is the actual tell."
+- **Accessibility as the highest-yield channel** (C41, u/lfehskoob): "the set AI skips most reliably" — landmark nesting errors, no pause control on moving content, no `prefers-reduced-motion`, and interaction states that only cover the happy path. Unlike the visual tells, these are machine-checkable and do not depend on taste, which makes them the most promising candidates for instrumented measurement in this whole file.
 
 **Newer-than-purple looks named for 2026** (the field has visibly drifted):
 warm cream/beige and brown-orange palettes attributed specifically to Claude (C27, C31, C35); tiny all-caps pixel or mono eyebrow headings (C27); serif numerals with oldstyle figures (C31); italic serif subtitles (C31, C35, C40); eyebrow text inside a pill-shaped border (C31); the pulsing "live" chip (C27, C31); u/elixon's name for the whole current mode, **"soft modernism"** — "vibrant gradients, pastel or neon accents, large rounded corners, subtle shadows, glassy or translucent surfaces, bold sans serif typography, generous whitespace, and smooth micro animations" (C27), which u/come2thecabaret glosses as "literally just 'statistically average.'"
@@ -280,7 +298,7 @@ u/Spirited-Animal2404 (C29) claims to distinguish Claude sites from GPT sites on
 
 **Subreddits searched but yielding no opened thread:**
 - **r/webdev** — search returned results but none on-topic enough to open; the closest were two duplicate posts, "I built a tool that scores how AI-generated a website looks" (`1un75r1`, 12 comments; `1un4po2`, 6 comments) and "I built a tool to check if a website is vibe coded" (`1t7ypzl`, 6 comments). Known to exist, not opened — rate limit hit first.
-- **r/vibecoding** — one high-value thread identified and **not opened**: "I audited an interface I built with AI and found about 30 things that gave it away" (`1vdp2nw`, 25 pts, 10 comments, 2026-08-02). This is exactly the builder-side perspective the brief asked for; three fetch attempts returned 429/422. **This is the single most important follow-up for the next sweep.**
+- **r/vibecoding** — the one high-value thread found here **was** opened on a fifth attempt after sustained rate limiting; it is C41 above. No further r/vibecoding search completed, so the sub is otherwise uncovered.
 - **r/userexperience** — the archive search for this sub timed out repeatedly and returned no rows. Unknown whether the sub has on-topic threads.
 - **r/ClaudeAI, r/cursor, r/SaaS, r/Entrepreneur** — searches were queued but did not complete before the rate limiter cut in. No results, and therefore no basis to claim the discussion is or is not there.
 - **r/UI_Design** additional threads identified but not opened: "AI Fatigue from seeing same designs" (`1tvb91q`, 22 pts, 9 comments), "Your say: how should we handle AI-generated designs in the sub?" (`1u0yn8v`, 6 pts, 18 comments), "AI is quietly making me a sloppier UI designer" (`1tc3djv`, 5 comments).
@@ -288,10 +306,10 @@ u/Spirited-Animal2404 (C29) claims to distinguish Claude sites from GPT sites on
 
 **Bluesky: unreachable.** `https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts` returned **HTTP 403** for all three queries attempted. No designer-Bluesky discussion is represented.
 
-**Mastodon: not attempted.** The public API supports hashtag timelines but not full-text search without an instance-local index, so a targeted search on this topic was not feasible in the time available. Untested.
+**Mastodon: not attempted.** No request was made. The public API supports hashtag timelines but not cross-instance full-text search, so a targeted search would have been awkward — but this was a judgement call, not a failure. Untested.
 
-**Product Hunt comment threads: not reached.** No accessible API path was found and no thread was opened. Nothing in this file represents Product Hunt.
+**Product Hunt comment threads: not attempted.** No request was made and no thread was opened. Nothing in this file represents Product Hunt.
 
 **Designer Hangout and similar closed Slack/Discord communities: structurally inaccessible.** Invite-gated; no public archive.
 
-**Coverage skew to acknowledge.** This file is 8 Reddit threads and 6 HN threads, all English-language, all developer- or designer-facing. Three of the four r/web_design threads are "list the tells" prompts, a format that invites listicle recitation and rewards the memorable over the accurate — C40 (an unprompted accusation) and C32 (a false positive) are the only two sources here that escape that bias, and they should be weighted accordingly. **No source in this file is a measurement.** The one quantitative claim encountered (C39's "131 AI-built websites") is a vendor self-report with no inspectable method and is tagged `[EVIDENCE-ONLY]` for that reason. Nothing here should be promoted to a fact without independent instrumented testing.
+**Coverage skew to acknowledge.** This file is 9 Reddit threads and 6 HN threads, all English-language, all developer- or designer-facing. Three of the four r/web_design threads are "list the tells" prompts, a format that invites listicle recitation and rewards the memorable over the accurate — C40 (an unprompted accusation) and C32 (a false positive) are the only two sources here that escape that bias, and they should be weighted accordingly. **No source in this file is a measurement.** The one quantitative claim encountered (C39's "131 AI-built websites") is a vendor self-report with no inspectable method and is tagged `[EVIDENCE-ONLY]` for that reason. Nothing here should be promoted to a fact without independent instrumented testing.

@@ -91,7 +91,11 @@
   footer div { max-width: 60rem; margin: 0 auto; padding: 1.25rem;
     display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;
     color: var(--text-secondary); font-size: 0.95rem; }
-  footer a { color: var(--text); }
+  /* 24x24 CSS px minimum for anything you tap: WCAG 2.2 SC 2.5.8 (AA).
+     Inline links in a footer are the usual place this gets missed, because
+     they look fine and read fine. Padding is enough; the text stays inline. */
+  footer a { color: var(--text); display: inline-block; min-height: 24px;
+             padding: 4px 2px; }
 </style>
 </head>
 <body>

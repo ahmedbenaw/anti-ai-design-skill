@@ -12,14 +12,28 @@ standard each one comes from. The scanner catches some automatically
 | Body text contrast | at least **4.5:1** (3:1 for text ≥24px, or ≥18.66px bold) | WCAG 2.2 SC 1.4.3 (AA) |
 | UI parts and icons contrast | at least **3:1** against what's next to them | SC 1.4.11 (AA) |
 | Click/tap targets | at least **24×24 px**; aim **44pt** (Apple) / **48dp** (Material) on touch | SC 2.5.8 (AA) |
-| Reduced motion | every non-essential animation inside `@media (prefers-reduced-motion: no-preference)` | SC 2.3.3, technique C39 |
+| Reduced motion | every non-essential animation inside `@media (prefers-reduced-motion: no-preference)` | SC 2.3.3 (**AAA**), technique C39/SCR40. There is no AA reduced-motion rule; the AA-and-below lever is 2.2.2 below. Do it anyway |
 | Auto-moving content | pause/stop control if it moves longer than **5 seconds** | SC 2.2.2 (A) |
 | Flashing | nothing flashes more than **3 times per second** | SC 2.3.1 (A) |
 | Keyboard focus | always visible; never `outline: none` without a replacement | SC 2.4.7 (AA) |
 | Line length | at most **75 characters** (sweet spot 45-75; `max-width: 70ch`) | SC 1.4.8 + BDA |
 | Body size / spacing | at least **16px**, line-height **1.5**, left-aligned, never justified | BDA Style Guide 2023 |
+| Reflow | usable at **320 CSS px wide and 256 CSS px tall** with no two-way scrolling | SC 1.4.10 (AA) |
+| Text spacing | nothing clips when a reader forces line-height 1.5, paragraph spacing 2x, letter spacing 0.12x, word spacing 0.16x | SC 1.4.12 (AA) |
 | Colour alone | never the only way to show meaning (add text, underline, or icon) | SC 1.4.1 (A) |
-| Reading level | about **grade 9 or lower** for anything users read | GOV.UK content guidance |
+| Reading level | about **grade 9 or lower** for anything users read | Our convention, not a standard. See the note below |
+
+### Where "grade 9" comes from, honestly
+
+It is a convention, not a measurement. Two different scales get mixed up here.
+The digits happen to match, which is how the confusion survives:
+
+- GOV.UK advises a **reading age of 9**, which is roughly US school grade 4.
+- This skill checks **Flesch-Kincaid grade 9**, which is roughly age 14 or 15.
+
+Those are five school years apart. Neither number is derived from a study of
+comprehension. Grade 9 is a workable bar for product documentation, and that
+is the whole claim. If your readers need simpler text, pass `--max-grade 6`.
 
 ## Rules that need your eyes (no script can check these)
 

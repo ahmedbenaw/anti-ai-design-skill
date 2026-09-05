@@ -5,10 +5,11 @@ Part of the anti-ai-design-style skill. Python 3.8+, standard library only.
 
 What it does, in plain words:
   1. Reading grade - estimates how hard the text is to read
-     (Flesch-Kincaid). Target: grade 9 or lower for anything users read
-     (GOV.UK guidance: aim for reading age ~9 even for expert audiences).
-  2. Sentence length - flags sentences over 25 words (GOV.UK hard limit;
-     comprehension drops below 10% at 43 words).
+     (Flesch-Kincaid). Target: grade 9 or lower for anything users read.
+     That target is our convention, not a standard. GOV.UK's "reading age 9"
+     is a different scale - roughly US grade 4 - and the digits matching is a
+     coincidence, not a citation. See reference/accessibility.md.
+  2. Sentence length - flags sentences over 25 words (GOV.UK's limit).
   3. AI-copy tells - buzzwords, AI cadence phrases, em-dash density,
      fake-proof numbers. These use the same rules.json as the code scanner.
 

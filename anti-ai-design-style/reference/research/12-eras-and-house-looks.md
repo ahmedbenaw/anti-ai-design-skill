@@ -22,6 +22,7 @@
 12. aichatdaily.com — "AI companies pivot to serif fonts to look more human" (2026-06-05)
 13. explainx.ai — writeup of Jim Nielsen's "The AI Aesthetic" (Nielsen essay dated 2026-07-29)
 14. blog.logrocket.com — "Linear design" (2025-06-07)
+15. `VoltAgent/awesome-design-md` → `design-md/claude/DESIGN.md` — third-party reconstruction of Claude's visual system — via `gh api`
 
 **Attempted and failed** (recorded so nobody re-runs them assuming they work): `newyorker.com` (blocked by fetcher), `openai.com/brand/` (403), `creativereview.co.uk` (403), `dezeen.com` (403), `blog.jim-nielsen.com/2026/ai-aesthetic/` (empty response), `nicksimson.com` (empty response), `createwith.com` Lovable Aesthetics page (empty response).
 
@@ -191,6 +192,16 @@
 - **Tags:** `[EVIDENCE-ONLY]` `[CONTESTED: the term is used for two different things]` `[STALE-RISK: 2025]`
 - **Feeds:** Vendor house look — Linear-style (weakly).
 
+### P39 — `awesome-design-md` Claude DESIGN.md (third-party reconstruction)
+- **Source:** VoltAgent `awesome-design-md`, community-authored DESIGN.md reconstructing Claude's visual system. Undated in the file. Read via `gh api`. https://github.com/VoltAgent/awesome-design-md/blob/main/design-md/claude/DESIGN.md
+- **Context:**
+  - Describes the system in the same terms as the press coverage: a tinted cream canvas, serif display headlines, warm coral CTAs, dark navy product surfaces; explicitly contrasts the cream/coral pairing with the cool blue-and-slate most AI brands use.
+  - Assigns a slab-serif display face to h1–h4 with a named fallback, and a humanist sans to UI text with Inter as fallback. **These names are a community reverse-engineering of rendered pages, not an Anthropic publication**, and no first-party source opened in this sweep corroborates them. Recorded as unverified and deliberately not repeated as fact elsewhere in this file.
+  - Useful only as evidence that the *described traits* (cream + serif + coral, warm-vs-cool positioning) are consistently perceived by third parties. It is not a source for typeface names, and it should not be cited for any hex the skill ships.
+  - I opened exactly one reconstruction. Other reconstructions exist in search results (shadcn.io, opendesigner.io, open-design.ai); whether they agree with this one is untested.
+- **Tags:** `[CONTESTED]` `[EVIDENCE-ONLY]` `[STALE-RISK]`
+- **Feeds:** Nothing scoreable. Background only.
+
 ---
 
 ## Era timeline
@@ -287,7 +298,7 @@ Coverage here is uneven and I have flagged where. Only Anthropic has first-party
 ## Gaps
 
 1. **No measurement exists, and that is the headline gap.** Every era-3 prevalence claim opened here is qualitative — designer testimony, example collections, one anecdote about two decks. Nobody has sampled generated pages and counted palettes, typeface classes or layout structures over time. A targeted search surfaced only adjacent work (text-homogenisation studies; UI-generation benchmarks scoring CLIP similarity against reference screenshots) — nothing that measures aesthetic drift in generated design. If this skill built even a small dated corpus of generated pages with extracted colour/type/layout features, it would be the first quantitative evidence in the field. That is a real opportunity, not just a gap.
-2. **Anthropic's proprietary typefaces are unverified.** No first-party source opened here names them. Third-party reconstructions disagree. The skill must not assert a typeface name for Anthropic on current evidence.
+2. **Anthropic's proprietary typefaces are unverified.** No first-party source opened here names them. One third-party reconstruction was opened (P39) and names faces; no second reconstruction was opened to check agreement. The skill must not assert a typeface name for Anthropic on current evidence.
 3. **Three vendor looks are effectively unsourced.** Google/Gemini (dezeen 403), Lovable (empty response), and "Linear-style" (only an ambiguous false-friend article). All three need a second pass, ideally with a fetcher that handles 403-ing publishers.
 4. **The New Yorker column itself was never opened** — only Chayka's own newsletter trailing it. The column is the canonical citation for the naming event and should be read directly when possible.
 5. **Jim Nielsen's essay was read second-hand.** The primary at `blog.jim-nielsen.com/2026/ai-aesthetic/` returned empty here. Its trait list should be verified against the original before any of CAND-6/CAND-7 ships with his attribution.
