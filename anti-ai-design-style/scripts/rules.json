@@ -334,7 +334,7 @@
       "id": "IC2",
       "name": "Emoji as UI icons",
       "patterns": [
-        "[\u2728\ud83d\ude80\ud83c\udfaf\u26a1\ud83d\udd25\ud83d\udca1\ud83d\udc96\ud83e\udd8b\ud83c\udf08]"
+        "[✨🚀🎯⚡🔥💡💖🦋🌈]"
       ],
       "points": 2,
       "unicode": true,
@@ -435,11 +435,7 @@
       "say goodbye to",
       "whether you're a",
       "it's important to note",
-      "delve",
-      "testament to",
-      "tapestry",
       "evolving landscape",
-      "plays a pivotal role",
       "stands as a"
     ],
     "fake_proof_regex": [
@@ -458,7 +454,31 @@
       "you're all set!",
       "start now!"
     ],
-    "notes": "transformation_verbs and vague_ctas are HIGH false-positive: humans wrote marketese long before AI (documented back to 1997). They score 1 point each (cap 4) on the AI axis but always appear on the craft axis as weak copy. ai_cadence items score only on density: 2+ distinct hits."
+    "notes": "transformation_verbs and vague_ctas are HIGH false-positive: humans wrote marketese long before AI (documented back to 1997). They score 1 point each (cap 4) on the AI axis but always appear on the craft axis as weak copy. ai_cadence items score only on density: 2+ distinct hits.",
+    "ai_cadence_legacy_2023": [
+      "delve",
+      "tapestry",
+      "testament to",
+      "plays a pivotal role",
+      "intricate",
+      "meticulous"
+    ],
+    "ai_cadence_current_2025": [
+      "emphasizing",
+      "enhance",
+      "highlighting",
+      "showcasing",
+      "align with",
+      "fostering",
+      "deep dive"
+    ],
+    "ai_cadence_generator_specific": [
+      "causal",
+      "empirical",
+      "correlate",
+      "underscore"
+    ],
+    "ai_cadence_comment": "Era-tagged, because AI vocabulary turns over about every 12-18 months. Structural phrases in ai_cadence are shapes, not fashions, and hold across eras. The 2023 bucket is kept as a legacy signal: Wikipedia's Signs of AI writing records that 'delve' dropped off sharply in 2025. The 2025 bucket needs a higher bar than the others because those are ordinary marketing words - flagging 'enhance' on its own would be wrong far more often than right. Re-check by 2027-03. Source: M11."
   },
   "craft_checks": {
     "comment": "These are quality/accessibility failures, NOT proof of AI. They feed the craft score. Thresholds are cited in reference/accessibility.md.",

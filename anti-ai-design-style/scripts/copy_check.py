@@ -140,11 +140,20 @@ def check_text(name, raw, rules, max_grade):
         findings.append((
             "Buzzwords: " + ", ".join(buzz[:6]),
             "Swap each for the concrete thing the product does."))
-    cadence = sorted({w for w in ct["ai_cadence"] if w in body_only})
-    if len(cadence) >= 2:
-        findings.append((
-            "AI cadence phrases: " + ", ".join(cadence[:4]),
-            "Rewrite in the words you would say out loud to a customer."))
+    # Cadence is scored per era, and never on a single hit. One fashionable
+    # word is a coincidence; several together is a habit. The 2025 bucket
+    # needs three because those words - "enhance", "highlighting" - are
+    # ordinary marketing English. Two of them in honest copy is normal, and
+    # a rule that flags honest copy gets switched off, taking the rest with it.
+    for key, need, era in (("ai_cadence", 2, "structural"),
+                           ("ai_cadence_legacy_2023", 2, "2023-24 era"),
+                           ("ai_cadence_current_2025", 3, "2025-26 era"),
+                           ("ai_cadence_generator_specific", 3, "Grok-flavoured")):
+        hits = sorted({w for w in ct.get(key, []) if w in body_only})
+        if len(hits) >= need:
+            findings.append((
+                "AI cadence phrases (%s): %s" % (era, ", ".join(hits[:4])),
+                "Rewrite in the words you would say out loud to a customer."))
 
     words_n = max(len(text.split()), 1)
     # Count dashes in running prose only. A dash used as a separator in a
@@ -233,11 +242,41 @@ Most bakeries finish their weekly billing in ten minutes.
 It costs 120 EGP a month. The first month is free."""
 
 
+# Copy in the vocabulary era current as of 2026. These words are ordinary
+# marketing English, unlike "delve" or "tapestry", so the scanner must need
+# several of them together before it says anything.
+CURRENT_ERA_COPY = """
+Our platform emphasizing collaboration is designed to enhance how your team
+works. By highlighting the metrics that matter and showcasing progress in real
+time, we align with the way modern teams operate. Take a deep dive into your
+data and see the difference.
+"""
+
+# The false-positive guard. Real human product copy that happens to reach for
+# two of the same ordinary words. If the scanner flags this, the rule is worse
+# than useless: people will turn it off and lose the rest of the checks too.
+HONEST_MARKETING_COPY = """
+We built this to enhance the weekly shop. It shows what you spent, and it
+sorts the list by aisle so you walk the shop once. Two taps to add a receipt.
+No account needed for the first month.
+"""
+
+
 def selftest():
     rules = load_rules()
     g1, f1 = check_text("slop.txt", SLOP_COPY, rules, 9)
     g2, f2 = check_text("clean.txt", CLEAN_COPY, rules, 9)
+    _, f3 = check_text("current-era.txt", CURRENT_ERA_COPY, rules, 9)
+    _, f4 = check_text("honest.txt", HONEST_MARKETING_COPY, rules, 9)
     problems = []
+    if not any("cadence" in x[0].lower() for x in f3):
+        problems.append(
+            "current-era AI copy was not caught as cadence: "
+            f"{[x[0] for x in f3]}")
+    if any("cadence" in x[0].lower() for x in f4):
+        problems.append(
+            "honest marketing copy wrongly flagged as AI cadence: "
+            f"{[x[0] for x in f4]}")
     if len(f1) < 3:
         problems.append(f"slop copy raised only {len(f1)} findings: {[x[0] for x in f1]}")
     if f2:
@@ -250,7 +289,8 @@ def selftest():
             print("  -", p)
         return 1
     print(f"SELFTEST: PASS (slop copy: {len(f1)} findings, grade {g1};"
-          f" clean copy: 0 findings, grade {g2})")
+          f" clean copy: 0 findings, grade {g2};"
+          f" current-era copy caught; honest copy not flagged)")
     return 0
 
 
