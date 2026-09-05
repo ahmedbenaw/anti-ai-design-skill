@@ -1,5 +1,33 @@
 # The library layer: nine libraries, one discipline
 
+## Installed versions, checked 2026-09-05
+
+Every version below was installed with npm on the date shown and every API
+name the scanner's twelve library rules depend on was found in that installed
+code. Licences were read from the package and from the repo's own LICENSE
+file, because those two disagree more often than you would think.
+
+| Library | Version | Licence (npm field) | Licence (repo LICENSE) | Note |
+|---|---|---|---|---|
+| gsap | 3.15.0 | Standard "no charge" | no LICENSE file; README links the same | Free for commercial use, not OSI open source |
+| animejs | 4.5.0 | MIT | MIT | 5.0.0-beta.2 exists on the `beta` tag; not used here |
+| animate.css | 4.1.1 | MIT | **Hippocratic 2.1 on GitHub main** | The npm release is MIT; newer source is not |
+| lenis | 1.3.26 | MIT | MIT | |
+| pixi.js | 8.20.1 | MIT | MIT | |
+| leaflet | 1.9.4 | BSD-2-Clause | BSD-2-Clause | 2.0.0-alpha.1 is a breaking rewrite; stay on 1.9.4 |
+| react-leaflet | (not installed) | Hippocratic 2.1 | Hippocratic 2.1 | Named here because people reach for it; check the licence first |
+| survey-core | 3.0.3 | MIT | MIT | The renderer. Survey Creator is commercial |
+| survey-js-ui | 3.0.3 | MIT | MIT | |
+| uiverse galaxy | repo, no package | see repo | see repo | A gallery of 3000+ elements, not a dependency |
+
+The Leaflet plugins page carried 36 categories and 612 table rows when
+checked. The categorised table in `maps-forms.md` is a curated subset, not a
+mirror.
+
+The two official skill repos for GSAP and PixiJS are vendored under
+`vendor/`, SKILL.md files only. See `vendor/README.md` for the override rule.
+
+
 **TL;DR:** these nine libraries are installed and ported into this skill. They
 are not a shopping list. Each one earns its place only when the page
 genuinely needs what it does. Each one also has a documented way of producing
