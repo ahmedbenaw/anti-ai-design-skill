@@ -66,7 +66,9 @@ Needs: Claude Code with the **hookify** plugin installed.
 These make Claude warn itself the moment it writes an AI-looking pattern.
 
 1. Run the installer, which does steps 1 and 2 for you:
-   `python3 <skill-path>/scripts/install.py .`
+   `python3 "<skill-path>"/scripts/install.py .`
+   Keep the quotes. Folder names often have spaces in them, and without
+   quotes the command stops at the first space.
    Add `--dry-run` first if you want to see what it would do.
    To do it by hand instead: copy all five files from the skill's
    `hookify/` folder into your project's `.claude/` folder.
