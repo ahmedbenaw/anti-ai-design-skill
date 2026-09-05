@@ -2,8 +2,8 @@
 
 ## Installed versions, checked 2026-09-05
 
-Every version below was installed with npm on the date shown and every API
-name the scanner's twelve library rules depend on was found in that installed
+Every version below was installed with npm on the date shown. Every API name
+the scanner's twelve library rules depend on was then found in that installed
 code. Licences were read from the package and from the repo's own LICENSE
 file, because those two disagree more often than you would think.
 

@@ -110,7 +110,10 @@ def main():
             summary, _ = json.JSONDecoder().raw_decode(text)
         except ValueError:
             summary = {}
-    brand_missing = "NOT RUN" in line
+    # "NOT RUN" means not installed; "DID NOT RUN" means installed and it
+    # failed to produce a verdict. Only the first deserves install advice.
+    brand_missing = "brand distance NOT RUN" in line
+    brand_crashed = "DID NOT RUN" in line
     others_ok = all(
         summary.get(k, {}).get("ok", False) for k in ("scan", "copy")) \
         if summary else False
@@ -130,6 +133,9 @@ def main():
         ("Some of this is the missing brand guard, which no edit can fix. "
          "Install\nanti-antropik-design to clear that part.\n\n"
          if brand_missing else "") +
+        ("The brand guard is installed but did not return a verdict. Run "
+         "verify_all.py\nby hand to see its error.\n\n"
+         if brand_crashed else "") +
         "Fix what the line names, then run verify_all.py again. Do not "
         "present unscanned\nvisual output: everything AI makes looks fine, so "
         "\"it looks fine\" is not a check.\n")

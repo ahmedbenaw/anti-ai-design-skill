@@ -88,6 +88,10 @@ def render_result(paths, enabled):
 
 
 def gather(paths, brand_dir, max_grade=9.0, render=False):
+    """brand_dir=None means the guard was not found. A guard that was found
+    and then produced no JSON is a different failure and is reported as such,
+    because telling someone to install a thing they already have is the kind
+    of advice that gets a tool uninstalled."""
     """Run the guards and collect what each one reported.
 
     brand_dir is passed in rather than looked up here so the fail-closed path
@@ -105,6 +109,7 @@ def gather(paths, brand_dir, max_grade=9.0, render=False):
                            os.path.join(brand_dir, "scripts", "audit_file.py"),
                            "--json"] + list(paths))
     return {"scan": scan, "copy": copy, "brand": brand,
+            "brand_found": brand_dir is not None,
             "render": render_result(paths, render)}
 
 
@@ -141,7 +146,9 @@ def summarise(results, rules):
              "findings": findings}
 
     if brand is None:
-        b = {"ok": False, "verdict": NOT_RUN, "fingerprint": None}
+        found = results.get("brand_found", False)
+        b = {"ok": False, "fingerprint": None,
+             "verdict": "DID NOT RUN" if found else NOT_RUN}
     else:
         b = {"ok": brand["verdict"] == "COMPLIANT",
              "verdict": brand["verdict"],

@@ -31,7 +31,7 @@ your product's world to steal colours and textures from.]
 ## 4. Colours: generated, then named
 Do not pick hex codes by hand. Hand-picked "warm and tasteful" palettes land on
 Claude's own design system (measured: 4 of 4 pages did). Run this instead:
-`python3 "$(python3 ../scripts/find_brand_guard.py)"/scripts/generate_palette.py --hue [0-360] --temp warm|neutral|cool --chroma low|medium|high --name [Name] --css`
+From the skill folder: `python3 "$(python3 scripts/find_brand_guard.py)"/scripts/generate_palette.py --hue [0-360] --temp warm|neutral|cool --chroma low|medium|high --name [Name] --css`
 It prints VERDICT: COMPLIANT and 16 ready colours. Paste the ones you use here:
 - Background: [#______] (name it, e.g. "slate")
 - Text:       [#______]
@@ -71,4 +71,4 @@ Build one section per question. Nothing else.
 "Follow DESIGN.md. Do not deviate from its colours, fonts, or Never list."
 When the tool drifts (it will), don't argue in chat. Point it back at the
 file. And re-run the scanner after each generation:
-`python3 scripts/ai_tell_scan.py <your files>`
+From the skill folder: `python3 scripts/verify_all.py <your files>`

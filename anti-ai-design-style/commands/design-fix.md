@@ -16,8 +16,9 @@ The user wants the AI-look findings fixed, not just listed.
    provenance residue → copy tells → colour/type tells → layout tells →
    motion tells → craft flags. Respect the DESIGN.md at every step.
    Never delete or weaken the scanner's rules to make it pass.
-4. Re-run all three scanners (AI-look, copy, brand distance). If any still
-   FAIL, fix and re-run. Stop after 3 rounds and report what remains and why.
+4. Prove it: run `python3 "${CLAUDE_PLUGIN_ROOT}"/scripts/verify_all.py <the files>`.
+   That runs all four checks. Quote its line as printed. If it still says
+   FAIL, fix what it names and run it again, up to three rounds.
 5. Show the user before/after in one line each. Example:
    "AI-look score: 52 to 8. Craft flags: 3 to 0. Brand distance: NON-COMPLIANT to COMPLIANT."
    Then list the 3 biggest changes you made, in plain words. They can veto

@@ -37,6 +37,7 @@ apart without someone noticing.
 
 ## Refreshing
 
-Clone each repo shallow, copy the `SKILL.md` files, update the table above
-with the new commit and date, then re-run `python3 ../../../scripts/ai_tell_scan.py --selftest`
-to confirm the library-misuse fixtures still catch all twelve rules.
+1. Clone each repo shallow and copy the `SKILL.md` files.
+2. Update the table above with the new commit and date.
+3. Run `python3 ../../../scripts/ai_tell_scan.py --selftest`. It must still
+   report all twelve library-misuse rules caught.
