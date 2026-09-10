@@ -1,5 +1,5 @@
 {
-  "register_version": "2026.09",
+  "register_version": "2026.10",
   "comment": "Machine-readable rules derived from reference/tells-register.md. Every rule id maps to a register entry. Weights follow the measured evidence in research file 04 (12 verified AI-generated repos) and the register's verification pass.",
   "provenance": [
     {
@@ -404,6 +404,61 @@
       "points": 2,
       "explain": "Auto-scrolling logo strips and hue-shifting backgrounds demand attention and hide content.",
       "fix": "A static row of real logos, or nothing."
+    },
+    {
+      "id": "MB1",
+      "name": "Untouched Compose template palette",
+      "only_ext": [
+        ".kt"
+      ],
+      "patterns": [
+        "(?i)0xFF(D0BCFF|CCC2DC|EFB8C8|6650a4|625b71|7D5260)\\b"
+      ],
+      "min_distinct": 3,
+      "points": 1,
+      "per_file": false,
+      "era": "2021+scaffold",
+      "explain": "These are the exact colour values Android Studio's Empty Activity template ships with. Three or more of them still in the file means nobody chose this palette. That is a scaffold left in place, not proof a model wrote the app - a person's first Android project looks identical.",
+      "fix": "Pick real colours for the product, then replace the values in ui/theme/Color.kt. Keep the names if you like; it is the values that give it away."
+    },
+    {
+      "id": "MB2",
+      "name": "Untouched Expo tabs scaffold",
+      "only_ext": [
+        ".tsx",
+        ".ts",
+        ".jsx",
+        ".js"
+      ],
+      "patterns": [
+        "['\\\"]Tab (One|Two)['\\\"]",
+        "#2f95dc",
+        "tabIconDefault:\\s*['\\\"]#ccc['\\\"]",
+        "chevron\\.left\\.forwardslash\\.chevron\\.right"
+      ],
+      "min_count": 2,
+      "points": 1,
+      "per_file": false,
+      "era": "2023+scaffold",
+      "explain": "\\\"Tab One\\\" and #2f95dc are create-expo-app's own placeholders, and the chevron icon is the one the template puts on every tab. Two or more of them shipping together means the navigation was never designed. Same caveat as any scaffold tell: it says unfinished, not AI-written.",
+      "fix": "Name the tabs after what they do, give each one its own icon, and replace the tint colour."
+    },
+    {
+      "id": "MB3",
+      "name": "Tailwind default palette inside mobile code",
+      "only_ext": [
+        ".dart",
+        ".kt"
+      ],
+      "patterns": [
+        "(?i)(0xFF|#)(EF4444|DC2626|F97316|F59E0B|EAB308|84CC16|22C55E|10B981|14B8A6|06B6D4|0EA5E9|3B82F6|2563EB|D946EF|EC4899|F43F5E|64748B|475569|6B7280|4B5563|9CA3AF|E5E7EB|F3F4F6|F9FAFB|1F2937|111827|334155|0F172A)\\b"
+      ],
+      "min_distinct": 3,
+      "points": 2,
+      "per_file": false,
+      "era": "2024+",
+      "explain": "Three or more of Tailwind's stock hex values hard-coded in a Dart or Kotlin file. Tailwind is a web framework: these numbers have no way of reaching a native file except through a model that writes web code by default. Measured across 12 generated mobile repos and a 413-file human-built control, where it appeared zero times.",
+      "fix": "Generate a palette for the app and use the tokens. If the project genuinely uses NativeWind or a shared Tailwind config, say so - this rule is scoped to native files for that reason."
     }
   ],
   "copy_tells": {

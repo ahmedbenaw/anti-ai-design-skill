@@ -41,7 +41,11 @@ import hashlib
 from collections import defaultdict
 
 SCAN_EXTENSIONS = {".html", ".htm", ".css", ".scss", ".less", ".js", ".jsx",
-                   ".ts", ".tsx", ".vue", ".svelte", ".astro", ".mdx"}
+                   ".ts", ".tsx", ".vue", ".svelte", ".astro", ".mdx",
+                   # Mobile source. Several 2026 tells only exist here: a Flutter
+                   # theme file or a Compose theme is where the untouched scaffold
+                   # palette survives, and neither is reachable from a .html scan.
+                   ".dart", ".kt"}
 SKIP_DIRS = {"node_modules", ".git", "dist", "build", ".next", "vendor",
              "__pycache__", ".venv"}
 DEFAULT_MAX_AI = 20
@@ -145,27 +149,37 @@ def scan_texts(texts, rules):
     # --- Code tells -------------------------------------------------------
     for rule in rules["code_tells"]:
         matched_files, evidence = [], []
+        # A rule may be scoped to file types. Tailwind's default hexes mean
+        # nothing in a Tailwind project and quite a lot in a .dart file, so the
+        # scope is part of the evidence, not an optimisation.
+        if rule.get("only_ext"):
+            scope = {path: text for path, text in texts.items()
+                     if os.path.splitext(path)[1].lower() in rule["only_ext"]}
+            if not scope:
+                continue
+        else:
+            scope = texts
         if "combo" in rule:
             # every combo member is checked project-wide; scores when
             # combo_min of them are present (co-occurrence logic)
             present = []
             for pat_src in rule["combo"]:
                 pat = re.compile(pat_src)
-                m = pat.search(all_text)
+                m = pat.search("\n".join(scope.values()))
                 if m:
                     present.append(m.group(0)[:60])
             extra_ok = True
             if "extra" in rule:
-                extra_ok = re.search(rule["extra"], all_text) is not None
+                extra_ok = re.search(rule["extra"], "\n".join(scope.values())) is not None
             if len(present) >= rule.get("combo_min", len(rule["combo"])) and extra_ok:
                 evidence = present
-                matched_files = [p for p, t in texts.items()
+                matched_files = [p for p, t in scope.items()
                                  if any(re.search(c, t) for c in rule["combo"])]
         else:
             distinct = set()
             count = 0
             for pat in compile_patterns(rule.get("patterns", [])):
-                for path, text in texts.items():
+                for path, text in scope.items():
                     for m in pat.finditer(text):
                         if rule.get("exclude_context"):
                             start = max(0, m.start() - 120)
@@ -185,7 +199,7 @@ def scan_texts(texts, rules):
                 continue
         if evidence:
             findings_tell.append(Finding(rule["id"], rule["name"], rule["points"],
-                                         matched_files or list(texts), evidence,
+                                         matched_files or list(scope), evidence,
                                          rule["explain"], rule["fix"], "tell"))
 
     # --- Copy tells on markup text ---------------------------------------
@@ -429,6 +443,45 @@ LIB_MISUSE_FIXTURE = """
 """
 
 
+MOBILE_FIXTURE = """
+// lib/ui/theme.dart - shipped as generated
+const Color danger = Color(0xFFEF4444);
+const Color slate = Color(0xFF64748B);
+const Color surface = Color(0xFFF9FAFB);
+"""
+
+MOBILE_COMPOSE_FIXTURE = """
+// ui/theme/Color.kt - straight out of the Empty Activity template
+val Purple80 = Color(0xFFD0BCFF)
+val PurpleGrey80 = Color(0xFFCCC2DC)
+val Pink80 = Color(0xFFEFB8C8)
+val Purple40 = Color(0xFF6650a4)
+"""
+
+MOBILE_EXPO_FIXTURE = """
+// app/(tabs)/_layout.tsx
+export default function TabLayout() {
+  return (
+    <Tabs screenOptions={{ tabBarActiveTintColor: '#2f95dc' }}>
+      <Tabs.Screen name="index" options={{ title: 'Tab One',
+        tabBarIcon: () => <IconSymbol name="chevron.left.forwardslash.chevron.right" /> }} />
+      <Tabs.Screen name="two" options={{ title: 'Tab Two' }} />
+    </Tabs>
+  );
+}
+"""
+
+MOBILE_CLEAN_FIXTURE = """
+// lib/ui/theme.dart - a real palette, generated with generate_palette.py
+const Color ink = Color(0xFF1B2A20);
+const Color canvas = Color(0xFFF4F1E8);
+const Color signal = Color(0xFFB4531F);
+
+class HomeTab extends StatelessWidget {
+  const HomeTab({super.key});
+}
+"""
+
 def selftest():
     rules = load_rules()
     prov1, tells1, craft1, lib1 = scan_texts({"slop.html": SLOP_FIXTURE}, rules)
@@ -440,12 +493,26 @@ def selftest():
                       "IC5", "LA11", "CP1", "CP2", "CP3", "LA1", "MO4"}
     missing = expect_in_slop - ids1
     prov3, tells3, craft3, lib3 = scan_texts({"libs.html": LIB_MISUSE_FIXTURE}, rules)
+    _, tells4, _, _ = scan_texts({"theme.dart": MOBILE_FIXTURE,
+                                  "Color.kt": MOBILE_COMPOSE_FIXTURE,
+                                  "_layout.tsx": MOBILE_EXPO_FIXTURE}, rules)
+    _, tells5, _, _ = scan_texts({"theme.dart": MOBILE_CLEAN_FIXTURE}, rules)
+    mobile_ids = {f.rule_id for f in tells4}
+    missing_mobile = {"MB1", "MB2", "MB3"} - mobile_ids
     lib_ids = {f.rule_id for f in lib3}
     expect_lib = {"LB1", "LB2", "LB3", "LB4", "LB5", "LB6", "LB7", "LB8",
                   "LB9", "LB10", "LB11", "LB12"}
     missing_lib = expect_lib - lib_ids
 
     problems = []
+    for ext in (".dart", ".kt"):
+        if ext not in SCAN_EXTENSIONS:
+            problems.append(f"{ext} files are not scanned, so no mobile rule can ever fire")
+    if missing_mobile:
+        problems.append(f"mobile fixture missed expected rules: {sorted(missing_mobile)}")
+    if tells5:
+        problems.append("clean mobile fixture wrongly flagged: "
+                        f"{[f.rule_id for f in tells5]}")
     if missing_lib:
         problems.append(f"library fixture missed expected rules: {sorted(missing_lib)}")
     if lib2:

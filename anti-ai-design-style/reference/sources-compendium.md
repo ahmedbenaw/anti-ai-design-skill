@@ -15,15 +15,15 @@ Every source behind this skill, in one file, tagged for use.
 
 | Category | ID range | Count | What it covers |
 |---|---|---|---|
-| Practitioners | P1-P24 | 24 | Designers, agencies and tool makers naming the visual tells |
+| Practitioners | P1-P39 | 39 | Designers, agencies and tool makers naming the visual tells |
 | Academic | A1-A24 | 24 | Papers and benchmarks on convergence, code stylometry, image forensics |
-| Community and wiki | C1-C26 | 26 | Hacker News threads, Wikipedia, Indie Hackers, GitHub tell catalogs |
-| Code samples | K1-K15 | 15 | 12 cloned AI-generated repos with measured counts, plus 3 cross-check articles |
-| Mobile and copy | M1-M20 | 20 | Mobile app tells, and UI plus marketing copy tells |
-| Accessibility | X1-X29 | 29 | WCAG 2.2, COGA, BDA, plain language, docs for non-technical readers |
+| Community and wiki | C1-C41 | 41 | Hacker News threads, Wikipedia, Indie Hackers, GitHub tell catalogs |
+| Code samples | K1-K42 | 42 | 24 cloned AI-generated repos with measured counts, a 413-file human-built control, plus cross-check articles |
+| Mobile and copy | M1-M36 | 36 | Mobile app tells, and UI plus marketing copy tells |
+| Accessibility | X1-X52 | 52 | WCAG 2.2, COGA, BDA, plain language, docs for non-technical readers |
 | Prior art | R1-R20 | 20 | Existing linters, skills, ban lists, vendor prompting guides |
-| Visual science | V1-V20 | 20 | Colour, imagery, illustration, iconography, motion, layout rhythm |
-| Library docs | L1-L76 | 76 | Docs, licences and policies for the nine installed libraries |
+| Visual science | V1-V35 | 35 | Colour, imagery, illustration, iconography, motion, layout rhythm |
+| Library docs | L1-L79 | 79 | Docs, licences and policies for the nine installed libraries |
 
 ---
 
@@ -247,6 +247,143 @@ Every source behind this skill, in one file, tagged for use.
   - Recommends three to five Dribbble, Mobbin or Awwwards references with notes on why each works.
 - **Tags:** `[ADOPT: separate taste planning from code]` `[ADOPT: named visual references]`
 - **Feeds:** JD4, JD5; templates/ direction file
+
+---
+
+### P25 — `frontend-design` SKILL.md, current version
+- **Source:** First-party vendor skill (Anthropic); 2026-09-03 (commit `41bbe19d`). https://github.com/anthropics/skills/blob/main/skills/frontend-design/SKILL.md
+- **Context:**
+  - Names **five** clusters that "AI-generated design right now clusters around": (1) warm cream background near `#F4F1EA` with high-contrast serif display and a terracotta/warm-clay accent "often near `#D97757`"; (2) near-black with one acid-green or vermilion
+  - Anthropic itself flags `#D97757` as its own product accent and says that on a user's brief it therefore "reads as a tell". This is a vendor naming its own house colour as a contamination risk in generated output — the single most useful line in this sweep.
+  - Full notes: `reference/research/12-eras-and-house-looks.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### P26 — `frontend-design` SKILL.md at commit `2235be7c`
+- **Source:** First-party vendor skill, prior revision; 2026-06-09. https://github.com/anthropics/skills/commit/2235be7c
+- **Context:**
+  - This revision is where the cluster language first appears: "AI-generated design right now clusters around three looks", listing cream `#F4F1EA` + serif + terracotta, near-black + acid accent, and broadsheet/hairline.
+  - The terracotta is described generically here — **no** `#D97757` and **no** acknowledgement that it is Anthropic's own accent. That admission is added only in the 2026-09-03 revision (P25).
+  - Full notes: `reference/research/12-eras-and-house-looks.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### P27 — `frontend-design` SKILL.md at commit `00756142`
+- **Source:** First-party vendor skill, original revision; 2025-12-04 (skill added 2025-11-12). https://github.com/anthropics/skills/commit/00756142
+- **Context:**
+  - Contains **no** mention of cream, `#F4F1EA`, terracotta, or clusters. Grep for those terms returns nothing.
+  - What it *does* name as generic: "overused font families (Inter, Roboto, Arial, system fonts)", "cliched color schemes (particularly purple gradients on white backgrounds)", and a warning not to converge on Space Grotesk.
+  - Full notes: `reference/research/12-eras-and-house-looks.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### P28 — `brand-guidelines` SKILL.md
+- **Source:** First-party vendor skill (Anthropic brand palette); at current path since 2025-12-01; pre-move history not checked. https://github.com/anthropics/skills/blob/main/skills/brand-guidelines/SKILL.md
+- **Context:**
+  - Publishes an official palette: dark `#141413`, light `#faf9f5`, mid grey `#b0aea5`, light grey `#e8e6dc`; accents orange `#d97757`, blue `#6a9bcc`, green `#788c5d`.
+  - Typography in this skill is **Poppins for headings, Lora for body**, with Arial/Georgia fallbacks — explicitly chosen because they need to be installable in a document-generation environment. These are *not* the faces used on Anthropic's own product surfaces
+  - Full notes: `reference/research/12-eras-and-house-looks.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### P29 — "Introducing Claude Design by Anthropic Labs"
+- **Source:** First-party product announcement; 2026-04-17. https://www.anthropic.com/news/claude-design-anthropic-labs
+- **Context:**
+  - Confirms the date the propagation mechanism shipped: 2026-04-17, research preview, Claude Pro/Max/Team/Enterprise, powered by Claude Opus 4.7. Aimed explicitly at people without a design background — founders, PMs.
+  - Output types named are decks, one-pagers, prototypes, designs — i.e. the artefacts the July reporting (P30) later finds looking identical.
+  - Full notes: `reference/research/12-eras-and-house-looks.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### P30 — "AI design tools are making every website look the same" (Maya Brooks)
+- **Source:** Trade/news reporting; 2026-07-31. https://northeasttimes.com/2026/07/31/ai-design-tools-are-making-every-website-look-the-same/
+- **Context:**
+  - Carries the anecdote that anchors most subsequent commentary: designer **Matt Ström-Awn** was shown sales decks by two unconnected startup founders that had the same layout — bright opening slide, three bullets, four rectangles for the market, centred "our m
+  - Names the look concretely: beige/cream grounds, rusty-orange accents, large italicised-and-highlighted serif display, tracked-out subheadings, ticker-like scrolling text bars, stacks of rounded rectangle outlines sometimes with a neon glow beneath.
+  - Full notes: `reference/research/12-eras-and-house-looks.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### P31 — "The generic style of AI web design" (Kyle Chayka)
+- **Source:** Newsletter by a New Yorker staff writer, trailing his column; 2026-06-29. https://kylechayka.substack.com/p/the-generic-style-of-ai-web-design
+- **Context:**
+  - This is the naming event for era 3 in mainstream press, by the writer who previously named "AirSpace"/"Filterworld". Dated 2026-06-29 — *after* Anthropic's own 2026-06-09 skill revision (P26), so the vendor documented it slightly before the press did.
+  - Trait list matches P30 closely: beige/cream grounds, rusty-orange accents, large italicised serif, tracked-out subheads, ticker-like text bars, dashboard-ish stacks of rounded rectangles with neon glow.
+  - Full notes: `reference/research/12-eras-and-house-looks.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### P32 — "Why Do Claude Designs All Look the Same?" (Bill Cava)
+- **Source:** Agency/consultancy analysis post; 2026-07-14. https://www.generativelabs.com/insights/why-ai-design-tools-look-the-same
+- **Context:**
+  - The only source in this sweep that puts **hex values** on the observed generated look: cream `#F7F1E4`, ink `#211D18`, rusty orange `#D9622B`. Important caveat stated in the piece itself: these are **sampled by eye from artefacts**, not from any published sp
+  - Quotes Ström-Awn again — the tool "defaults to the same aesthetic for every single person that's using it" — and quotes Claude Design guidance as saying "This default is persistent".
+  - Full notes: `reference/research/12-eras-and-house-looks.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### P33 — "We Don't Want a Beige Internet" (Elise Oras)
+- **Source:** Agency blog post; "May 27", year not stated on page. https://www.wheelsupcollective.com/post/we-dont-want-a-beige-internet
+- **Context:**
+  - Uses "beigeification of the web" as a **metaphor for sameness**, not as a description of the cream palette. Its actual trait list is era-1/era-2: purple-to-indigo hero gradient, Inter headlines, rounded cards, `bg-indigo-500` CTAs, centred hero → three-or-fo
+  - Useful as a caution: "beige internet" language in 2026 commentary does **not** reliably mean the cream look. Do not treat the phrase as an era-3 citation.
+  - Full notes: `reference/research/12-eras-and-house-looks.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### P34 — "Vercel Design System for React"
+- **Source:** Third-party reconstruction of a vendor design system; 2026-05-12. https://www.shadcn.io/design/vercel
+- **Context:**
+  - Reconstructed palette is monochrome-first: ink `#171717`, canvas `#ffffff` with `#fafafa`/`#f5f5f5` soft steps, hairline `#ebebeb`, body `#4d4d4d`, mute `#888888`; a signal blue `#0070f3`; plus a set of two-stop brand gradients (`#7928ca`→`#ff0080`, `#007cf0
+  - Typography: **Geist** for display/body/labels, **Geist Mono** for code and "technical eyebrows".
+  - Full notes: `reference/research/12-eras-and-house-looks.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### P35 — "OpenAI Refreshes Its Visual Brand Identity…" (Arman Lorenzo Burias)
+- **Source:** Design-trade news; 2025-02-07 (upd. 2025-05-01). https://news.designrush.com/openai-refreshes-its-visual-brand-identity-with-new-logo-typeface
+- **Context:**
+  - OpenAI's first rebrand, 2025, in-house team with Studio Dumbar and Berlin type foundry ABC Dinamo. Custom typeface **OpenAI Sans** (geometric-but-rounded sans), refined blossom mark, new wordmark.
+  - Palette described as greys and blues as a base with contrasting primaries; a pulsating blue disc as the key motion element representing ChatGPT's voice.
+  - Full notes: `reference/research/12-eras-and-house-looks.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### P36 — "AI companies pivot to serif fonts to look more human" (Jaeden Schafer)
+- **Source:** Newsletter/analysis; 2026-06-05. https://www.aichatdaily.com/ai-analysis/ai-companies-pivot-serif-fonts-look-more-human
+- **Context:**
+  - Names the coinages this skill should track: designer **Keya Vadgama** calls the shift the "**serif renaissance**"; the pejorative circulating online for it is "**tasteslop**". Neither coinage is given a dated primary link in this piece — Vadgama's Substack p
+  - Names four AI companies as having moved to serif type in product surfaces or branding: Anthropic (Claude), Perplexity, Runway, Manus. This is the closest thing found to evidence that the serif half of era 3 is an *industry* pattern rather than an Anthropic o
+  - Full notes: `reference/research/12-eras-and-house-looks.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### P37 — "The AI Aesthetic Explained — Why AI Apps All Look Alike"
+- **Source:** Secondary writeup of a primary essay; writeup 2026; Nielsen essay 2026-07-29. https://www.explainx.ai/blog/ai-aesthetic-design-patterns-jim-nielsen-2026
+- **Context:**
+  - Nielsen's list of tells that mark software as AI-made is broader than palette: shimmering "thinking" text during async states; tiny sidebar icons; beige/cream with orange accents; serif type; the sparkle emoji as an AI signifier; whack-a-mole toggle patterns
+  - Value to this skill: it extends era 3 from *marketing pages* into *product chrome*. The cream-and-orange tell shows up alongside behaviours (shimmer loading, sparkle icon) that a source scanner can catch far more reliably than a colour.
+  - Full notes: `reference/research/12-eras-and-house-looks.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### P38 — "Linear design: The SaaS design trend that's boring and bettering UI" (Daniel Schwarz)
+- **Source:** Design-publication explainer; 2025-06-07. https://blog.logrocket.com/ux-design/linear-design/
+- **Context:**
+  - **Important false friend.** This article uses "linear design" to mean *sequential, one-direction-scroll layout*, and only mentions the company Linear as having popularised it. It is not a specification of Linear-the-company's visual system.
+  - Traits it does list, which overlap the thing practitioners mean by "Linear-style": dark mode (not mandatory), bold typography, complex gradients, glassmorphism, high contrast, monochrome palettes, minimal CTAs, one-dimensional scroll.
+  - Full notes: `reference/research/12-eras-and-house-looks.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### P39 — `awesome-design-md` → `design-md/claude/DESIGN.md`
+- **Source:** Third-party community reconstruction of Claude's visual system; undated in file. https://github.com/VoltAgent/awesome-design-md/blob/main/design-md/claude/DESIGN.md
+- **Context:**
+  - Describes the system in the same terms as the press coverage: a tinted cream canvas, serif display headlines, warm coral CTAs, dark navy product surfaces; explicitly contrasts the cream/coral pairing with the cool blue-and-slate most AI brands use.
+  - Assigns a slab-serif display face to h1–h4 with a named fallback, and a humanist sans to UI text with Inter as fallback. **These names are a community reverse-engineering of rendered pages, not an Anthropic publication**, and no first-party source opened in
+  - Full notes: `reference/research/12-eras-and-house-looks.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
 
 ---
 
@@ -692,6 +829,143 @@ Every source behind this skill, in one file, tagged for use.
 
 ---
 
+### C27 — What's one giveaway that the website was AI generated?
+- **Source:** r/web_design; 2026-08-05. https://www.reddit.com/r/web_design/comments/1vgdi27/
+- **Context:**
+  - The single most-detailed answer, u/inthebinary, gives a stacking list rather than a single tell: cards with a left-only border, hero "eyebrow" headers, no real privacy/terms page, purple/green/blue gradients, italics used for emphasis, 15–20px border radius
+  - Three separate commenters independently name the **left-side colored border on boxes** (u/inthebinary, u/thestaffstation, u/masaIafries). u/masaIafries calls it "the strange artifact of a border on the left-hand side" alongside cream/beige palettes and mixed
+  - Full notes: `reference/research/11-community-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### C28 — What makes a website feel human instead of AI-generated?
+- **Source:** r/web_design; 2026-08-25. https://www.reddit.com/r/web_design/comments/1vxra9d/
+- **Context:**
+  - Top-voted answers are refusals and jokes ("Nice try, clanker" — u/The_Real_Mr_F, 16 pts; "Usually they're made by humans" — u/Nidhogg369, 56 pts). The thread was widely read as a prompt-farming attempt, which is itself a data point about how the community tr
+  - u/addycodes (19 pts) argues for a non-visual account: sites "smell," like the uncanny valley. Pressed by u/braincandybangbang on the Squarespace-template counterargument, they refine it: it is not layout or stock assets, it is that "no thought has been put i
+  - Full notes: `reference/research/11-community-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### C29 — how do you tell if a landing page is ai generated?
+- **Source:** r/web_design; 2026-07-22. https://www.reddit.com/r/web_design/comments/1v3k6h3/
+- **Context:**
+  - u/heycosmicbunny gives the sharpest structural claim in the sweep: "the tell isn't the polish, it's the rhythm" — headline, three-icon feature grid, testimonial carousel, pricing, "regardless of what the product actually does." Human pages have asymmetry bec
+  - u/Ninjishnu, independently: "everything has the same weight and nothing pulls your eye first... AI output treats every section as equally important," plus interaction breakage — placeholder text still in a card, a button that scrolls instead of acting.
+  - Full notes: `reference/research/11-community-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### C30 — Designer in our company regressed too much with AI, to a point it makes our product laughable
+- **Source:** r/web_design; 2026-08-30. https://www.reddit.com/r/web_design/comments/1w2308l/
+- **Context:**
+  - The highest-engagement Reddit thread in this sweep, and the only one that captures the *stakeholder* reaction rather than the designer's. OP describes a formerly strong in-house designer now answering questions live from Claude during calls; commenters coin/
+  - u/ibopm (141 pts, top comment) makes the historical-analogy argument explicitly: "This is similar to when Bootstrap came out and every website started looking exactly the same." Good designers still used Bootstrap but customised the components.
+  - Full notes: `reference/research/11-community-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### C31 — How can you tell a design is AI?
+- **Source:** r/UI_Design; 2026-06-22. https://www.reddit.com/r/UI_Design/comments/1uchh8o/
+- **Context:**
+  - The densest single tell-list in the sweep, u/idolikeglitter: giant bold centred h1, "BIG WORDS ABOVE HEADLINES," serif headline over sans paragraph, "boxes in boxes in boxes," text boxes with a left colored border, three counters side by side, teaser boxes w
+  - u/ThirdEyesOfTheWorld gives an independent and largely non-overlapping 2026 list: eyebrow text inside pill-shaped rounded borders, vertical colored borders on one side of boxes, **numbers set in serif with oldstyle figures**, rounded icon boxes, "very faint
+  - Full notes: `reference/research/11-community-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### C32 — Anyone feel like this UI looks too AI generated?
+- **Source:** r/UI_Design; 2026-05-28. https://www.reddit.com/r/UI_Design/comments/1tq8u5r/
+- **Context:**
+  - A **false-positive case study**. The OP (u/Top-Letter-9322) built every icon in Figma and every shader in Unity; u/Hepdesigns still asserts "It looks too AI generated because it is AI generated," and is corrected by the author.
+  - The named triggers are thin: u/el_yanuki cites the gradient border; u/post-gym-nut-stank cites "generic" iconography and color-coded numbers "added for the sake of 'cohesion'"; u/squooshy_android claims reducing letter-spacing in the "Achievements" wordmark
+  - Full notes: `reference/research/11-community-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### C33 — The trashy, vibe-coded design of my app is unanimously preferred over the carefully crafted one
+- **Source:** r/UI_Design; 2026-05-17. https://www.reddit.com/r/UI_Design/comments/1tfr0sc/
+- **Context:**
+  - A designer replaced their app's AI-generated UI with a hand-crafted Figma design and found testers unanimously preferred the AI one. Every substantive reply says the hand-made version was simply worse: too dark, too low-contrast, font sizes too close togethe
+  - u/yarin_ (18 pts, top): the vibecoded version "is still more captivating and direct," and "To an untrained eye, the figma one looks more 'ai-slop' than the actual ai-slop."
+  - Full notes: `reference/research/11-community-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### C34 — How I fixed the "AI-built this" look on my Lovable site
+- **Source:** r/lovable; 2026-05-15. https://www.reddit.com/r/lovable/comments/1tdw9yc/
+- **Context:**
+  - The clearest *builder-side* tell in the sweep is a content one, from u/Blade999666 on the recurring fake-persona testimonial: "Sarah Chen / Head of Ops — I've seen her a thousand times I think the past few months under various testimonials." A named, recurri
+  - OP's own framing of the market: the fix he sells is "a design system you can use on unlimited projects so your site doesn't look like every other Lovable site launching right now" — i.e. the convergence is acknowledged by the tool's own userbase, not just by
+  - Full notes: `reference/research/11-community-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### C35 — Slightly reducing the sloppiness of AI generated front end
+- **Source:** Hacker News; 2026-06-12. https://news.ycombinator.com/item?id=48504912
+- **Context:**
+  - The largest and most argumentative thread found. The article's finding — prompting for a Qt-app look strips most of the slop feeling — produced a mechanistic explanation that several commenters reached independently: u/Xotic007 ("Slop is basically what you g
+  - u/LucidLynx gives the 2026 visual canon: "Everything is in blue or mauve gradient, with a white background, and a single JavaScript-heavy page that lags as soon as you scroll a little," plus lots of 404s and credentials leaking in HTML comments.
+  - Full notes: `reference/research/11-community-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### C36 — Hallmark – Anti-AI-Slop Design Skill for Claude Code, Cursor, and Codex
+- **Source:** Hacker News; 2026-07-26. https://news.ycombinator.com/item?id=49058547
+- **Context:**
+  - u/loopmonster reviews the tool's own screenshot gallery and finds it self-defeating: the collage is "where every one screams of being AI generated," with two of the examples excepted; the rest "are practically identical and are the go-to output for what you
+  - u/aleksiy123 asks whether any of these skills demonstrably work; u/mstkllah, having used "impeccable, ui-ux-max, and many, many others," reports they "all seem to converge on the same thing" — useful for consistency and accessibility, but "the design itself
+  - Full notes: `reference/research/11-community-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### C37 — Join Me in Jamverse
+- **Source:** Hacker News; 2026-08-06. https://news.ycombinator.com/item?id=49199867
+- **Context:**
+  - u/cautiouscat states the base observation: "it's getting crazy how confidently you can point at a websites design and go 'An LLM designed this.'"
+  - u/pixelready gives the most useful reframe in the sweep: "I think what we sense as 'LLM design' now is what used to be 'oh, they used a popular squarespace template or Wordpress theme.'" The mechanism he proposes is that models trained on UI over-favour re-u
+  - Full notes: `reference/research/11-community-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### C38 — Launch HN: ProvenMetal (YC S26)
+- **Source:** Hacker News; 2026-08-06. https://news.ycombinator.com/item?id=49199220
+- **Context:**
+  - u/stopachka, reviewing a YC launch, draws an explicit asymmetry: "you can definitely tell the website content is AI-generated. It's okay to vibe code the design, but I really hesitate when I see vibed writing."
+  - This is a founder-audience reaction, and it inverts the priority of most published tell-lists: the visual layer is granted a pass, the copy is not.
+  - Full notes: `reference/research/11-community-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### C39 — We scanned 131 AI-built websites, and the "AI look" wasn't the biggest tell
+- **Source:** Hacker News; 2026-06-11. https://news.ycombinator.com/item?id=48489797
+- **Context:**
+  - The article is a vendor self-report (siteblob.com) with no inspectable method; it is included only because the comments are a clean demonstration of copy-level detection in the wild.
+  - All four comments reject the piece as itself AI-written, and name why. u/bediger4000: "It has a lot of one sentence per paragraph 'LinkedInfluencer' style. It's wordy and redundant, and it never quite gets to a conclusion."
+  - Full notes: `reference/research/11-community-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### C40 — The annotated PyTorch training loop (AI-design accusation subthread)
+- **Source:** Hacker News; 2026-06-22. https://news.ycombinator.com/item?id=48679076
+- **Context:**
+  - The single most specific 2026 visual fingerprint found anywhere in the sweep, from u/f3408fh: "It has all the tell-tale signs like the all-caps bold letter-spaced microcopy... Many card-like elements with a colored border on one side only. The italic serif f
+  - This is a live, unprompted accusation against a third-party site — not an answer to a "list the tells" question — which makes it less susceptible to listicle contamination than C27/C29/C31.
+  - Full notes: `reference/research/11-community-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### C41 — I audited an interface I built with AI and found about 30 things that gave it away
+- **Source:** r/vibecoding; 2026-08-02. https://www.reddit.com/r/vibecoding/comments/1vdp2nw/
+- **Context:**
+  - **The strongest builder-side source in this sweep.** The author shipped an AI-built site, could not initially articulate why it looked like every other one, then spent three days auditing it in six passes (accessibility, layout, typography, colour, copy, gen
+  - Typography tells with named remedies: default typefaces (Inter, Roboto, Arial, Open Sans) — "not bad fonts, default fonts," and changing the typeface was "the single biggest visual improvement I made"; arbitrary off-scale sizes like `text-[15px]`; italics us
+  - Full notes: `reference/research/11-community-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+---
+
 # K. Code samples
 
 All 12 repos were cloned in full and scanned locally on 2026-08-28. Provenance was verified inside each repo. Counts are measured, not assumed.
@@ -832,6 +1106,251 @@ All 12 repos were cloned in full and scanned locally on 2026-08-28. Provenance w
   - Provided the provenance link to sample K9. No independent claims cited from it.
 - **Tags:** `[EVIDENCE-ONLY]`
 - **Feeds:** K9 provenance
+
+---
+
+### K16 — u-x-o-n-e/Focus-App
+- **Source:** Bolt.new (Vue); 2025-05-22 / 2025-05-24. https://github.com/u-x-o-n-e/Focus-App
+- **Context:**
+  - Provenance: `.bolt/config.json` contains exactly `{ "template": "vite-vue" }`.
+  - `tailwind.config.js` aliases the **complete, byte-identical Tailwind `indigo` ramp** to a token named `primary` — all eleven steps `#eef2ff #e0e7ff #c7d2fe #a5b4fc #818cf8 #6366f1 #4f46e5 #4338ca #3730a3 #312e81 #1e1b4b` — with `secondary` = Tailwind `teal`
+  - Full notes: `reference/research/10-code-patterns-multiframework.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### K17 — hartono0297/splitbill
+- **Source:** Bolt.new (Vue); 2025-11-21 / 2026-02-23. https://github.com/hartono0297/splitbill
+- **Context:**
+  - Provenance: `.bolt/config.json` = `{ "template": "vite-vue" }`.
+  - 24 files. Reflex accent is **blue**, not indigo: `*-blue-(500|600)` ×31, `*-(emerald|green)-(500|600)` ×28, `*-violet-*` ×4, `*-purple-*` ×0, `*-indigo-*` ×0.
+  - Full notes: `reference/research/10-code-patterns-multiframework.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### K18 — tiagofrancafernandes/bolt-vue-tailwind-website
+- **Source:** Bolt.new (Vue TS); 2024-12-24 / 2024-12-26. https://github.com/tiagofrancafernandes/bolt-vue-tailwind-website
+- **Context:**
+  - Provenance: `.bolt/config.json` = `{ "template": "vite-vue-ts" }`.
+  - 34 files, no `tailwind.config.js` colour extension at all. `*-blue-(500|600)` ×20; `text-(gray|slate)-(500|600)` ×14; `min-h-screen` ×8; `max-w-7xl mx-auto` ×2.
+  - Full notes: `reference/research/10-code-patterns-multiframework.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### K19 — mrodrigueznav/gsict
+- **Source:** Bolt.new (Nuxt); 2024-12-03 / 2024-12-03. https://github.com/mrodrigueznav/gsict
+- **Context:**
+  - Provenance: `.bolt/config.json` = `{ "template": "nuxt" }`.
+  - 24 files. `*-blue-(500|600)` ×6, `dark hero bg` ×3, `flex items-center justify-between` ×4, `(md|lg):grid-cols-3` ×1, `min-h-screen` ×1, `hover:bg-` ×11.
+  - Full notes: `reference/research/10-code-patterns-multiframework.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### K20 — alexanderop/todo-app-example
+- **Source:** Bolt.new (Nuxt); 2024-10-07 / 2024-10-08. https://github.com/alexanderop/todo-app-example
+- **Context:**
+  - Provenance: `.bolt/config.json` = `{ "template": "nuxt" }`.
+  - 17 files, atomic-design folder tree (`components/atoms|molecules|organisms`) — a structural habit worth noting, but seen once so it fails the bar.
+  - Full notes: `reference/research/10-code-patterns-multiframework.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### K21 — LorenzovandenDungen/yelp
+- **Source:** Bolt.new (Vue); 2024-10-09 / 2024-10-09. https://github.com/LorenzovandenDungen/yelp
+- **Context:**
+  - Provenance: `.bolt/config.json` = `{ "template": "vite-vue" }`.
+  - 15 files. `tailwind.config.js` extends colours with a single brand token, `'yelp-red': '#d32323'` — i.e. when a brand is named in the prompt, the generator sets one custom hex and nothing else.
+  - Full notes: `reference/research/10-code-patterns-multiframework.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### K22 — yishangzhang/vue02
+- **Source:** Bolt.new (Vue); 2025-06-15 / 2025-06-15. https://github.com/yishangzhang/vue02
+- **Context:**
+  - Provenance: `.bolt/config.json` = `{ "template": "vite-vue" }`.
+  - 14 files. Exactly one `"Inter"` reference and one `hsl(var(--` — the only Vue sample of eight showing any token-variable pattern, and only once.
+  - Full notes: `reference/research/10-code-patterns-multiframework.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### K23 — carterror/almacen-insumos
+- **Source:** Bolt.new (Nuxt); 2025-03-04 / 2025-03-13. https://github.com/carterror/almacen-insumos
+- **Context:**
+  - Provenance: `.bolt/config.json` = `{ "template": "nuxt" }`.
+  - 31 files. `<script setup>` ×19, composition-API calls ×85, and **zero matches on every other pattern in the 47-pattern web set** — including every colour, layout, shadow, motion and copy pattern. Uses Nuxt UI components rather than raw utilities.
+  - Full notes: `reference/research/10-code-patterns-multiframework.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### K24 — naveen8041/GNPlantCareApp
+- **Source:** Bolt.new (Expo/RN); 2025-09-09 / 2025-09-16. https://github.com/naveen8041/GNPlantCareApp
+- **Context:**
+  - Provenance: `.bolt/config.json` = `{ "template": "bolt-expo" }`.
+  - `StyleSheet.create` ×11 with the same shadow block re-declared per component: `shadowColor` ×18, `shadowOpacity` ×18, `elevation` ×18 — the three counts are identical, i.e. the block is always emitted whole. `shadowOffset` appears 17 times and **all 17 have
+  - Full notes: `reference/research/10-code-patterns-multiframework.md`.
+- **Tags:** `[ADOPT: feeds a scanner rule]`
+- **Feeds:** MB3
+
+### K25 — Vikas17187/MediFill_FSD
+- **Source:** Bolt.new (Expo/RN); 2026-05-17 / 2026-06-24. https://github.com/Vikas17187/MediFill_FSD
+- **Context:**
+  - Provenance: `.bolt/config.json` = `{ "template": "bolt-expo" }`.
+  - `shadowOffset` ×3, **all `width: 0`**. `SafeAreaView` ×29, `flex: 1` ×41, `Tabs.Screen` ×5 (Expo Router tab scaffold).
+  - Full notes: `reference/research/10-code-patterns-multiframework.md`.
+- **Tags:** `[ADOPT: feeds a scanner rule]`
+- **Feeds:** MB3
+
+### K26 — murounedecor-creator/AppMurounedecor
+- **Source:** Bolt.new (Expo/RN); 2026-07-19 / 2026-09-03. https://github.com/murounedecor-creator/AppMurounedecor
+- **Context:**
+  - Provenance: `.bolt/config.json` = `{"template": "bolt-expo", "skills": {}, "systemSkills": {"browser-testing": true, "seo-geo": false, ...}}` — a newer Bolt config shape that also stamps the agent's enabled skills.
+  - `StyleSheet.create` ×24; `shadowColor`/`shadowOpacity`/`elevation` = 21/21/21; `shadowOffset` ×21, **all `width: 0`**, `{width: 0, height: 2}` ×12, `shadowOpacity: 0.15` ×12, `shadowRadius: 8` ×15.
+  - Full notes: `reference/research/10-code-patterns-multiframework.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### K27 — msoheib/makeen
+- **Source:** Bolt.new (Expo/RN) + Claude Code; 2025-10-20 / 2025-12-07. https://github.com/msoheib/makeen
+- **Context:**
+  - Provenance: `.bolt/config.json` = `{ "template": "bolt-expo" }`, plus a root `CLAUDE.md` and 11 all-caps AI-workflow markdown files at repo root (`SECURITY-FIXES-SUMMARY.md`, `WEB-MIGRATION-GUIDE.md`, `MOBILE_SEARCH_FIX.md`, `README-TYPESCRIPT-FIX.md`, …) —
+  - Largest RN sample (364 scanned files). `StyleSheet.create` ×133; `shadowOffset` ×56, **all `width: 0`**; `{width: 0, height: 2}` ×34, `shadowOpacity: 0.1` ×37, `shadowRadius: 4` ×34.
+  - Full notes: `reference/research/10-code-patterns-multiframework.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### K28 — midlaj-muhammed/CalorAI
+- **Source:** Replit Agent (Expo/RN); 2026-03-11 / 2026-03-11. https://github.com/midlaj-muhammed/CalorAI
+- **Context:**
+  - Provenance: `replit.md` whose H1 is "CalorAI - Replit Agent Guide", with a "Recent Changes" changelog dated "Mar 06, 2026" — current-generation, and the agent's own memory file.
+  - `shadowOffset` ×24, **all `width: 0`**; `shadowColor` ×30 / `shadowOpacity` ×25 / `elevation` ×25.
+  - Full notes: `reference/research/10-code-patterns-multiframework.md`.
+- **Tags:** `[ADOPT: feeds a scanner rule]`
+- **Feeds:** MB3
+
+### K29 — davidhoang/tapestry
+- **Source:** Replit Agent (Expo/RN + web monorepo); 2025-06-20 / 2026-06-29. https://github.com/davidhoang/tapestry
+- **Context:**
+  - Provenance: `replit.md` at root ("Workspace / Overview: pnpm workspace monorepo using TypeScript").
+  - The only RN sample using NativeWind seriously: Tailwind-style `className=` ×3258 against `StyleSheet.create` ×24. Where NativeWind is used, the RN tells (StyleSheet shadows, numeric borderRadius) collapse and the *web* tells return: 8 banned indigo/violet he
+  - Full notes: `reference/research/10-code-patterns-multiframework.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### K30 — BoomchainLabs/earn-app
+- **Source:** Bolt.new (Expo/RN); 2025-08-12 / 2026-09-04. https://github.com/BoomchainLabs/earn-app
+- **Context:**
+  - Provenance: `.bolt/config.json` = `{ "template": "bolt-expo" }`.
+  - Only 10 scanned files (an early-stage scaffold). `expo-router` ×5, `StyleSheet.create` ×1, `lucide-react-native` ×1, `expo-linear-gradient` ×1, `nativewind` ×3 (dependency declarations, not usage).
+  - Full notes: `reference/research/10-code-patterns-multiframework.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### K31 — pratit989/Rinse
+- **Source:** FlutterFlow; 2021-10-20 / 2024-01-12. https://github.com/pratit989/Rinse
+- **Context:**
+  - Provenance: `lib/flutter_flow/flutter_flow_theme.dart` and siblings (`flutter_flow_count_controller.dart`, `flutter_flow_google_map.dart`); `FFAppState()` ×78 in generated pages.
+  - 57 generated `.dart` files (FlutterFlow runtime excluded). `BorderRadius.circular(` ×89 of which `(12|16)` ×57; `BoxShadow(` ×29 and `blurRadius:` ×29 — one blur per shadow, no spread variation. Shadow `offset:` is `Offset(0, …)` in 29 of 29 — the human-conf
+  - Full notes: `reference/research/10-code-patterns-multiframework.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### K32 — alexkocodes/Fitegy-App
+- **Source:** FlutterFlow; 2022-10-11 / 2023-07-22. https://github.com/alexkocodes/Fitegy-App
+- **Context:**
+  - Provenance: `lib/flutter_flow/` export tree; `FlutterFlowTheme.of(context)` ×534 in 67 generated files (≈8 per file).
+  - `GoogleFonts.` ×111, all reached through FlutterFlow's own `GoogleFonts.asMap` indirection rather than a named family — so the font choice is invisible to a `GoogleFonts.inter` regex.
+  - Full notes: `reference/research/10-code-patterns-multiframework.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### K33 — nomadkaraoke/karaokehunt-app
+- **Source:** FlutterFlow; 2023-02-17 / 2026-04-20. https://github.com/nomadkaraoke/karaokehunt-app
+- **Context:**
+  - Provenance: `lib/flutter_flow/` export tree; `FlutterFlowTheme.of(context)` ×484, `FFAppState()` ×21.
+  - `BorderRadius.circular(8` ×32 dominates (vs 0 at 12/16) — the opposite radius habit to the LLM Flutter samples.
+  - Full notes: `reference/research/10-code-patterns-multiframework.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### K34 — uincogn/moto
+- **Source:** Replit Agent (Flutter); 2025-07-16 / 2025-08-04. https://github.com/uincogn/moto
+- **Context:**
+  - Provenance: `replit.md` at root with the Agent's standard "Overview / User Preferences" section structure.
+  - 62 `.dart` files. `ColorScheme.fromSeed` ×2 and `useMaterial3: true` ×2 — the LLM reaches for the Material 3 seed API that FlutterFlow never uses (0/3 there).
+  - Full notes: `reference/research/10-code-patterns-multiframework.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### K35 — ViaXTrace/Viax-Trace
+- **Source:** Replit Agent (Flutter + web); 2026-04-16 / 2026-09-02. https://github.com/ViaXTrace/Viax-Trace
+- **Context:**
+  - Provenance: `replit.md` at root describing a pnpm monorepo with "a Flutter Android app".
+  - 31 `.dart` files. **38 of its 87 `Color(0xFF…)` literals are exact Tailwind defaults**: `0xFF0EA5E9 0xFF10B981 0xFF16A34A 0xFF1D4ED8 0xFF22C55E 0xFF3B82F6 0xFF7C3AED 0xFFA855F7 0xFFD97706 0xFFEAB308 0xFFEF4444 0xFFF59E0B 0xFFF97316`. Seven are banned violet
+  - Full notes: `reference/research/10-code-patterns-multiframework.md`.
+- **Tags:** `[ADOPT: feeds a scanner rule]`
+- **Feeds:** MB3
+
+### K36 — albasuny9/Mezanya_LastFrist
+- **Source:** Replit Agent (Flutter); 2026-05-12 / 2026-08-11. https://github.com/albasuny9/Mezanya_LastFrist
+- **Context:**
+  - Provenance: `replit.md` at root ("Mezanya - Personal Financial Management App").
+  - 65 `.dart` files, 659 hex literals — **69 are exact Tailwind defaults** (`0xFF0284C7 0xFF059669 0xFF0891B2 0xFF0D9488 0xFF15803D 0xFF16A34A 0xFF1D4ED8 0xFF22C55E 0xFF2563EB 0xFF7C3AED 0xFFD97706 0xFFDB2777 0xFFDC2626`), including 4 banned violet. The *domina
+  - Full notes: `reference/research/10-code-patterns-multiframework.md`.
+- **Tags:** `[ADOPT: feeds a scanner rule]`
+- **Feeds:** MB3
+
+### K37 — Ameer-Mahmoud/Space-App
+- **Source:** Replit Agent (Flutter web); 2025-10-01 / 2026-06-14. https://github.com/Ameer-Mahmoud/Space-App
+- **Context:**
+  - Provenance: `replit.md` at root ("Space — Solar System Flutter App").
+  - 11 `.dart` files. `BorderRadius.circular(12|16)` ×6 of 12; `withOpacity(0.N)` ×14 in 11 files — opacity-derived colour instead of defined tints; `LinearGradient(` ×4; `FontWeight.w600|w700` ×8.
+  - Full notes: `reference/research/10-code-patterns-multiframework.md`.
+- **Tags:** `[ADOPT: feeds a scanner rule]`
+- **Feeds:** MB3
+
+### K38 — Chaka12/remittance-epay
+- **Source:** Replit Agent (Flutter); 2025-12-02 / 2026-07-17. https://github.com/Chaka12/remittance-epay
+- **Context:**
+  - 11 `.dart` files and a genuinely minimal surface: `SizedBox(height: 8|12|16|20|24)` ×31, `EdgeInsets.all(16` ×8, `FontWeight.bold` ×21, `Card(` ×6, `Icons.*` ×25, `Colors.(teal|green)` ×4, `Colors.blue` ×1.
+  - **Zero hex literals of any kind** — the app is built entirely from `Colors.*` Material constants. Recorded so the Flutter denominators are honest.
+  - Full notes: `reference/research/10-code-patterns-multiframework.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### K39 — MrChartist/Funda-Scanner-Base-Project
+- **Source:** Lovable (2026); 2026-03-23 / 2026-04-06. https://github.com/MrChartist/Funda-Scanner-Base-Project
+- **Context:**
+  - Provenance: `lovable-tagger` imported in `vite.config.ts`.
+  - `src/components/ui/` contains **exactly 49 files**; `--radius: 0.5rem` (stock shadcn default) in `src/index.css`; `public/placeholder.svg` present.
+  - Full notes: `reference/research/10-code-patterns-multiframework.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### K40 — Ank1t0327/sleepypig
+- **Source:** Lovable (2026); 2026-03-10 / 2026-03-15. https://github.com/Ank1t0327/sleepypig
+- **Context:**
+  - Provenance: `lovable-tagger` in `vite.config.ts`.
+  - `src/components/ui/` = **exactly 49 files**; `--radius: 0.75rem`; `public/placeholder.svg` present but **referenced 0 times in `src/`** — dead scaffold left in the shipped repo.
+  - Full notes: `reference/research/10-code-patterns-multiframework.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### K41 — davoodepb/artesanal-fio-alma
+- **Source:** Lovable (2026); 2026-03-13 / 2026-05-09. https://github.com/davoodepb/artesanal-fio-alma
+- **Context:**
+  - Provenance: `lovable-tagger` in `vite.config.ts`.
+  - `src/components/ui/` = **exactly 49 files**; `--radius: 1rem`; `placeholder.svg` referenced in 9 files — i.e. shipped placeholder art.
+  - Full notes: `reference/research/10-code-patterns-multiframework.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### K42 — D4C1-Labs/Flipper-ARF-Website
+- **Source:** Lovable (2026); 2026-03-14 / 2026-07-12. https://github.com/D4C1-Labs/Flipper-ARF-Website
+- **Context:**
+  - Provenance: `lovable-tagger` in `vite.config.ts`.
+  - `src/components/ui/` = **exactly 49 files**; `--radius: 0.625rem`; `public/placeholder.svg` present, referenced 0 times.
+  - Full notes: `reference/research/10-code-patterns-multiframework.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
 
 ---
 
@@ -1036,6 +1555,152 @@ M1 to M10 are the mobile app sources. M11 to M20 are the UI and marketing copy s
   - Proves marketese was a documented human problem 28 years before the AI framing.
 - **Tags:** `[EVIDENCE-ONLY]` `[ADOPT: objective and concise copy]` `[CONTESTED]`
 - **Feeds:** CP1, CP6; Part 5
+
+---
+
+### M21 — SwiftUI Agent Skill — README.md + swiftui-pro/SKILL.md
+- **Source:** Practitioner rule-set (repo, primary); v1.1, retrieved 2026-09-05. https://github.com/twostraws/SwiftUI-Agent-Skill
+- **Context:**
+  - The repo exists specifically to correct AI output. The README describes it as covering "navigation, layout, animations, state management, VoiceOver, deprecated API, and more, targeting the mistakes LLMs actually make."
+  - It states the failure modes directly: LLMs "sometimes make buttons invisible to VoiceOver, they frequently use deprecated API, and they would often write code that causes surprise performance problems."
+  - Full notes: `reference/research/09-mobile-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### M22 — swiftui-pro/references/api.md — "Using modern SwiftUI API"
+- **Source:** Practitioner rule-set (repo file); retrieved 2026-09-05. https://raw.githubusercontent.com/twostraws/SwiftUI-Agent-Skill/main/swiftui-pro/references/api.md
+- **Context:**
+  - Enumerates specific old→new API pairs, each of which is a literal string a regex can find: `foregroundColor()` → `foregroundStyle()`; `cornerRadius()` → `clipShape(.rect(cornerRadius:))`; `tabItem()` → the `Tab` API; `.navigationBarLeading`/`.navigationBarTr
+  - Bans the 1-parameter `onChange()` variant, `Text` concatenation with `+`, and `showsIndicators: false` in favour of `.scrollIndicators(.hidden)`.
+  - Full notes: `reference/research/09-mobile-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### M23 — swiftui-pro/references/design.md + accessibility.md + hygiene.md
+- **Source:** Practitioner rule-set (repo files); retrieved 2026-09-05. https://raw.githubusercontent.com/twostraws/SwiftUI-Agent-Skill/main/swiftui-pro/references/design.md
+- **Context:**
+  - design.md: "Avoid hard-coded values for padding and stack spacing unless specifically requested"; prefer a shared enum of design constants; avoid fixed frames; enforce Apple's 44×44 minimum tap target strictly.
+  - design.md also: "Use `bold()` instead of `fontWeight(.bold)`" and warns against "scattering around `fontWeight(.medium)` or `fontWeight(.semibold)`" — a specific, regex-able habit.
+  - Full notes: `reference/research/09-mobile-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### M24 — swiftui-pro/references/views.md
+- **Source:** Practitioner rule-set (repo file); retrieved 2026-09-05. https://raw.githubusercontent.com/twostraws/SwiftUI-Agent-Skill/main/swiftui-pro/references/views.md
+- **Context:**
+  - The single most-repeated rule in the file (stated twice deliberately): "Strongly prefer to avoid breaking up view bodies using computed properties or methods that return `some View`... Extract them into separate `View` structs instead, placing each into its
+  - "Each type (struct, class, enum) should be in its own Swift file. Flag files containing multiple type definitions." — the giant single-file `ContentView.swift` is the shape being corrected.
+  - Full notes: `reference/research/09-mobile-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### M25 — Android Studio "Empty Activity" Compose default `Color.kt` — literal values, verified across two unrelated public repos
+- **Source:** Primary artifact / direct measurement; retrieved 2026-09-05. https://raw.githubusercontent.com/Koustubh12345/GitAtlas/main/app/src/main/java/com/tensei/ui/theme/Color.kt
+- **Context:**
+  - Two unrelated repositories (`Koustubh12345/GitAtlas`, `samglish/Andal-IA`) contain **byte-identical** default values: `Purple80 = Color(0xFFD0BCFF)`, `PurpleGrey80 = Color(0xFFCCC2DC)`, `Pink80 = Color(0xFFEFB8C8)`, `Purple40 = Color(0xFF6650a4)`, `PurpleGre
+  - A third repo (`BruceDevices/App`) keeps the **variable names** but has replaced the hex values (`Purple80 = Color(0xFFBB86FC)` etc.) — i.e. the names persist through customization while the values change. The names are therefore the more durable, and more fa
+  - Full notes: `reference/research/09-mobile-2026.md`.
+- **Tags:** `[ADOPT: feeds a scanner rule]`
+- **Feeds:** MB1
+
+### M26 — Expo `expo-template-tabs` — `constants/Colors.ts` and `app/(tabs)/_layout.tsx`
+- **Source:** Primary artifact (official scaffold source); retrieved 2026-09-05. https://github.com/expo/expo/tree/main/templates/expo-template-tabs
+- **Context:**
+  - **Note:** this is the opt-in tabs template. What a bare `create-expo-app` produces is the *default* template, covered separately as M36 — its literals are different.
+  - `constants/Colors.ts` hardcodes `const tintColorLight = '#2f95dc'; const tintColorDark = '#fff';` with `tabIconDefault: '#ccc'` in both schemes. Any app shipping `#2f95dc` has an untouched Expo theme.
+  - Full notes: `reference/research/09-mobile-2026.md`.
+- **Tags:** `[ADOPT: feeds a scanner rule]`
+- **Feeds:** MB2
+
+### M27 — "Design slop" — Adrian Krebs
+- **Source:** Quantitative measurement (n=1,590, Playwright); 2026-04-20. https://adriankrebs.ch/blog/design-slop/
+- **Context:**
+  - Method: 1,590 Show HN submissions loaded in a headless browser (Playwright) with an in-page script analysing DOM and CSS deterministically.
+  - Results by pattern count: 22% scored "High" (4+ patterns), 32% "Medium" (2–3), 46% "Low" (0–1).
+  - Full notes: `reference/research/09-mobile-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### M28 — "AI Design Slop: 16 Patterns That Out Your App as Vibe-Coded"
+- **Source:** Blog restatement of M27; 2026-04-22. https://www.developersdigest.tech/blog/ai-design-slop-and-how-to-spot-it
+- **Context:**
+  - Explicitly restates Krebs (M27), published two days later, and credits the Playwright DOM/CSS method to him. It is **not** an independent corroboration.
+  - The 16 patterns break down as 3 font, 5 color, 8 layout — including "VibeCode Purple", gradients everywhere, colored glows/box-shadows, colored left borders on cards, identical icon-on-top feature cards, numbered 1-2-3 step sequences, stat banner rows, emoji
+  - Full notes: `reference/research/09-mobile-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### M29 — FlutterFlow Documentation — Design System
+- **Source:** Vendor documentation; retrieved 2026-09-05. https://docs.flutterflow.io/concepts/design-system/
+- **Context:**
+  - Confirms every FlutterFlow project starts from a fixed seeded theme: "By default, we add 16 predefined colors for light and dark themes."
+  - Theme settings centralise palette, typography, border radius and spacing — i.e. a project that never edits them produces cross-screen consistency but a fully generic look, and every unedited FlutterFlow app shares one palette.
+  - Full notes: `reference/research/09-mobile-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### M30 — "Why did Apple reject my AI app under Guideline 4.3?" — Laurens Dauchy, PTKD
+- **Source:** Vendor blog / practitioner claim; 2026-05-17. https://ptkd.com/journal/rejection-guideline-4-3-ai-spam
+- **Context:**
+  - Names a concrete screenshot cluster reviewers reportedly act on: "purple-to-blue gradient, the same centered prompt input with three example-question chips below it, and the same paywall card", plus "identical color palettes, identical hero gradients, identi
+  - Names store-metadata phrases recurring across rejected submissions: "Your personal AI" / "powered by GPT" / "ask anything" / "the smartest AI on iOS".
+  - Full notes: `reference/research/09-mobile-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### M31 — "Apple Updates App Store Guidelines With Stricter Rules for Low-Quality Apps" — Juli Clover
+- **Source:** Trade press reporting policy text; 2026-06-09. https://www.macrumors.com/2026/06/09/app-store-guidelines-low-quality-apps/
+- **Context:**
+  - Reports tightened Guideline 4.3(b) language: "Don't submit apps that are indistinguishable from what's already widely available. Opportunistically creating variants of existing app categories or popular apps degrades App Store discovery..."
+  - The named saturated categories are **dating, flashlight, sound effect, wallpaper, simple timer, fortune-telling** — plus fart, burp, Kama Sutra and drinking-game apps. None of these are AI-specific; the list is largely pre-AI.
+  - Full notes: `reference/research/09-mobile-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### M32 — Navigation bar — Jetpack Compose components
+- **Source:** Platform documentation; retrieved 2026-09-05. https://developer.android.com/develop/ui/compose/components/navigation-bar
+- **Context:**
+  - States the navigation bar is for "Three to five destinations of equal importance."
+  - `NavigationBarItem` treats both `icon` and `label` as optional, with the canonical example using both.
+  - Full notes: `reference/research/09-mobile-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### M33 — Liquid Glass
+- **Source:** Encyclopedia / platform history; retrieved 2026-09-05. https://en.wikipedia.org/wiki/Liquid_Glass
+- **Context:**
+  - Announced 2025-06-09 at WWDC, shipped in iOS 26, iPadOS 26, macOS Tahoe, tvOS 26, visionOS 26 and watchOS 26.
+  - Defining properties: translucent elements that refract and reflect the background, with shaders producing clear or frosted-glass appearances; on iOS/iPadOS elements react to device motion.
+  - Full notes: `reference/research/09-mobile-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### M34 — "Does v0 Write React Native? (2026 Answer)" — Lawrence Arya, VP0 Journal
+- **Source:** Vendor journal / product fact; 2026-06-19. https://vp0.com/blogs/does-v0-write-react-native
+- **Context:**
+  - "v0 by Vercel generates web code, specifically React with Next.js, Tailwind, and shadcn, deployed to Vercel as a website, and it does not generate React Native, Swift, Kotlin, or Flutter."
+  - Default output stack is "React components styled with Tailwind and shadcn, which are web technologies."
+  - Full notes: `reference/research/09-mobile-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### M35 — "Best AI Mobile App Design Generators for 2026" — Aditya, Appthetics
+- **Source:** Feature matrix (negative result); 2026-06-22. https://www.appthetics.com/blog/best-ai-mobile-app-design-generators
+- **Context:**
+  - Covers Appthetics, Figma Make, Google Stitch, Uizard, UX Pilot and Appy Pie.
+  - Contains **no** discussion of visual character, defaults, sameness, template look, tab bars, cards, gradients, corner radius or icon sets for any tool.
+  - Full notes: `reference/research/09-mobile-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### M36 — Expo `expo-template-default` — `src/constants/theme.ts`, `src/app/_layout.tsx`, `src/components/app-tabs.tsx`
+- **Source:** Primary artifact (official default scaffold source); retrieved 2026-09-05. https://github.com/expo/expo/tree/main/templates/expo-template-default
+- **Context:**
+  - This — not `expo-template-tabs` (M26) — is what a bare `npx create-expo-app` produces, and is therefore the scaffold most AI-assisted React Native projects start from. Its literals differ from the tabs template's, so MOB2 needs both sets.
+  - `src/constants/theme.ts` defines a **deliberately neutral, accent-free** palette: light `text #000000` / `background #ffffff` / `backgroundElement #F0F0F3` / `backgroundSelected #E0E1E6` / `textSecondary #60646C`, with dark-mode inverses. **There is no tint
+  - Full notes: `reference/research/09-mobile-2026.md`.
+- **Tags:** `[ADOPT: feeds a scanner rule]`
+- **Feeds:** MB2
 
 ---
 
@@ -1311,6 +1976,215 @@ X1 to X17 are the output-design sources. X18 to X29 are the documentation source
   - Requires writing appropriate to the audience, which in practice means testing with real readers.
 - **Tags:** `[ADOPT: test docs with real readers]`
 - **Feeds:** docs guidance
+
+---
+
+### X30 — Web Content Accessibility Guidelines (WCAG) 2.2
+- **Source:** W3C; 12 December 2024. https://www.w3.org/TR/WCAG22/
+- **Context:**
+  - Header reads "This version: https://www.w3.org/TR/2024/REC-WCAG22-20241212/" and "W3C Recommendation, 12 December 2024". The first WCAG 2.2 Recommendation was 5 October 2023; 12 Dec 2024 is the current dated version. **There is no 2025 or 2026 republication.
+  - The header notes "Errata exists" and links to X31.
+  - Full notes: `reference/research/15-accessibility-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### X31 — WCAG 2.2 Errata
+- **Source:** W3C WAI; latest entries 17 August 2026. https://www.w3.org/WAI/WCAG22/errata/
+- **Context:**
+  - 15 entries listed as "since current publication" with the 2026-08-17 date, plus 9 entries logged against the October 2023 publication (dated Nov 2024).
+  - All entries are classified **Editorial Errata** — terminology consistency, definition ordering, grammar, harmonising the word "breakpoint", the wording of the motion-animation definition.
+  - Full notes: `reference/research/15-accessibility-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### X32 — Understanding SC 1.4.3 Contrast (Minimum)
+- **Source:** W3C WAI; WCAG 2.2 series. https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html
+- **Context:**
+  - Normative SC 1.4.3 (Level AA): text and images of text have "a contrast ratio of at least 4.5:1", except Large Text at "3:1", Incidental text, and Logotypes.
+  - "large scale (text)" is defined as "at least 18 point or 14 point bold" or an equivalent for CJK.
+  - Full notes: `reference/research/15-accessibility-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### X33 — Understanding SC 1.4.11 Non-text Contrast
+- **Source:** W3C WAI; WCAG 2.2 series. https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html
+- **Context:**
+  - Level AA. Requires "a contrast ratio of at least 3:1 against adjacent color(s)" for two categories.
+  - User Interface Components: "Visual information required to identify user interface components and states", except inactive components, or where appearance is "determined by the user agent and not modified by the author".
+  - Full notes: `reference/research/15-accessibility-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### X34 — Understanding SC 2.5.8 Target Size (Minimum)
+- **Source:** W3C WAI; WCAG 2.2 series. https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html
+- **Context:**
+  - Level AA: "The size of the target for pointer inputs is at least 24 by 24 CSS pixels, except when:".
+  - Spacing exception (verbatim, the part a checker must implement): "if a 24 CSS pixel diameter circle is centered on the bounding box of each, the circles do not intersect another target or the circle for another undersized target".
+  - Full notes: `reference/research/15-accessibility-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### X35 — Understanding SC 2.5.5 Target Size (Enhanced)
+- **Source:** W3C WAI; WCAG 2.2 series. https://www.w3.org/WAI/WCAG22/Understanding/target-size-enhanced.html
+- **Context:**
+  - Level **AAA**: "The size of the target for pointer inputs is at least 44 by 44 CSS pixels", with Equivalent, Inline, User Agent Control and Essential exceptions.
+  - There is no Spacing exception at AAA — unlike 2.5.8, closely spaced small targets cannot be excused.
+  - Full notes: `reference/research/15-accessibility-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### X36 — Understanding SC 2.4.13 Focus Appearance
+- **Source:** W3C WAI; WCAG 2.2 series. https://www.w3.org/WAI/WCAG22/Understanding/focus-appearance.html
+- **Context:**
+  - 2.4.13 Focus Appearance, Level **AAA**: the indicator area "is at least as large as the area of a 2 CSS pixel thick perimeter of the unfocused component"; and it "has a contrast ratio of at least 3:1 between the same pixels in the focused and unfocused state
+  - Exceptions: the indicator is user-agent determined and not author-adjustable, or neither the indicator nor its background colour is author-modified.
+  - Full notes: `reference/research/15-accessibility-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### X37 — Understanding SC 1.4.10 Reflow
+- **Source:** W3C WAI; WCAG 2.2 series. https://www.w3.org/WAI/WCAG22/Understanding/reflow.html
+- **Context:**
+  - Level AA: content presented "without requiring scrolling in two dimensions" for "Vertical scrolling content at a width equivalent to 320 CSS pixels" and "Horizontal scrolling content at a height equivalent to 256 CSS pixels".
+  - Exception: "parts of the content which require two-dimensional layout for usage or meaning" (data tables, maps, code, some diagrams).
+  - Full notes: `reference/research/15-accessibility-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### X38 — Understanding SC 1.4.12 Text Spacing
+- **Source:** W3C WAI; WCAG 2.2 series. https://www.w3.org/WAI/WCAG22/Understanding/text-spacing.html
+- **Context:**
+  - Level AA. No loss of content or functionality when the user sets, and changes nothing else:
+  - "Line height (line spacing) to at least 1.5 times the font size".
+  - Full notes: `reference/research/15-accessibility-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### X39 — Understanding SC 2.3.3 Animation from Interactions
+- **Source:** W3C WAI; WCAG 2.2 series. https://www.w3.org/WAI/WCAG22/Understanding/animation-from-interactions.html
+- **Context:**
+  - Level **AAA**: "Motion animation triggered by interaction can be disabled, unless the animation is essential to the functionality or the information being conveyed."
+  - `prefers-reduced-motion` appears as **sufficient techniques** C39 (CSS) and SCR40 (JS), plus a general technique for an in-page preference. Sufficient techniques are informative ways to satisfy the SC, not requirements in themselves.
+  - Full notes: `reference/research/15-accessibility-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### X40 — W3C Accessibility Guidelines (WCAG) 3.0
+- **Source:** W3C; 3 March 2026. https://www.w3.org/TR/wcag-3.0/
+- **Context:**
+  - Status wording: "This is a draft document and may be updated, replaced, or obsoleted by other documents at any time." Publication as a Working Draft "does not imply endorsement by W3C and its Members".
+  - The draft itself signals that substantial work remains before completion; it is not a candidate for conformance use in 2026.
+  - Full notes: `reference/research/15-accessibility-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### X41 — Making Content Usable for People with Cognitive and Learning Disabilities
+- **Source:** W3C COGA TF / APA WG / AG WG; 29 April 2021. https://www.w3.org/TR/coga-usable/
+- **Context:**
+  - Still the current published version as of this sweep: 29 April 2021, non-normative supplemental guidance beyond WCAG. No conformance levels.
+  - Eight objectives, verbatim: help users understand what things are and how to use them; help users find what they need; use clear and understandable content; help users avoid mistakes and know how to correct them; help users focus; ensure processes do not rel
+  - Full notes: `reference/research/15-accessibility-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### X42 — Cognitive Accessibility Research Modules
+- **Source:** W3C APA WG (COGA TF); 5 February 2026. https://www.w3.org/TR/2026/DNOTE-coga-research-modules-20260205/
+- **Context:**
+  - Explicitly non-normative: "Group Note Drafts are not endorsed by W3C nor its Members".
+  - Contains "a detailed analysis of accessibility issues for people with disabilities that may require cognitive accessibility supports, user needs, areas for further research, and directions for solutions".
+  - Full notes: `reference/research/15-accessibility-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### X43 — Use clear language (GOV.UK content and publishing guidance)
+- **Source:** UK Government Digital Service; current (fetched 2026-09-05). https://guidance.publishing.service.gov.uk/writing-to-gov-uk-standards/writing-guidelines/clear-language/
+- **Context:**
+  - "Try to split up sentences that are over 25 words long."
+  - "Paragraphs should have no more than 5 sentences each."
+  - Full notes: `reference/research/15-accessibility-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### X44 — Sentence length: why 25 words is our limit
+- **Source:** Inside GOV.UK (GDS); 4 August 2014. https://insidegovuk.blog.gov.uk/2014/08/04/sentence-length-why-25-words-is-our-limit/
+- **Context:**
+  - The rule: "if you have sentences longer than 25 words, try to break them up or condense them".
+  - The comprehension claim, attributed to Ann Wylie: "when average sentence length is 14 words, readers understand more than 90% of what they're reading. At 43 words, comprehension dropped below 10 percent."
+  - Full notes: `reference/research/15-accessibility-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### X45 — GOV.UK content principles: conventions and research background
+- **Source:** GDS; published, ongoing. https://www.gov.uk/government/publications/govuk-content-principles-conventions-and-research-background/govuk-content-principles-conventions-and-research-background
+- **Context:**
+  - This is a synthesis of external research, not original GOV.UK experiments: it cites Nielsen Norman (2006) on F-shaped scanning, Delin (2005), Peters et al. (2006, 2007) on low numeracy.
+  - Finding relevant to docs written for stressed or low-literacy readers: low-literacy users read "word by word rather than scanning" — long paragraphs are disproportionately costly for them.
+  - Full notes: `reference/research/15-accessibility-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### X46 — Readability — Home Office User-Centred Design Manual
+- **Source:** UK Home Office; current. https://design.homeoffice.gov.uk/accessibility/written-content/readability
+- **Context:**
+  - The target, verbatim: "Usually we recommend writing for a maximum reading age of 9, even if you are writing for a specialist audience."
+  - **Reading age 9 is a UK reading age, roughly US grade 4** — it is not "grade 9". The skill's `grade 9` target is a Flesch-Kincaid grade level (roughly age 14–15), about five school years easier said than the UK guidance.
+  - Full notes: `reference/research/15-accessibility-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### X47 — Exploring validation messages
+- **Source:** GDS Design Notes; 14 November 2013. https://designnotes.blog.gov.uk/2013/11/14/exploring-validation-messages/
+- **Context:**
+  - Pattern tested: "errors are first grouped at the top of the page in a summary and then markers are placed next to the incorrectly completed fields".
+  - Research finding: "In research users scrolled rather than clicking the links, but it is good accessibility with screen readers" — the summary earns its place for assistive-tech users, not because sighted users use the anchors.
+  - Full notes: `reference/research/15-accessibility-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### X48 — The effect of a specialized dyslexia font, OpenDyslexic, on reading rate and accuracy
+- **Source:** Wery & Diliberto, *Annals of Dyslexia* 67(2) 114–127; 2016/2017. https://pmc.ncbi.nlm.nih.gov/articles/PMC5629233/
+- **Context:**
+  - Sample: **12** elementary students, grades 3–6, with diagnosed dyslexia. Single-subject alternating-treatment design; three tasks (letter naming, real-word decoding, nonsense-word decoding).
+  - Result: OpenDyslexic "decreased students' outcomes compared to both Arial and TNR, on all three reading tasks", with fluency effect sizes from −88.65% to −49.65% and accuracy effects −73.53% to −63.62%.
+  - Full notes: `reference/research/15-accessibility-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### X49 — Dyslexie font does not benefit reading in children with or without dyslexia
+- **Source:** Kuster, van Weerdenburg, Gompel & Bosman, *Annals of Dyslexia* 68(1) 25–42; 2017/2018. https://pmc.ncbi.nlm.nih.gov/articles/PMC5934461/
+- **Context:**
+  - Experiment 1: **170** Dutch children with dyslexia (ages ~7–12). Experiment 2: **102** with dyslexia plus **45** without.
+  - Speed/accuracy: "Reading speed between Arial and Dyslexie did not differ significantly at Times 1 and 2, both F's < 1"; in Experiment 2, "Words written in Dyslexie font were not read faster or more accurately".
+  - Full notes: `reference/research/15-accessibility-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### X50 — Extra-large letter spacing improves reading in dyslexia
+- **Source:** Zorzi et al., *PNAS; 4 June 2012. https://www.pnas.org/doi/10.1073/pnas.1205566109
+- **Context:**
+  - Reported design: 54 Italian and 40 French children with dyslexia read 24 short sentences at standard vs expanded letter spacing.
+  - Reported result: roughly 20% faster reading and about half as many errors, with no training — an on-the-fly spacing manipulation.
+  - Full notes: `reference/research/15-accessibility-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### X51 — Inter-letter spacing, inter-word spacing, and font with dyslexia-friendly features
+- **Source:** Galliussi, Perondi, Chia, Gerbino & Bernardis, *Annals of Dyslexia* 70(1) 141–152; 2020. https://pmc.ncbi.nlm.nih.gov/articles/PMC7188700/
+- **Context:**
+  - Sample: **128** Italian children (64 with dyslexia, 64 controls), mean age 12.4, reading 8 equivalent texts aloud. Three manipulations crossed: letterform (dyslexia-friendly features vs not), inter-letter spacing, inter-word spacing.
+  - Letterform: "the data collected failed to show any effect from the letterform" — no speed or accuracy benefit, in either group. This is a **third independent null on glyph design**, and the most likely source of the circulating "2020 review" claim.
+  - Full notes: `reference/research/15-accessibility-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### X52 — Designing for accessibility posters (index)
+- **Source:** UK Home Office Digital, Data and Technology; undated. https://ukhomeoffice.github.io/accessibility-posters/
+- **Context:**
+  - Poster set covers: Anxiety, Autistic spectrum, Deaf or hard of hearing, Dyslexia, Low vision, Physical or motor disabilities, Screenreaders. **There is no ADHD poster.**
+  - Only the index page loaded; the do/don't items live in a downloadable PDF that was not opened this sweep. The autism items quoted in `06-accessibility.md` (A10/A11) are therefore not re-verified here.
+  - Full notes: `reference/research/15-accessibility-2026.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
 
 ---
 
@@ -1727,6 +2601,144 @@ X1 to X17 are the output-design sources. X18 to X29 are the documentation source
   - Same paper as A2 and P22.
 - **Tags:** `[ADOPT: productive friction before generating]` `[EVIDENCE-ONLY]` `[CONTESTED]`
 - **Feeds:** JD1, JD4; templates/ direction file
+
+---
+
+### V21 — Design Theater: Evaluating the Gap Between User-Facing Design Reasoning and Implementation in Generative UI Tools
+- **Source:** arXiv preprint, accepted AAAI/AIES; 2026-07-24 (rev. 2026-07-31). https://arxiv.org/abs/2607.22928
+- **Context:**
+  - 24 UI-generation tasks × 5 tools (ChatGPT, Claude, Firebase Studio, Vercel v0, Bolt) = **120 interfaces**. For each the authors captured generated code, the rendered interface, and the full user-facing reasoning trace. Rendered output was standardised as **1
+  - Headline (code/rationale, not render): **>25% of user-facing design rationales are not implemented** in the interface, rising to **34% for functional requirements**; tools recognise ~half the UX principles embedded in the prompt (mean 0.54); four of five too
+  - Full notes: `reference/research/14-rendered-metrics.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### V22 — UIClip: A Data-driven Model for Assessing User Interface Design
+- **Source:** ACM UIST '24 (full paper); arXiv 2024-04-18; UIST 2024-10. https://arxiv.org/abs/2404.12500
+- **Context:**
+  - Takes a **UI screenshot plus a natural-language description** and returns a numeric design-quality/relevance score plus design recommendations. Trained on a large UI dataset built by "a combination of automated crawling, synthetic augmentation, and human rat
+  - Validation: outputs compared against UIs ranked by **12 human designers**; UIClip achieved the highest agreement with the ground-truth ranking among the baselines tested.
+  - Full notes: `reference/research/14-rendered-metrics.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### V23 — Aalto Interface Metrics (AIM): A Service and Codebase for Computational GUI Evaluation
+- **Source:** ACM UIST '18 Adjunct + open-source codebase; 2018-10. https://dl.acm.org/doi/10.1145/3266037.3266087
+- **Context:**
+  - This is the single most useful source in the sweep for topic 3: **17 published metrics with an open implementation**, in four categories — Colour Perception, Perceptual Fluency, Visual Guidance, Accessibility.
+  - Pipeline (matters for the skill): user supplies a **URL**; AIM captures a screenshot with **Headless Chrome**, runs a segmentation script producing elements with id / absolute position / size / base64 image, and feeds screenshot + segments to each metric. Th
+  - Full notes: `reference/research/14-rendered-metrics.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### V24 — Good Accessibility, Handcuffed Creativity: AI-Generated UIs Between Accessibility Guidelines and Practitioners' Expectations
+- **Source:** ACM DIS '25 (full paper); 2025-07. https://mintviz.usv.ro/publications/2025.DIS.2.pdf
+- **Context:**
+  - 2×3×5 factorial: 2 tools (**FigmaAI, Galileo**) × 3 app types × 5 prompt types × 3 repetitions = **90 UIs**. Plus interviews with **8 professional designers**.
+  - Four WCAG **2.1** criteria assessed, chosen for objective measurability: **1.3.1** visual hierarchy, **1.4.3** colour contrast, **1.4.12** text spacing, **2.5.5** target size. Measured with the **WebAIM Contrast Checker** and the **Stark** Figma plugin, plus
+  - Full notes: `reference/research/14-rendered-metrics.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### V25 — Generated Inaccessible: Measuring WCAG Violations in AI UI Design Tools
+- **Source:** ACM W4A '26 (full paper, gold OA CC-BY); 2026-06. https://dl.acm.org/doi/10.1145/3800424.3800430
+- **Context:**
+  - **I could not open the ACM landing page (HTTP 403).** Everything below comes from the publisher abstract retrieved via the Semantic Scholar Graph API record for the DOI. I have not read the methods section, so treat the internals as unverified.
+  - Design: **54 designers** manually created interfaces in Figma, then generated comparable designs with **six AI tools**. **21,880 accessibility assessments** across **five WCAG success criteria**.
+  - Full notes: `reference/research/14-rendered-metrics.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### V26 — Usable but Conventional: An Empirical Study on the UX of AI-Generated Interface Prototypes
+- **Source:** arXiv preprint, accepted SEMISH 2026 (SBC); 2026-05-14. https://arxiv.org/abs/2605.15124
+- **Context:**
+  - **92 participants** evaluated AI-generated and human-created prototypes **blind to authorship**, using the **UEQ-S** (short User Experience Questionnaire), which splits pragmatic from hedonic quality.
+  - Result: AI prototypes scored **positively on pragmatic** dimensions (usability, efficiency) but **neutral-to-negative on hedonic** dimensions (originality, innovation).
+  - Full notes: `reference/research/14-rendered-metrics.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### V27 — TextFake: Benchmarking AI-Generated Image Detection on Text-Rich Images
+- **Source:** arXiv preprint; 2026-05-31. https://arxiv.org/abs/2606.01050
+- **Context:**
+  - **20,000 images** spanning **28 languages, 4 topic categories, 2 scene modalities**, built by a four-stage pipeline using distribution-aligned structured prompting to remove covariate shortcuts. Content is text-rich forgeries — fabricated screenshots, docume
+  - Zero-shot evaluation of **14 specialised detectors plus 3 frontier VLM APIs**: **no method exceeds 80% accuracy**, with some dropping **over 60 points** from their natural-image benchmark performance.
+  - Full notes: `reference/research/14-rendered-metrics.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### V28 — TextRich: A Multi-Domain Benchmark for Detecting AI-Generated Text-Rich Images from GPT-Image-2
+- **Source:** arXiv preprint; 2026-06-17 (rev. 2026-07-26). https://arxiv.org/abs/2606.19259
+- **Context:**
+  - **12,095 images** across six categories: commercial posters, infographic charts, academic posters, receipts, tables, and **UI screenshots**. All fakes from GPT-Image-2.
+  - **Five** representative AI-generated-image detectors evaluated zero-shot, plus one multimodal VLM. The abstract reports the strongest detector is "competitive overall" but remains ineffective on certain structured categories and is sensitive to JPEG compress
+  - Full notes: `reference/research/14-rendered-metrics.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### V29 — Did I Just Browse A Website Written by LLMs?
+- **Source:** ACM IMC 2025 poster; 2025-07-18. https://www.arxiv.org/abs/2507.13933
+- **Context:**
+  - Detects "**LLM-dominant**" websites — pages automatically generated by LLMs with little human input. The unit of classification is the **whole site**, not the page: they aggregate an LLM text-detector's output across multiple prose-like pages.
+  - Two ground-truth datasets totalling **120 sites**; they report **100% accuracy** on them. Also applied at scale to 10,000 sites from search results and 10,000 from Common Crawl.
+  - Full notes: `reference/research/14-rendered-metrics.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### V30 — axe-core rule descriptions (rule → WCAG SC mapping)
+- **Source:** Open-source docs (Deque); current (v4.11 referenced). https://github.com/dequelabs/axe-core/blob/develop/doc/rule-descriptions.md
+- **Context:**
+  - The rules that genuinely require **render-time computed styles and geometry** rather than static DOM inspection, with the WCAG tags the doc itself carries: `color-contrast` → `wcag143`, `wcag2aa`; `color-contrast-enhanced` → `wcag146`, `wcag2aaa`; `target-si
+  - `target-size` carrying the `wcag22aa` tag confirms axe-core implements **SC 2.5.8 Target Size (Minimum)**, the WCAG 2.2 addition — this is the one genuinely new render-time check available since 2.2.
+  - Full notes: `reference/research/14-rendered-metrics.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### V31 — Web Content Accessibility Guidelines (WCAG) 2.2
+- **Source:** W3C Recommendation; current. https://www.w3.org/TR/WCAG22/
+- **Context:**
+  - Criterion numbers verified at source rather than from memory: **1.4.3 Contrast (Minimum)** AA, 4.5:1; **1.4.4 Resize Text** AA, 200%; **1.4.6 Contrast (Enhanced)** AAA, 7:1; **1.4.10 Reflow** AA; **1.4.11 Non-text Contrast** AA, 3:1; **1.4.12 Text Spacing**
+  - **New in WCAG 2.2:** **2.4.11 Focus Not Obscured (Minimum)** AA; **2.4.13 Focus Appearance** AAA; **2.5.8 Target Size (Minimum)** AA. **2.5.5 Target Size** is the pre-existing AAA criterion, renamed **Target Size (Enhanced)** in 2.2.
+  - This matters for citing V24 correctly: V24 audited against **WCAG 2.1** and used **2.5.5** (AAA, 44px), not 2.5.8 (AA, 24px). Do not conflate the two.
+  - Full notes: `reference/research/14-rendered-metrics.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### V32 — Lighthouse accessibility scoring
+- **Source:** Google developer docs; current. https://developer.chrome.com/docs/lighthouse/accessibility/scoring
+- **Context:**
+  - The Lighthouse accessibility score is a **weighted average of its accessibility audits**, weighted by **axe user-impact assessments**. The engine underneath is **axe-core** (the page links axe v4.11 rule descriptions).
+  - Each audit is **binary pass/fail** — no partial credit. Manual and low-impact/best-practice audits do not affect the score.
+  - Full notes: `reference/research/14-rendered-metrics.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### V33 — Automated Testing Identifies 57% of Digital Accessibility Issues
+- **Source:** Vendor study (Deque). https://www.deque.com/blog/automated-testing-study-identifies-57-percent-of-digital-accessibility-issues/
+- **Context:**
+  - Anonymised data from **2,000+ audits**, **13,000+ pages** (all first-time assessments), **~300,000 issues**, across various industries. Automated testing with Deque's axe suite (axe-core rules) identified **57% of accessibility issues** — which Deque contras
+  - **The definition is the whole story.** Deque explicitly changed the metric from "share of WCAG success criteria that are automatable" to "**total volume of issues detected by severity and impact**," on the argument that some issue types occur far more freque
+  - Full notes: `reference/research/14-rendered-metrics.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### V34 — AI Website Detector
+- **Source:** Commercial web tool; accessed 2026-09-05. https://anonymiz.com/ai-website-detector
+- **Context:**
+  - Claims to detect ChatGPT, Lovable, Bolt.new, Framer, v0 and "20+ more" builders.
+  - Its actual signals are **HTML source and infrastructure**, not pixels: builder fingerprints (CDN domains, CSS class conventions, attribution badges), HTML comments left by Lovable.dev / Cursor, direct references to OpenAI/Anthropic/Google/xAI API endpoints i
+  - Full notes: `reference/research/14-rendered-metrics.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### V35 — Human or LLM? A Comparative Study on Accessible Code Generation Capability
+- **Source:** arXiv preprint (cs.SE); 2025-03-20. https://arxiv.org/abs/2503.15885
+- **Context:**
+  - Compares accessibility of web code from two LLMs (GPT-4o, Qwen2.5-Coder-32B-Instruct-AWQ) against human-written code.
+  - Finding: **LLMs often produce *more* accessible code**, particularly on basic features like colour contrast and alt text; both LLMs and humans struggle with ARIA attributes.
+  - Full notes: `reference/research/14-rendered-metrics.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
 
 ---
 
@@ -2426,6 +3438,35 @@ Nine libraries are installed and ported into this skill. Every URL below was rea
   - A form that validates and then alerts the JSON is still a fake. Wire `onComplete` to a real POST.
 - **Tags:** `[ADOPT: the six runtime states]` `[ADOPT: showSaveInProgress, Success and Error]` `[AVOID: onComplete with no persistence]`
 - **Feeds:** JD2; library_misuse rules
+
+---
+
+### L77 — npm registry, `survey-creator-core` package metadata
+- **Source:** npm registry metadata; retrieved 2026-09-05. https://registry.npmjs.org/survey-creator-core/latest
+- **Context:**
+  - Version 3.0.3; `license: "SEE LICENSE IN LICENSE"`. Registry-side confirmation of the SurveyJS licence split, complementing L63's LICENSE-file evidence.
+  - The Creator tracks the same version number as the MIT renderer, which is exactly why the split is easy to miss in a lockfile.
+  - Full notes: `reference/research/13-stale-recheck.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### L78 — npm registry, `react-leaflet` package metadata
+- **Source:** npm registry metadata; retrieved 2026-09-05. https://registry.npmjs.org/react-leaflet/latest
+- **Context:**
+  - Version 5.0.0; `license: "Hippocratic-2.1"` as a literal registry string.
+  - The Hippocratic fact for react-leaflet previously survived only inside L15's prose, with no source of its own.
+  - Full notes: `reference/research/13-stale-recheck.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
+
+### L79 — npm registry, `animate-ui` package metadata
+- **Source:** npm registry metadata; retrieved 2026-09-05. https://registry.npmjs.org/animate-ui/latest
+- **Context:**
+  - The name-collision hazard: `animate-ui@0.0.4`, MIT, description "``` yarn install ```", no repository field, created 2019-08-19, last modified 2022-04 - unrelated to imskyleen's animate-ui.
+  - `@animate-ui/core` returns 404. Backs L17 and supplies the install trap it currently lacks.
+  - Full notes: `reference/research/13-stale-recheck.md`.
+- **Tags:** `[EVIDENCE-ONLY]`
+- **Feeds:** evidence archive; no rule depends on it yet
 
 ---
 

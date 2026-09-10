@@ -35,7 +35,7 @@ Two scores, kept separate on purpose:
 - **Library misuse**: one of the nine ported libraries used in the way that
   produces a known tell. The library is fine. That use of it is not.
 
-Every rule traces to `reference/tells-register.md` (version 2026.09).
+Every rule traces to `reference/tells-register.md` (version 2026.10).
 That traces to 254 sourced entries in `reference/sources-compendium.md`.
 Every source there carries context bullets and ADOPT or AVOID tags.
 Do not add or repeat "AI tells" from memory. If it is not in the register,
@@ -122,8 +122,8 @@ in two fingerprints, so anyone can tell which rules produced the verdict:
 
 ```
 PASS: AI-look 0/100 (distinct), craft flags 0, library misuse 0, copy grade
-4.6, brand distance COMPLIANT, rendered PASS | register 2026.09,
-rules 3b9aa5d25679d4e8, brand rules 5697117fa1b27195
+4.6, brand distance COMPLIANT, rendered PASS | register 2026.10,
+rules 08519bc72585992c, brand rules 5697117fa1b27195
 ```
 
 Exit code 0 means every guard ran and passed. If the brand guard is missing,
@@ -185,7 +185,7 @@ to the brief.
 One line, always:
 
 > Verified: AI-look score 6/100 (distinct), craft flags 0, library misuse 0,
-> brand distance COMPLIANT, register 2026.09.
+> brand distance COMPLIANT, register 2026.10.
 
 Then at most three sentences on the choices that make the design this
 product's own. No design-theory lecture.
