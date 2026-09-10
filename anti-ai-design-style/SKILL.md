@@ -107,22 +107,28 @@ that catch what briefs miss:
   visible focus, no colour-only meaning, copy at about grade 9.
 
 If another design skill is active (frontend-design, taste-suite,
-impeccable, anti-antropik-design), follow its aesthetic guidance freely.
+impeccable, anti-antropik-design), follow its aesthetic guidance for
+anything the register does not score.
 This skill is the measuring layer on top. They do not conflict: whatever
 is generated must still pass Step 3.
 
 ### Step 3 — Scan. Always. Before presenting anything.
 
+`$SKILL` below is this skill's own folder, named at the top of this file when
+it loads. Set it once: `SKILL="<that path>"`. In the plugin install it is
+already there as `${CLAUDE_PLUGIN_ROOT}`. Your working directory is the user's
+project, not this folder, so a bare `scripts/...` will not be found.
+
 Once per conversation, prove the tools work.
 
 ```
-python3 scripts/ai_tell_scan.py --selftest     # must print SELFTEST: PASS
+python3 "$SKILL"/scripts/ai_tell_scan.py --selftest   # must print SELFTEST: PASS
 ```
 
 Then scan everything you made or edited. One command runs every guard:
 
 ```
-python3 scripts/verify_all.py <files or folder>
+python3 "$SKILL"/scripts/verify_all.py <files or folder>
 ```
 
 Add `--render` to also load the page in a real browser and measure contrast,
@@ -146,28 +152,40 @@ did not happen never counts as a check that passed.
 Want the findings themselves? Run the tools one at a time.
 
 ```
-python3 scripts/ai_tell_scan.py <files or folder>
-python3 scripts/copy_check.py <pages and docs with prose>
+python3 "$SKILL"/scripts/ai_tell_scan.py <files or folder>
+python3 "$SKILL"/scripts/copy_check.py <pages and docs with prose>
 ```
 
 **The second guard is not optional.** This skill measures distance from
 generic AI output. It does NOT measure distance from a specific company's
-brand, and fixing one can cause the other. Warm cream plus a bookish serif
-plus a terracotta accent passes this scanner and lands on Claude's own design
-language. That is exactly what happened to the first version of
+brand, and fixing one can cause the other. Warm cream plus a bookish serif plus
+a terracotta accent used to pass this scanner while landing squarely on Claude's
+own design language. Rule CO6 now scores that combination, so this scanner
+catches it too. The point still stands: passing one guard is not the same as
+arriving somewhere. That is what happened to the first version of
 `examples/fixed-example.html`, which scored 0 here and NON-COMPLIANT there.
-`verify_all.py` runs it for you, and fails when it cannot find it. Run it
+`verify_all.py` runs it for you, and fails when it cannot find it.
+
+If the line says `brand distance NOT RUN`, say that first, in plain words. The
+second checker is not installed. So the FAIL is about a missing tool, not about
+their design. The fix: install `anti-antropik-design`, or set
+`ANTI_ANTROPIK_PATH` to point at it. Run it
 directly to see the replacement hex values it suggests:
 
 ```
-python3 "$(python3 scripts/find_brand_guard.py)"/scripts/audit_file.py <files> --suggest
+python3 "$(python3 "$SKILL"/scripts/find_brand_guard.py)"/scripts/audit_file.py <files> --suggest
 ```
 
-If that path is unknown, `python3 scripts/find_brand_guard.py` prints it.
+If that path is unknown, `python3 "$SKILL"/scripts/find_brand_guard.py` prints it.
 
 Do not choose colours by hand. Generate them:
-`generate_palette.py --hue N --temp warm|neutral|cool --chroma low|medium|high`
-prints a verified 16-role system. Read `reference/brand-distance.md` for the
+`generate_palette.py` in the brand guard prints a verified 16-role system:
+
+```
+python3 "$(python3 "$SKILL"/scripts/find_brand_guard.py)"/scripts/generate_palette.py \
+  --hue N --temp warm|neutral|cool --chroma low|medium|high
+```
+ Read `reference/brand-distance.md` for the
 whole story, including which type structures are excluded.
 
 Exit code 0 = pass. Exit code 1 = apply each finding's "do this" line
@@ -178,13 +196,16 @@ never present unscanned visual output.
 
 **What the grade-9 readability gate covers.** It applies to what a user
 reads. That means `SKILL.md`, `setup-guide.md`, `fixes.md`,
-`accessibility.md`, `brand-distance.md`, `sources.md`, the compendium, the
+`accessibility.md`, `brand-distance.md`, `sources.md`, the tells register, the
 templates and the examples README. It also covers any page or doc you produce
-for the user. It does NOT
-apply to `reference/research/` or `reference/libraries/*.md`. Those are
-evidence archives and API references. They quote sources verbatim and use the
-libraries' own terminology, and flattening that would damage them. This is a
-stated exemption, not an unnoticed failure. If you edit them, keep the quotes.
+for the user.
+
+It does NOT apply to `reference/research/`, `reference/libraries/*.md`, or
+`reference/sources-compendium.md`. Those are evidence archives and API
+references. They quote sources word for word and use each library's own terms.
+Flattening that would damage them. The compendium grades about 11 for exactly
+that reason. This is a stated exemption, not an unnoticed failure. If you edit
+them, keep the quotes.
 
 Scanner limits, stated so you never over-claim. It reads code and copy,
 not rendered pixels. A PASS means "no known AI-look patterns". It does not
@@ -195,10 +216,17 @@ to the brief.
 
 ### Step 4 — Present with the proof line
 
-One line, always:
+One line, always: the one `verify_all.py` printed, pasted whole. The
+fingerprints are not decoration. They say which rules gave this verdict.
 
-> Verified: AI-look score 6/100 (distinct), craft flags 0, library misuse 0,
-> brand distance COMPLIANT, register 2026.10.
+```
+PASS: AI-look 0/100 (distinct), craft flags 0, library misuse 0, copy grade
+4.6, brand distance COMPLIANT, rendered PASS | register 2026.10, rules
+08519bc72585992c, brand rules 5697117fa1b27195
+```
+
+Paste the real one. Do not retype it, shorten it, or start it with a word the
+tool did not print.
 
 Then at most three sentences on the choices that make the design this
 product's own. No design-theory lecture.
@@ -252,7 +280,7 @@ judgment check, not a scanner one.
 | `reference/fixes.md` | a scan failed and a fix isn't obvious |
 | `reference/accessibility.md` | any output work (the floors), or a11y questions |
 | `reference/setup-guide.md` | the user asks how to install/run anything |
-| `reference/sources-compendium.md` | "says who?": all 254 sources, tagged ADOPT or AVOID, with the master ban list and adopt list |
+| `reference/sources-compendium.md` | "says who?": all 368 sources, tagged ADOPT or AVOID, with the master ban list and adopt list |
 | `reference/sources.md` + `reference/research/` | the full research dossiers behind the compendium |
 | `reference/brand-distance.md` | before any brand, identity or client-facing work; and whenever your fix drifts warm-cream |
 | `reference/libraries/` | any time motion, scroll, canvas, maps or forms are involved |

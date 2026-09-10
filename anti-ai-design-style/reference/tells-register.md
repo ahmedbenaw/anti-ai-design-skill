@@ -32,12 +32,20 @@ source is the receipt. `scripts/check_citations.py` fails if either kind stops
 resolving. A number written as `technique C39` is a WCAG technique, not a
 citation.
 
-Dossier keys: P=01-practitioners, A=02-academic, C=03-community-wiki,
-K=04-code-patterns (measured on 12 verified AI-generated repos),
-M=05-mobile-and-copy, X=06-accessibility, R=07-prior-art, V=08-visual-science,
-and from the 2026-09 sweep: 09-mobile-2026, 10-code-patterns-multiframework,
-11-community-2026, 12-eras-and-house-looks, L=13-stale-recheck,
-14-rendered-metrics, 15-accessibility-2026.
+Dossier keys:
+
+| Key | File |
+|---|---|
+| P | `01-practitioners`, and `12-eras-and-house-looks` from the 2026-09 sweep |
+| A | `02-academic` |
+| C | `03-community-wiki`, and `11-community-2026` |
+| K | `04-code-patterns`, and `10-code-patterns-multiframework` |
+| M | `05-mobile-and-copy`, and `09-mobile-2026` |
+| X | `06-accessibility`, and `15-accessibility-2026` |
+| R | `07-prior-art` |
+| V | `08-visual-science`, and `14-rendered-metrics` |
+| L | `13-stale-recheck`, and the library docs |
+
 Full citations with URLs live in `sources.md`.
 
 ---
@@ -171,8 +179,8 @@ weighted 1 for that reason and never carry a verdict alone.
 | MB2 | Untouched Expo tabs scaffold | 2+ of `"Tab One"`, `#2f95dc`, `tabIconDefault: '#ccc'`, `chevron.left.forwardslash.chevron.right` | 1 | 2023+scaffold | high on beginners; near zero for `"Tab One"` on expert work | Verified (M26 tabs template, M36 default template — two distinct scaffolds, both transcribed from Expo's own source). `[STALE-RISK]`: the default template changed shape between M26 and M36; re-verify against `expo/expo` before each release. **Scaffold — never fires alone.** |
 | MB3 | Tailwind default palette inside mobile code | 3+ distinct Tailwind stock hexes as `0xFF…`/`#…` in `.dart` or `.kt` | 2 | 2024+ | low, and measured: **0 hits in a 413-file human-built FlutterFlow control** | Verified by measurement (K24, K25, K28, K35, K36 — 5 clean positives of 12 generated mobile repos, 8 clean negatives, 0 of 413 in the control). Exclude when the project genuinely uses NativeWind or a shared Tailwind config. |
 
-**Counter-evidence recorded from the same sweep** (these did *not* replicate, and
-no rule was added or changed for them):
+**Counter-evidence from the same sweep.** None of these replicated. No rule was
+added or changed for any of them.
 
 | Candidate | What the sweep found | Decision |
 |---|---|---|

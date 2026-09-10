@@ -383,25 +383,34 @@ single source to a rule.
 
 ## 6. Everything missed or left open, in one list
 
-1. Evals never re-run with the brand gate (Task 1). The 18/18 is pre-gate.
-2. Nine libraries not actually installed; gsap-skills and pixijs-skills not
-   vendored verbatim (Task 2). Port is docs-derived.
-3. Hookify rules and slash commands never fired in a live session (Task 3).
-4. `/claude-tag-troubleshoot:config-guide` was found to be Slack-only;
-   Ben's latest instruction names `debug-plugins`. Use that, and remove any
-   config-guide mention from the plan and setup guide.
-5. Description optimisation loop not run (Task 4).
-6. Exa never connected; research used WebSearch/WebFetch/arXiv (Task 5).
-7. No Vue, React Native, Flutter samples in K; mobile tells thin (Task 5).
-8. The register expires around 2028-03 (18-month era). A "re-verify against
-   real generated repos" reminder belongs in the setup guide's last section.
-9. Cross-reference from `anti-antropik-design` back to this skill (Task 7).
-10. n=1 per eval cell. Say so wherever a number is quoted.
-11. `scripts/__pycache__/` snuck into the tree; strip before packaging.
-12. Grader agents hit a 429 rate limit in iteration 1; if it recurs, grade by
-    script plus hand verification, and say so in `grading.json`.
+**Status as of 2026-09-10.** Closed items keep their number so older notes still
+line up.
 
----
+| # | Item | Status |
+|---|---|---|
+| 1 | Evals re-run with the brand gate | **Still open.** Deferred on purpose; the eval loop runs once, on final rules. `evals.json` still has no brand or library assertion. |
+| 2 | Nine libraries installed, gsap-skills and pixijs-skills vendored | **Closed** (commit 2e06f47). |
+| 3 | Hookify rules and slash commands fired live | **Closed** (11a08b7, 7de9c0c). Four of the five had never fired; they bound to a field the event does not provide. |
+| 4 | `config-guide` is Slack-only; use `debug-plugins` | **Closed.** Both are named plainly in the setup guide as not checking local Claude Code. |
+| 5 | Description optimisation loop | **Run, and it measured nothing.** Every query scored a trigger rate of 0.0, both sides. The harness needs a tool call to detect and got none. No change applied. See `anti-ai-design-style-workspace/description-loop.md`. |
+| 6 | Exa never connected | **Still open, and only Ben can close it.** Exa is not in the connector directory; it has to be added as a custom connector at `https://mcp.exa.ai/mcp` and signed into. Every dossier states which route it used. |
+| 7 | No Vue, React Native or Flutter samples; mobile tells thin | **Closed.** 27 new K entries, 24 cloned generated repos and a 413-file human-built control. Three mobile rules now ship: MB1, MB2, MB3. |
+| 8 | Register expires around 2028-03 | **Open by design.** "Keeping this register alive" now lives at the end of the register, with the steps. |
+| 9 | Cross-reference from `anti-antropik-design` back to this skill | **Written, not applied.** `proposals/anti-antropik-design.md`. The installed copy stays read-only. |
+| 10 | n=1 per eval cell | **Open.** Still true, still has to be said wherever a number is quoted. |
+| 11 | `scripts/__pycache__/` in the tree | **Closed.** Stripped before packaging; the `.skill` is 0.62 MB. |
+| 12 | Grader agents hit a 429 in iteration 1 | **Open**, and only matters when item 1 runs. |
+
+New since the handover was written:
+
+13. The register cited two different things with the same spelling. `P13` meant
+    a research finding; `R3` meant a source. `scripts/check_citations.py` now
+    fails if either kind stops resolving. 146 citations resolve.
+14. `.dart` and `.kt` were not scanned at all, so no mobile rule could have
+    fired. They are now, and rules can be scoped by file type.
+15. Seven candidate tells did not replicate and are recorded as counter-evidence
+    in the register, including the straight-down shadow. A human-built control
+    hit it 49/49.
 
 ## 7. Non-negotiables for whoever picks this up
 

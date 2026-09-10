@@ -1,8 +1,5 @@
-__pycache__/
-*.pyc
-.DS_Store
-.venv/
-node_modules/
-scratch/
-.serena/
+graphify-out/
+.refactor-chain/
 .venv-render/
+__pycache__/
+.DS_Store
