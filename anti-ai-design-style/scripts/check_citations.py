@@ -150,7 +150,23 @@ def selftest():
     return 0
 
 
+HELP = """Check that every citation in the tells register still points at something real.
+
+  python3 scripts/check_citations.py              check the register now
+  python3 scripts/check_citations.py --selftest   check the checker, then the register
+
+Two kinds of citation, spelled differently on purpose:
+  P-T13   a numbered finding inside reference/research/01-practitioners.md
+  R3      a source entry in reference/sources-compendium.md
+
+Exit 0 when every citation resolves, 1 when any does not. Takes about a second.
+"""
+
+
 def main(argv):
+    if "--help" in argv or "-h" in argv:
+        print(HELP)
+        return 0
     if "--selftest" in argv:
         return selftest()
     resolved, problems, unverifiable = check(

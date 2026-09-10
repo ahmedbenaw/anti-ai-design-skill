@@ -265,6 +265,26 @@ Two separate scores, never mixed:
   motion, focus, line length, readability, states present. A page can be
   distinctly designed and still fail craft: and vice versa.
 
+## Keeping this register alive
+
+Tells drift on roughly 18-month eras: purple, then shadcn tokens, then the
+cream-editorial "tasteful" look. So a rule with no era tag is a rule that
+quietly stops working.
+
+When you update it:
+
+1. Verify against real generated code the way `research/04-code-patterns.md`
+   and `research/10-code-patterns-multiframework.md` did. Clone repos that are
+   provably generated, and count. An article is not evidence.
+2. Get a control group. The straight-down shadow looked like a certainty at
+   123/123 until a human-built control also hit 49/49.
+3. Write the selftest fixture first and watch it fail. A rule whose fixture
+   never failed has never been tested.
+4. Add the row here and the source in `sources-compendium.md` before the regex.
+5. Era-tag anything retired and keep it at 1 point as legacy. Do not delete.
+6. Bump the register version and update `rules.json` in the same change.
+7. Run `python3 scripts/check_citations.py`.
+
 ## Why this register is dated
 
 The purple era gave way to the shadcn-token era, which is giving way to the

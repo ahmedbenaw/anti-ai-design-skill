@@ -17,11 +17,10 @@ description: >
 
 # Anti AI Design Style
 
-**TL;DR:** AI design tools all sample the same statistical average. So
-their output converges on one look. This skill breaks that in three moves.
-A short brief captures what makes THIS product itself. Generation follows
-the brief. A scanner measures the result against a sourced register of AI
-tells. "Done" means the scanner passed. Never "it looks fine", because
+**TL;DR:** AI design tools all sample the same statistical average, so
+their output converges on one look. This skill breaks that with a brief, a
+build that follows it, and a scanner that measures the result against a
+sourced register. "Done" means the scanner passed, never "it looks fine" -
 everything AI makes looks fine.
 
 Two scores, kept separate on purpose:
@@ -36,12 +35,26 @@ Two scores, kept separate on purpose:
   produces a known tell. The library is fine. That use of it is not.
 
 Every rule traces to `reference/tells-register.md` (version 2026.10).
-That traces to 254 sourced entries in `reference/sources-compendium.md`.
+That traces to 368 sourced entries in `reference/sources-compendium.md`.
 Every source there carries context bullets and ADOPT or AVOID tags.
 Do not add or repeat "AI tells" from memory. If it is not in the register,
 it is folklore. Folklore is often wrong. Raw purple-gradient classes were
 found in 0 of 12 real 2025-26 AI repos. The cream-and-serif "tasteful"
 look is now a tell itself.
+
+## The short version, if you read nothing else
+
+1. Write the brief first. Two minutes. What is this product, who is it for,
+   what would only ever be true of it.
+2. Build it, following that brief.
+3. Run the scanner. It prints one line.
+4. If that line does not start with `PASS`, the work is not done. Fix the
+   top finding and run it again.
+5. Quote the line you got. Do not retype it, summarise it, or write your
+   own version of it.
+
+That is the whole skill. The rest is detail for when a step is unclear or
+a finding is hard to fix.
 
 ## Who you are talking to
 
@@ -249,14 +262,36 @@ judgment check, not a scanner one.
 | `hookify/`, `commands/` | the user wants the Claude Code layer (see setup guide) |
 | `scripts/rules.json` | updating rules, only with a source, only with the register |
 
-## Keeping the register alive
+Adding or retiring a rule: `reference/tells-register.md` explains how, at
+the end. Never add one from an article alone.
 
-Tells drift (~18-month eras: purple → shadcn-tokens → cream-editorial).
-When updating, verify against real generated code the way
-`research/04-code-patterns.md` did: clone provably-generated repos and
-count. Then bump the register version. Era-tag retired tells (keep them
-at 1 point as legacy). Update rules.json in the same change. Never add
-a rule from an article alone.
+## What the last version of this skill got wrong
+
+Worth knowing, because the mistakes were not obvious ones and the same
+traps are still open.
+
+- **It measured one distance and called it "distinct."** v2 scored how far
+  a design sat from *generic AI output*. It never asked how close the design
+  sat to *a specific house style*. So its own four pages went through the
+  brand guard too. **Four out of four passed one guard and failed the
+  other.** Escaping the average is not the same as arriving somewhere. The
+  proof line now carries a brand-distance field, and a missing brand guard
+  is a FAIL, not a shrug.
+- **It trusted its own word lists past their expiry.** The cadence rules
+  encoded 2023-24 vocabulary and nothing since. AI vocabulary turns over
+  about every 18 months, so a rule with no era tag is a rule that quietly
+  stops working. Every rule now carries one.
+- **It graded a phone frame instead of a button.** One eval passed
+  "button is at least 44px" against a `min-height: 844px` that was the
+  simulated phone, not the control. A check measuring the wrong element
+  passes forever and tells you nothing.
+- **Its citations pointed at two different things with the same spelling.**
+  `P13` meant a research finding in one file and a source in another.
+  Nothing crashed; the evidence chain just stopped meaning what it said.
+  `scripts/check_citations.py` now fails if a citation stops resolving.
+- **It never ran its own hooks.** Four of the five fired on a field that
+  the event does not provide. They were correct-looking and inert. Reading
+  a rule is not running it.
 
 ## What this skill refuses
 
