@@ -7,9 +7,13 @@ installed as a plugin, changes between sessions. Hard-coding a path means the
 guard silently stops running, and a silently skipped guard is worse than no
 guard - it produces a verdict that looks complete and is not.
 
-So this searches, validates, and fails closed: a directory only counts if it
-actually contains scripts/audit_file.py. Exit 2 means "not found", and the
-callers treat that as a FAIL, never as a pass.
+So this searches and validates: a directory only counts if it actually
+contains scripts/audit_file.py. An installed copy always wins. When none is
+installed, the copy vendored inside this skill is used and the proof line says
+`(vendored)`, so the fallback is visible, never silent. Exit 2 means "nothing
+usable at all", and the callers treat that as a FAIL, never as a pass. Set
+ANTI_ANTROPIK_NO_VENDORED=1 to refuse every vendored copy, which is how the
+tests reach that path.
 """
 
 import argparse
@@ -35,9 +39,16 @@ VENDORED = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__
 
 
 def source_of(path):
-    """'vendored' when the guard came from this skill's own copy, else 'installed'."""
+    """'vendored' when the guard is a copy shipped inside a `vendor/` folder.
+
+    Structural, not positional: a second copy of this skill in a plugin cache
+    carries its own vendor/ folder, and the plugin glob can find it. It must
+    be labelled vendored there too, or the proof line would say (installed)
+    about a frozen copy.
+    """
     try:
-        return "vendored" if os.path.realpath(path) == os.path.realpath(VENDORED) else "installed"
+        real = os.path.realpath(path)
+        return "vendored" if os.path.basename(os.path.dirname(real)) == "vendor" else "installed"
     except Exception:
         return "installed"
 
@@ -79,6 +90,8 @@ def locate(home=None, env=None, allow_vendored=True):
     and the most recently written one is the one the running session uses.
     """
     found = [p for p in candidates(home, env, allow_vendored) if _usable(p)]
+    if not allow_vendored or (os.environ if env is None else env).get("ANTI_ANTROPIK_NO_VENDORED"):
+        found = [p for p in found if source_of(p) != "vendored"]
     if not found:
         return None
     override = (os.environ if env is None else env).get("ANTI_ANTROPIK_PATH")
@@ -124,11 +137,27 @@ def selftest():
         checks.append(("installed skill is found",
                        locate(home=home, env={}) ==
                        os.path.join(home, ".claude", "skills", NAME)))
+
+        # A second copy of THIS skill in the plugin cache carries its own
+        # vendor/ folder, and the plugin glob finds it. It must be labelled
+        # vendored, must lose to a real install however old, and the switch
+        # must remove it too.
+        cached = os.path.join(home, ".claude", "plugins", "cache", "x",
+                              "anti-ai-design-style", "vendor", NAME)
+        os.makedirs(os.path.join(cached, "scripts"))
+        open(os.path.join(cached, MARKER), "w").close()
+        os.utime(os.path.join(home, ".claude", "skills", NAME), (1, 1))
+        checks.append(("a vendored copy reached through the plugin glob is labelled vendored",
+                       source_of(cached) == "vendored"))
+        checks.append(("an older real install beats a newer vendored copy in the plugin cache",
+                       locate(home=home, env={}) ==
+                       os.path.join(home, ".claude", "skills", NAME)))
+        shutil.rmtree(os.path.join(home, ".claude", "skills"))
+        checks.append(("ANTI_ANTROPIK_NO_VENDORED=1 also removes a plugin-cache vendored copy",
+                       locate(home=home, env={"ANTI_ANTROPIK_NO_VENDORED": "1"}) is None))
     finally:
         shutil.rmtree(root, ignore_errors=True)
 
-    for label, ok in checks:
-        print("  {} {}".format("ok  " if ok else "FAIL", label))
     # The vendored copy must report the fingerprint this skill's proof lines
     # were written against. If the installed copy is ever updated and this
     # copy is not, the two fingerprints in the proof line will differ.
@@ -143,6 +172,8 @@ def selftest():
         fp = "error: {}".format(e)
     checks.append(("vendored copy reports fingerprint 5697117fa1b27195 (got {})".format(fp),
                    fp == "5697117fa1b27195"))
+    for label, ok in checks:
+        print("  {} {}".format("ok  " if ok else "FAIL", label))
     passed = all(ok for _, ok in checks)
     print("SELFTEST: {}".format("PASS" if passed else "FAIL"))
     return 0 if passed else 1

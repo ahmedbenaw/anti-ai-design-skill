@@ -140,3 +140,16 @@ based on reading the code, not on trust.
 Finding 1 is now caught by the copy checker and by eval assertion `a9`.
 Finding 2 is closed with a red-then-green fixture per rule. Finding 3 is a
 one-line fix. Finding 4 is what the checklist in step 3 is for.
+
+## Update 2026-09-11, after the adversarial review
+
+Three read-only reviewers went over every scanner change made for this
+report. They found 17 problems; every one was reproduced by hand and 13 fixes
+went in, test first. The one that mattered most concerns a double install.
+If this skill is installed twice, once as a plugin, the plugin copy's frozen
+brand guard could beat your real one. The proof line would still say
+"(installed)". That is fixed and tested. The others were spellings the scanner missed or wrongly caught. Examples:
+upper-case hex, `rgba()` gradients, `[PDF]` badges, a logo inverted for dark
+mode. One more: a Codex install that could not be undone. Verdict and evidence:
+`interrogate/VERDICT.md`, `interrogate/reproduction-log.md`. New rules
+fingerprint `b591c533d917bdd4`. Evals re-measured: same grades.

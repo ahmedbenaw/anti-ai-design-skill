@@ -237,35 +237,27 @@ def scan_texts(texts, rules):
 
     # --- Craft checks -----------------------------------------------------
     for chk in rules["craft_checks"]["checks"]:
-        if "requires" in chk:
-            has_req = any(re.search(r, all_text) for r in chk["requires"])
-            if "patterns" in chk:
-                # `requires` is a gate: the rule only applies when the
-                # precondition is on the page (tokens defined, a dark-mode
-                # block). The patterns below then do the counting.
-                if not has_req:
-                    continue
-            else:
-                # No patterns: the finding is "X present and Y absent", the
-                # shape CR2 uses for animation without a reduced-motion rule.
-                missing = all(not re.search(mreg, all_text)
-                              for mreg in chk.get("missing", []))
-                if has_req and missing:
-                    findings_craft.append(Finding(chk["id"], chk["name"], 0,
-                                                  list(texts), [],
-                                                  chk["explain"], chk["fix"], "craft"))
-                continue
+        # One shape for every craft rule: `requires` gates (the rule only
+        # applies when the precondition is on the page), `missing` vetoes
+        # (the finding is void if any of these is present), and `patterns`
+        # counts against `min_count`. A rule with no patterns is the
+        # "X present and Y absent" shape (CR2) and counts as one hit.
+        if "requires" in chk and not any(re.search(r, all_text) for r in chk["requires"]):
+            continue
+        if "missing" in chk and any(re.search(mreg, all_text) for mreg in chk["missing"]):
+            continue
         count, evidence, files = 0, [], []
-        for pat in compile_patterns(chk.get("patterns", [])):
-            for path, text in texts.items():
-                for m in pat.finditer(text):
-                    count += 1
-                    if len(evidence) < 3:
-                        evidence.append(m.group(0)[:60])
-                    files.append(path)
-        if count and count >= chk.get("min_count", 1):
-            if "missing" in chk and any(re.search(mreg, all_text) for mreg in chk["missing"]):
-                continue
+        if "patterns" in chk:
+            for pat in compile_patterns(chk["patterns"]):
+                for path, text in texts.items():
+                    for m in pat.finditer(text):
+                        count += 1
+                        if len(evidence) < 3:
+                            evidence.append(m.group(0)[:60])
+                        files.append(path)
+        else:
+            count, files = 1, list(texts)
+        if count >= chk.get("min_count", 1):
             findings_craft.append(Finding(chk["id"], chk["name"], 0, files,
                                           evidence, chk["explain"], chk["fix"],
                                           "craft"))
@@ -540,8 +532,8 @@ export default function AppTabs() {
 CSS_FORM_FIXTURE = """
 <!doctype html><html><head><style>
 .hero{background:linear-gradient(135deg,#8b5cf6 0%,#ec4899 100%)}
-.band{background:linear-gradient(90deg,#3b82f6,#a855f7)}
-.strip{background:linear-gradient(to right,#f97316,#ef4444)}
+.band{background:linear-gradient(90deg,rgba(59,130,246,1) 0%,rgba(168,85,247,1) 100%)}
+.strip{background:linear-gradient(to right,hsl(20,90%,55%),hsl(0,84%,60%))}
 .wash{background:linear-gradient(120deg,#22d3ee,#6366f1)}
 .foot{background:linear-gradient(45deg,#f43f5e,#fb923c)}
 .dark{background:#0f172a}
@@ -572,22 +564,57 @@ h1{font-size:clamp(2.5rem,6vw,4.5rem);font-weight:800;letter-spacing:-.03em}
 CSS_FORM_EXPECT = {"CO3", "CO4", "TY5", "TY4", "LA3", "LA8", "LA9", "MO1", "MO2", "MO3"}
 
 
+# Spellings the reviewers found the twins missing: upper-case hex, a
+# two-decimal rgba alpha, a three-digit hero size, and the Tailwind-side
+# thresholds written in CSS (tracking-wide = .025em, scale-125).
+CSS_EDGE_FIXTURE = """
+<!doctype html><html><head><style>
+.dark{background:#0F172A}
+.glass{background:rgba(255,255,255,0.20);border:1px solid rgba(255,255,255,.15);backdrop-filter:blur(12px)}
+.card{border:1px solid #E5E7EB;box-shadow:0 20px 25px -5px rgba(0,0,0,.1)}
+h1{font-size:120px;font-weight:700;letter-spacing:-.03em}
+.eyebrow{text-transform:uppercase;letter-spacing:.025em}
+.a:hover{transform:scale(1.25)}.b:hover{transform:scale(1.25)}.c:hover{transform:scale(1.25)}
+</style></head><body><div class="dark"><div class="glass">g</div></div><div class="card"><span class="eyebrow">New</span><h1>Big</h1></div>
+<a class="a">1</a><a class="b">2</a><a class="c">3</a></body></html>
+"""
+CSS_EDGE_EXPECT = {"CO4", "LA9", "TY4", "TY5", "MO2"}
+
+
 # A well-made plain-CSS page. Every property the ten twins look for appears
 # here in its honest, below-threshold form: one gradient, a blockquote rule
 # with no radius, a 2px shadow, a subtle hover lift, .02em uppercase on a
 # button. If any of the ten rules fires on this, its twin has been loosened.
 CSS_CLEAN_FIXTURE = """
 <!doctype html><html><head><style>
-body{font-family:Georgia,serif;color:#1b2a20;background:#f4f1e8}
+body{font-family:Georgia,serif;color:var(--ink);background:var(--paper)}
 h1{font-size:2rem;font-weight:600;letter-spacing:0}
-.btn{text-transform:uppercase;letter-spacing:.02em;background:#b4531f;color:#fff;padding:12px 20px}
+.btn{text-transform:uppercase;letter-spacing:.02em;background:var(--signal);color:var(--paper);padding:12px 20px}
 .btn:hover{transform:translateY(-1px)}
 .header{background:linear-gradient(180deg,#f4f1e8,#e8e2d4)}
 blockquote{border-left:3px solid #b4531f;padding-left:16px;margin:0}
-.card{border:1px solid #e5e7eb;box-shadow:0 1px 2px rgba(0,0,0,.06);padding:20px}
-.avatar{width:48px;height:48px;border-radius:50%;background:#ddd}
-.dark{background:#1b2a20;color:#fff}
+.card{border:1px solid var(--line);box-shadow:0 1px 2px rgba(0,0,0,.06);padding:20px}
+.avatar{width:48px;height:48px;border-radius:50%;background:var(--line)}
+.dark{background:var(--ink);color:var(--paper)}
+:root{--ink:#1b2a20;--paper:#f4f1e8;--signal:#b4531f;--line:#e5e7eb}
+.t1{color:var(--ink,#1b2a20)}.t2{color:var(--ink,#1b2a20)}.t3{color:var(--ink,#1b2a20)}.t4{color:var(--ink,#1b2a20)}
+.t5{color:var(--ink,#1b2a20)}.t6{color:var(--ink,#1b2a20)}.t7{color:var(--ink,#1b2a20)}.t8{color:var(--ink,#1b2a20)}
+.t9{background:var(--paper,#f4f1e8)}.t10{background:var(--paper,#f4f1e8)}.t11{background:var(--paper,#f4f1e8)}.t12{background:var(--paper,#f4f1e8)}
+.p1{background:linear-gradient(to bottom,#fafafa,#f0f0f0)}.p2{background:linear-gradient(to bottom,#f5f5f5,#e8e8e8)}
+.p3{background:linear-gradient(to bottom,#ffffff,#f4f4f4)}.p4{background:linear-gradient(to bottom,#f7f7f7,#ededed)}
+.p5{background:linear-gradient(to bottom,rgb(250,250,250),rgb(240,240,240))}.p6{background:linear-gradient(to bottom,#f9f9f9,#eeeeee)}
+@media (prefers-color-scheme: dark){:root{--ink:#eee;--paper:#111}.logo-mark{filter:invert(1)}}
+a:focus{outline:none;box-shadow:0 0 0 3px #b4531f}
+@keyframes pulse{0%{opacity:1}50%{opacity:.4}100%{opacity:1}}
+/* ------------------------------------------------------------------------------------------------------------------------------------ */
+.skeleton{animation:pulse 1.5s infinite}
 </style></head><body>
+<span style="text-transform:uppercase">Menu</span>
+<p>The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.</p>
+<h2 style="letter-spacing:.2em">Menu</h2>
+<div style="border:1px solid #e5e7eb">a</div>
+<p>The quick brown fox jumps over the lazy dog.</p>
+<div style="box-shadow:0 10px 30px rgba(0,0,0,.1)">b</div>
 <div class="header"><h1>Fadl's Ledger</h1><button class="btn">Try it</button></div>
 <blockquote>We type a customer once.</blockquote>
 <div class="card"><span class="avatar"></span>Bab al-Louq, Cairo</div>
@@ -640,12 +667,16 @@ def selftest():
     css_missing = CSS_FORM_EXPECT - {f.rule_id for f in tells7}
     _, tells8, _, _ = scan_texts({"page.html": CSS_CLEAN_FIXTURE}, rules)
     css_false = {f.rule_id for f in tells8} & CSS_FORM_EXPECT
+    _, tells7b, _, _ = scan_texts({"page.html": CSS_EDGE_FIXTURE}, rules)
+    css_edge_missing = CSS_EDGE_EXPECT - {f.rule_id for f in tells7b}
     _, _, craft9, _ = scan_texts({"page.html": TOKEN_CRAFT_FIXTURE}, rules)
     craft_missing = TOKEN_CRAFT_EXPECT - {f.rule_id for f in craft9}
     _, _, craft10, _ = scan_texts({"page.html": CSS_CLEAN_FIXTURE}, rules)
     craft_false = {f.rule_id for f in craft10} & TOKEN_CRAFT_EXPECT
 
     problems = []
+    if css_edge_missing:
+        problems.append(f"CSS twins missed a spelling the reviewers found: {sorted(css_edge_missing)}")
     if css_missing:
         problems.append("plain-CSS form of these tells scored 0, only the Tailwind "
                         f"spelling is recognised: {sorted(css_missing)}")

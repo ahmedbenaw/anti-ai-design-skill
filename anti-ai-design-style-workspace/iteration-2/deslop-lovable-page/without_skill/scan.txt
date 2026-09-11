@@ -1,5 +1,5 @@
 
-=== AI-look scan (register 2026.10, fingerprint ee9ee6320a9a639b) ===
+=== AI-look scan (register 2026.10, fingerprint b591c533d917bdd4) ===
 Files scanned: 1
 
 AI-look score: 20/100  ->  leaning generic - fix the strongest findings

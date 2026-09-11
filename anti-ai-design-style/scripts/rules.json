@@ -121,7 +121,7 @@
       "name": "Many two-hue gradient washes",
       "patterns": [
         "\\bfrom-[a-z]+-\\d00\\s+(?:via-[a-z]+-\\d00\\s+)?to-[a-z]+-\\d00\\b",
-        "linear-gradient\\([^)]*#[0-9a-fA-F]{3,6}\\b[^)]*#[0-9a-fA-F]{3,6}\\b[^)]*\\)"
+        "linear-gradient\\((?:[^()]|\\([^()]*\\))*?(?:#(?!(?:([0-9a-fA-F]{2})\\1\\1|([0-9a-fA-F])\\2\\2)\\b)[0-9a-fA-F]{3,8}\\b|rgba?\\((?!\\s*(\\d+)\\s*,\\s*\\3\\s*,\\s*\\3\\b)[^()]*\\)|hsla?\\([^()]*\\)|\\b(?:red|blue|purple|pink|cyan|indigo|violet|teal|orange|fuchsia|emerald|magenta|lime|amber|rose|sky)\\b)(?:[^()]|\\([^()]*\\))*?(?:#(?!(?:([0-9a-fA-F]{2})\\4\\4|([0-9a-fA-F])\\5\\5)\\b)[0-9a-fA-F]{3,8}\\b|rgba?\\((?!\\s*(\\d+)\\s*,\\s*\\6\\s*,\\s*\\6\\b)[^()]*\\)|hsla?\\([^()]*\\)|\\b(?:red|blue|purple|pink|cyan|indigo|violet|teal|orange|fuchsia|emerald|magenta|lime|amber|rose|sky)\\b)"
       ],
       "points": 4,
       "min_distinct": 5,
@@ -132,8 +132,8 @@
       "id": "CO4",
       "name": "Dark hero glass combo",
       "combo": [
-        "\\bbg-(gray-900|slate-900|slate-950|zinc-950|black)\\b|background(?:-color)?:\\s*#(?:0f172a|111827|18181b|09090b|020617|000000|000)\\b",
-        "\\bbg-white/(5|10|20)\\b|background(?:-color)?:\\s*rgba\\(255,\\s*255,\\s*255,\\s*0?\\.(?:0[5-9]|1\\d?|2)\\)",
+        "\\bbg-(gray-900|slate-900|slate-950|zinc-950|black)\\b|background(?:-color)?:\\s*#(?i:0f172a|111827|18181b|09090b|020617|000000|000)\\b",
+        "\\bbg-white/(5|10|20)\\b|background(?:-color)?:\\s*rgba\\(255,\\s*255,\\s*255,\\s*0?\\.(?:0[5-9]|1\\d?|2\\d?)\\)",
         "\\bborder-white/(10|20|30)\\b|border[^;{}]*rgba\\(255,\\s*255,\\s*255,\\s*0?\\.(?:1|2|3)\\d?\\)",
         "\\bbackdrop-blur|backdrop-filter:\\s*blur"
       ],
@@ -197,8 +197,8 @@
       "patterns": [
         "uppercase[^\"']*tracking-(wide|widest)",
         "tracking-(wide|widest)[^\"']*uppercase",
-        "text-transform:\\s*uppercase[^}]*letter-spacing:\\s*0?\\.(?:0[8-9]|[1-9])\\d*em",
-        "letter-spacing:\\s*0?\\.(?:0[8-9]|[1-9])\\d*em[^}]*text-transform:\\s*uppercase"
+        "text-transform:\\s*uppercase[^}\"]*letter-spacing:\\s*0?\\.(?:0(?:2[5-9]|[3-9])|[1-9])\\d*em",
+        "letter-spacing:\\s*0?\\.(?:0(?:2[5-9]|[3-9])|[1-9])\\d*em[^}\"]*text-transform:\\s*uppercase"
       ],
       "points": 2,
       "explain": "Tiny ALL-CAPS labels above every heading. Also harder to read for dyslexic users.",
@@ -208,7 +208,7 @@
       "id": "TY4",
       "name": "Hero type sandwich",
       "combo": [
-        "text-[45]xl[^\"']*(sm|md|lg):text-[567]xl|font-size:\\s*(?:clamp\\([^)]*[3-9](?:\\.\\d+)?rem|[3-9](?:\\.\\d+)?rem|[4-9]\\dpx)",
+        "text-[45]xl[^\"']*(sm|md|lg):text-[567]xl|font-size:\\s*(?:clamp\\([^)]*[3-9](?:\\.\\d+)?rem|[3-9](?:\\.\\d+)?rem|(?<!\\d)(?:[4-9]\\d|[1-9]\\d\\d)px\\b)",
         "font-bold|font-weight:\\s*(?:700|800|900|bold)\\b",
         "tracking-tight|letter-spacing:\\s*-0?\\.0(?:2[5-9]|[3-9])\\d*em"
       ],
@@ -235,7 +235,7 @@
       "name": "Icon tile above card heading",
       "patterns": [
         "\\bw-1[02] h-1[02][^\"']*rounded-(lg|xl)[^\"']*bg-[a-z]+-(100|500/10)|bg-primary/10[^\"']*rounded",
-        "width:\\s*(?:40|48)px;\\s*height:\\s*(?:40|48)px;[^}]*border-radius:\\s*(?:8|10|12|16)px[^}]*background(?:-color)?:\\s*#[0-9a-fA-F]{6}"
+        "width:\\s*(?:40|48)px;\\s*height:\\s*(?:40|48)px;[^}\"]*border-radius:\\s*(?:8|10|12|16)px[^}\"]*background(?:-color)?:\\s*#[0-9a-fA-F]{6}"
       ],
       "points": 3,
       "explain": "The little rounded square holding an icon above every card title - 'the universal AI feature-card template'.",
@@ -273,7 +273,7 @@
         "border-l-4 border-[a-z]+-[45]00",
         "border-l-\\[3px\\]",
         "border-l-4 border-l-(?:[a-z]+-[45]00|primary|accent|destructive)\\b",
-        "border-left:\\s*[3-8]px\\s+solid[^}]*border-radius|border-radius[^}]*border-left:\\s*[3-8]px\\s+solid"
+        "border-left:\\s*[3-8]px\\s+solid[^}\"]*border-radius|border-radius[^}\"]*border-left:\\s*[3-8]px\\s+solid"
       ],
       "points": 1,
       "explain": "Coloured left stripes on cards - 'almost as reliable a sign of AI design as em-dashes' - unless they encode real status.",
@@ -286,8 +286,8 @@
       "patterns": [
         "border[^\"']*border-(gray|slate|zinc)-200[^\"']*shadow-(lg|xl|2xl)",
         "shadow-(lg|xl|2xl)[^\"']*border-(gray|slate|zinc)-200",
-        "border:\\s*1px\\s+solid\\s*#(?:e5e7eb|e2e8f0|e4e4e7|d1d5db)\\b[^}]*box-shadow:[^;]*\\d{2}px",
-        "box-shadow:[^;]*\\d{2}px[^}]*border:\\s*1px\\s+solid\\s*#(?:e5e7eb|e2e8f0|e4e4e7|d1d5db)\\b"
+        "border:\\s*1px\\s+solid\\s*#(?i:e5e7eb|e2e8f0|e4e4e7|d1d5db)\\b[^}\"]*box-shadow:[^;]*\\d{2}px",
+        "box-shadow:[^;]*\\d{2}px[^}\"]*border:\\s*1px\\s+solid\\s*#(?i:e5e7eb|e2e8f0|e4e4e7|d1d5db)\\b"
       ],
       "points": 2,
       "explain": "A hairline border AND a big soft shadow on the same card - two competing depth systems at once.",
@@ -374,7 +374,7 @@
         "opacity-0[^\"']*translate-y",
         "data-aos=",
         "\\bIntersectionObserver\\b",
-        "opacity:\\s*0;[^}]*transform:\\s*translateY\\("
+        "opacity:\\s*0;[^}\"]*transform:\\s*translateY\\("
       ],
       "points": 2,
       "min_count": 3,
@@ -386,7 +386,7 @@
       "name": "hover:scale on everything",
       "patterns": [
         "hover:scale-10[5-9]|hover:scale-1[12]\\d",
-        ":hover\\s*\\{[^}]*transform:\\s*scale\\(1\\.(?:0[5-9]|1\\d?)\\)"
+        ":hover\\s*\\{[^}\"]*transform:\\s*scale\\(1\\.(?:0[5-9]|[12]\\d?)\\)"
       ],
       "points": 1,
       "min_count": 3,
@@ -398,7 +398,7 @@
       "name": "Pulse on static things",
       "patterns": [
         "animate-pulse",
-        "animation:[^;]*\\bpulse\\b|@keyframes\\s+pulse\\b"
+        "animation:[^;]*\\bpulse\\b"
       ],
       "points": 2,
       "exclude_context": "[Ss]keleton|[Ll]oading",
@@ -602,7 +602,7 @@
           "outline-none"
         ],
         "missing": [
-          "focus-visible|focus:ring|focus:outline"
+          "focus-visible|focus:ring|focus:outline|:focus\\s*\\{[^}]*(?:box-shadow|outline-offset)"
         ],
         "explain": "Keyboard users can't see where they are (WCAG 2.4.7).",
         "fix": "Never remove the outline without a visible replacement (e.g. focus-visible:ring-2)."
@@ -645,7 +645,7 @@
           "--[a-z][a-z0-9-]*:\\s*#[0-9a-fA-F]{3,6}\\b"
         ],
         "patterns": [
-          "(?<!-)\\b(?:color|background|background-color|border|border-color|fill|stroke):\\s*[^;{}]*#[0-9a-fA-F]{3,6}\\b"
+          "(?<!-)\\b(?:color|background|background-color|border|border-color|fill|stroke):\\s*(?![^;{}]*var\\()[^;{}]*#[0-9a-fA-F]{3,6}\\b"
         ],
         "min_count": 12,
         "explain": "The page defines colour tokens with custom properties and then types twelve or more raw hex colours into component rules anyway. Once a token system exists, each bypass is a value that dark mode, theming and the brand guard cannot reach. Design-system checklist, section 4.",
@@ -658,7 +658,7 @@
           "prefers-color-scheme:\\s*dark"
         ],
         "patterns": [
-          "filter:\\s*invert\\(\\s*(?:1|100%)\\s*\\)"
+          "(?:html|body|:root)[^{}]*\\{[^}\"]*filter:\\s*invert\\(\\s*(?:1|100%)\\s*\\)"
         ],
         "explain": "The dark theme is the light theme run through filter: invert(). Images, brand colours and shadows invert with it, and contrast pairs that passed in light mode no longer hold. A dark palette is designed, not flipped. Design-system checklist, section 4.",
         "fix": "Define dark-mode token values in the prefers-color-scheme block and drop the filter. Re-check contrast in dark mode."
@@ -667,7 +667,7 @@
         "id": "CR9",
         "name": "Focus outline removed, nothing put back",
         "patterns": [
-          ":focus\\s*\\{[^}]*outline:\\s*(?:none|0)\\b"
+          ":focus\\s*\\{(?![^}]*(?:box-shadow|outline-offset|border))[^}]*outline:\\s*(?:none|0)\\b"
         ],
         "missing": [
           ":focus-visible"

@@ -201,7 +201,7 @@ fingerprints are not decoration. They say which rules gave this verdict.
 ```
 PASS: AI-look 0/100 (distinct), craft flags 0, library misuse 0, copy grade
 4.6, brand distance COMPLIANT, rendered PASS | register 2026.10, rules
-ee9ee6320a9a639b, brand rules 5697117fa1b27195 (installed)
+b591c533d917bdd4, brand rules 5697117fa1b27195 (installed)
 ```
 
 Paste the real one. Never retype it, shorten it, or add a word to it.

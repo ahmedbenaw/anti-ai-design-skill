@@ -126,11 +126,12 @@ def check_text(name, raw, rules, max_grade):
             f"{len(long_sents)} sentence(s) over 25 words (e.g. \"{example}\")",
             "Split them. One idea per sentence."))
 
-    # Shipped placeholders. A bracketed run that reads like a blank: words in
-    # capitals, something ending in "name", or a field word first. Citations
-    # like [1], keys like [Enter] and flags like [optional] do not match.
+    # Shipped placeholders. A bracketed run that reads like a blank: two or
+    # more words in capitals, a field word, something ending in "name", or a
+    # field word first. Citations like [1], keys like [Enter], flags like
+    # [optional] and one-word badges like [PDF] or [NOTE] do not match.
     ph = re.findall(
-        r"\[\s*(?:[A-Z][A-Z ]{2,40}|[A-Za-z ]{2,30}\bname|"
+        r"\[\s*(?:[A-Z]{2,}(?: [A-Z]{2,})+|(?:NAME|ADDRESS|PHONE|EMAIL|CITY|PRICE|DATE|COMPANY|LOGO|TBD|XXX+)\b[A-Z ]{0,40}|[A-Za-z ]{2,30}\bname|"
         r"(?:Street|Address|Phone|Email|Logo|Your|Landmark|Company|Insert|Placeholder)\b[^\]]{0,40})\s*\]",
         text)
     if ph:
@@ -279,12 +280,13 @@ No account needed for the first month.
 # a clinic, and still not something anyone would upload.
 PLACEHOLDER_COPY = """<h1>[ CLINIC NAME ] physiotherapy</h1>
 <p>Three therapists in Alexandria. Call [ Phone number ] or visit [ Street and building ].</p>
-<p>[ Therapist name ] runs the first visits.</p>"""
+<p>[ Therapist name ] runs the first visits. Find us at [YOUR ADDRESS] or [INSERT MAP LINK].</p>"""
 
 # Square brackets that are not placeholders: citations, keyboard hints,
 # optional flags, and a markdown link. None of these may be flagged.
 BRACKETS_OK_COPY = """<p>See the register [1] and press [Enter] to continue. The --render flag is [optional].</p>
-<p><a href="/x">[read more]</a> about our bakery in Bab al-Louq.</p>"""
+<p><a href="/x">[read more]</a> about our bakery in Bab al-Louq.</p>
+<p>[NOTE] Grab the menu as a [PDF]. Shipping by [DHL]. Press [ESC] to close. [BETA] features are marked.</p>"""
 
 
 def selftest():

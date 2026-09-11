@@ -444,7 +444,7 @@ is the report; the status table at its end says what landed where.
 
 | # | Item | Status |
 |---|---|---|
-| 20 | Ten of thirty code rules only knew the Tailwind spelling | **Closed** (9c36fd3). CSS twin per rule, red fixture first, clean-CSS guard. `research/17-tailwind-vs-css.md`. Fingerprint moved twice, now `ee9ee6320a9a639b`. |
+| 20 | Ten of thirty code rules only knew the Tailwind spelling | **Closed** (9c36fd3). CSS twin per rule, red fixture first, clean-CSS guard. `research/17-tailwind-vs-css.md`. Fingerprint moved twice, now `b591c533d917bdd4`. |
 | 21 | LA8 verified from claims, measured at 2 of 12 | **Closed.** Down-weighted 3 to 1, contested, as the register's own rule requires. |
 | 22 | `anti-antropik-design` vendored as fallback brand guard | **Closed** (9c36fd3). Installed copy wins; proof line says `(installed)` or `(vendored)`; `ANTI_ANTROPIK_NO_VENDORED=1` reproduces fail-closed. No licence file in the source; `vendor/README.md` says so. |
 | 23 | Pages shipping `[ CLINIC NAME ]` passed every check | **Closed** (f5caa5b). `copy_check` fails them; eval assertion `a9`; Step 1 asks for names. |
@@ -452,8 +452,9 @@ is the report; the status table at its end says what landed where.
 | 25 | Codex, Cowork, Claude Design | **Closed** (f5caa5b). `install.py --codex`; Cowork is the plugin format `claude plugin validate` passes, live upload is Ben's; Claude Design is the same session, not an install. |
 | 26 | Live-site audits | **Closed** (f5caa5b). `verify_all --render --allow-network`; `reference/live-audit.md`. Craft only; no pixel-based AI claim. |
 | 27 | `/design-fix` dropped its file argument | **Closed** (9c36fd3). |
-| 28 | Fourth eval with a library, so `a8` can discriminate | **Running.** Iteration 3, `scroll-story-with-library`. |
+| 28 | Fourth eval with a library, so `a8` can discriminate | **Done.** Iteration 3, `scroll-story-with-library`: with_skill 9/9, baseline 7/9 (copy, brand). `a8` still did not discriminate (0 for 4); kept as a guard, recorded in `iteration-3/benchmark.md`. |
 | 29 | The sub-validator said the skill was not shipped by the plugin route | **Withdrawn.** The docs allow a root `SKILL.md`; `claude plugin validate` passes. |
+| 30 | Adversarial review of the sprint-2 scanner changes (three reviewers, read-only) | **Done.** 17 findings, all reproduced, 13 fixes fixture-first; one critical (a plugin-cache copy's vendored guard was labelled installed and beat a real install). `workspace/interrogate/VERDICT.md`. Fingerprint `b591c533d917bdd4`. |
 
 ## 7. Non-negotiables for whoever picks this up
 
@@ -463,7 +464,7 @@ is the report; the status table at its end says what landed where.
 - Never present a page without all three scanners and the proof line:
   `PASS: AI-look 0/100 (distinct), craft flags 0, library misuse 0, copy
   grade 4.6, brand distance COMPLIANT, rendered PASS | register 2026.10,
-  rules ee9ee6320a9a639b, brand rules 5697117fa1b27195 (installed)`
+  rules b591c533d917bdd4, brand rules 5697117fa1b27195 (installed)`
   Quote what `verify_all.py` printed. Never compose the line by hand.
 - Never claim "proven human-made". The scanner measures the AI look.
 - Never edit the installed `anti-antropik-design` copy. Propose instead.

@@ -109,3 +109,5 @@ asks for scroll animation or a map would give it something to do.
 The `side-tab` gap in `cross-tool-findings.md` is the other blind spot. An
 unrelated detector flagged accent stripes on two with_skill outputs, and this
 register has no rule for it, so both scored 0 on that axis.
+
+> Re-measured 2026-09-11 under rules fingerprint `b591c533d917bdd4` (after the interrogate fixes): every cell graded the same as before.

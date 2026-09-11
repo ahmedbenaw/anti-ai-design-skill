@@ -3,11 +3,11 @@
     "skill_name": "anti-ai-design-style",
     "skill_path": "/Users/ben/Downloads/Repos/Anti-AI-design skill/anti-ai-design-style",
     "executor_model": "claude-opus-5",
-    "timestamp": "2026-09-11T03:27:31.911413+00:00",
+    "timestamp": "2026-09-11T12:55:38.978422+00:00",
     "evals_run": [
       0,
-      1,
-      2
+      2,
+      1
     ],
     "runs_per_configuration": 1,
     "note": "n = 1 per cell. No stddev claim is made across repeats; the stddev fields describe spread across the three evals, not across repeats."
@@ -81,7 +81,7 @@
         "copy grade 4.0",
         "brand COMPLIANT (0)",
         "library misuse 0",
-        "fingerprint ee9ee6320a9a639b"
+        "fingerprint b591c533d917bdd4"
       ]
     },
     {
@@ -152,149 +152,7 @@
         "copy grade 4.9",
         "brand NON-COMPLIANT (8)",
         "library misuse 0",
-        "fingerprint ee9ee6320a9a639b"
-      ]
-    },
-    {
-      "eval_id": 1,
-      "eval_name": "student-budget-app-screen",
-      "configuration": "with_skill",
-      "run_number": 1,
-      "result": {
-        "pass_rate": 1.0,
-        "passed": 9,
-        "failed": 0,
-        "total": 9,
-        "time_seconds": 590.7,
-        "tokens": 153810,
-        "tool_calls": 39,
-        "errors": 0
-      },
-      "expectations": [
-        {
-          "text": "a1: AI-look score below 20",
-          "passed": true,
-          "evidence": "ai_score=0"
-        },
-        {
-          "text": "a2: No CR1/CR2 craft flags",
-          "passed": true,
-          "evidence": "craft=none"
-        },
-        {
-          "text": "a3: Shows allowance, top 3 categories, log button",
-          "passed": true,
-          "evidence": "3 class=cat rows: Fares/Handouts/Food on campus, plus allowance and one button"
-        },
-        {
-          "text": "a4: Log-expense button at least 44px tall",
-          "passed": true,
-          "evidence": "button.log measured 56.0px tall at 390px viewport (Playwright bounding box)"
-        },
-        {
-          "text": "a5: No purple/indigo gradient, glow or glassmorphism",
-          "passed": true,
-          "evidence": "no purple-gradient or backdrop-filter pattern"
-        },
-        {
-          "text": "a6: Two design choices explained by student context",
-          "passed": true,
-          "evidence": "'23 microbus rides and 7 metro trips', 'photocopy kiosk by gate 3, 1 EGP a page'"
-        },
-        {
-          "text": "a9: No bracketed placeholders remain in visible copy",
-          "passed": true,
-          "evidence": "none found"
-        },
-        {
-          "text": "a7: audit_file.py reports COMPLIANT (brand gate)",
-          "passed": true,
-          "evidence": "COMPLIANT, 0 violations"
-        },
-        {
-          "text": "a8: library_misuse == 0 or justified",
-          "passed": true,
-          "evidence": "library_misuse=0"
-        }
-      ],
-      "notes": [
-        "AI-look 0/100",
-        "craft none",
-        "copy grade 1.2",
-        "brand COMPLIANT (0)",
-        "library misuse 0",
-        "fingerprint ee9ee6320a9a639b"
-      ]
-    },
-    {
-      "eval_id": 1,
-      "eval_name": "student-budget-app-screen",
-      "configuration": "without_skill",
-      "run_number": 1,
-      "result": {
-        "pass_rate": 0.7778,
-        "passed": 7,
-        "failed": 2,
-        "total": 9,
-        "time_seconds": 304.4,
-        "tokens": 131998,
-        "tool_calls": 20,
-        "errors": 0
-      },
-      "expectations": [
-        {
-          "text": "a1: AI-look score below 20",
-          "passed": true,
-          "evidence": "ai_score=4"
-        },
-        {
-          "text": "a2: No CR1/CR2 craft flags",
-          "passed": false,
-          "evidence": "craft=['CR2', 'CR5']"
-        },
-        {
-          "text": "a3: Shows allowance, top 3 categories, log button",
-          "passed": true,
-          "evidence": "allowance, 3 categories and a log button present"
-        },
-        {
-          "text": "a4: Log-expense button at least 44px tall",
-          "passed": true,
-          "evidence": "button.cta measured 62.0px tall at 390px viewport (Playwright bounding box)"
-        },
-        {
-          "text": "a5: No purple/indigo gradient, glow or glassmorphism",
-          "passed": true,
-          "evidence": "no purple-gradient or backdrop-filter pattern"
-        },
-        {
-          "text": "a6: Two design choices explained by student context",
-          "passed": true,
-          "evidence": "Abou Tarek, microbus/metro, printing mulakhasat, EGP"
-        },
-        {
-          "text": "a9: No bracketed placeholders remain in visible copy",
-          "passed": true,
-          "evidence": "none found"
-        },
-        {
-          "text": "a7: audit_file.py reports COMPLIANT (brand gate)",
-          "passed": false,
-          "evidence": "NON-COMPLIANT, 7 violations"
-        },
-        {
-          "text": "a8: library_misuse == 0 or justified",
-          "passed": true,
-          "evidence": "library_misuse=0"
-        }
-      ],
-      "notes": [
-        "AI-look 4/100",
-        "craft ['CR2', 'CR5']",
-        "copy grade 2.1",
-        "brand NON-COMPLIANT (7)",
-        "library misuse 0",
-        "fingerprint ee9ee6320a9a639b"
+        "fingerprint b591c533d917bdd4"
       ]
     },
     {
@@ -365,7 +223,7 @@
         "copy grade 2.2",
         "brand COMPLIANT (0)",
         "library misuse 0",
-        "fingerprint ee9ee6320a9a639b"
+        "fingerprint b591c533d917bdd4"
       ]
     },
     {
@@ -436,7 +294,149 @@
         "copy grade 5.7",
         "brand NON-COMPLIANT (4)",
         "library misuse 0",
-        "fingerprint ee9ee6320a9a639b"
+        "fingerprint b591c533d917bdd4"
+      ]
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "student-budget-app-screen",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 9,
+        "failed": 0,
+        "total": 9,
+        "time_seconds": 590.7,
+        "tokens": 153810,
+        "tool_calls": 39,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "a1: AI-look score below 20",
+          "passed": true,
+          "evidence": "ai_score=0"
+        },
+        {
+          "text": "a2: No CR1/CR2 craft flags",
+          "passed": true,
+          "evidence": "craft=none"
+        },
+        {
+          "text": "a3: Shows allowance, top 3 categories, log button",
+          "passed": true,
+          "evidence": "3 class=cat rows: Fares/Handouts/Food on campus, plus allowance and one button"
+        },
+        {
+          "text": "a4: Log-expense button at least 44px tall",
+          "passed": true,
+          "evidence": "button.log measured 56.0px tall at 390px viewport (Playwright bounding box)"
+        },
+        {
+          "text": "a5: No purple/indigo gradient, glow or glassmorphism",
+          "passed": true,
+          "evidence": "no purple-gradient or backdrop-filter pattern"
+        },
+        {
+          "text": "a6: Two design choices explained by student context",
+          "passed": true,
+          "evidence": "'23 microbus rides and 7 metro trips', 'photocopy kiosk by gate 3, 1 EGP a page'"
+        },
+        {
+          "text": "a9: No bracketed placeholders remain in visible copy",
+          "passed": true,
+          "evidence": "none found"
+        },
+        {
+          "text": "a7: audit_file.py reports COMPLIANT (brand gate)",
+          "passed": true,
+          "evidence": "COMPLIANT, 0 violations"
+        },
+        {
+          "text": "a8: library_misuse == 0 or justified",
+          "passed": true,
+          "evidence": "library_misuse=0"
+        }
+      ],
+      "notes": [
+        "AI-look 0/100",
+        "craft none",
+        "copy grade 1.2",
+        "brand COMPLIANT (0)",
+        "library misuse 0",
+        "fingerprint b591c533d917bdd4"
+      ]
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "student-budget-app-screen",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.7778,
+        "passed": 7,
+        "failed": 2,
+        "total": 9,
+        "time_seconds": 304.4,
+        "tokens": 131998,
+        "tool_calls": 20,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "a1: AI-look score below 20",
+          "passed": true,
+          "evidence": "ai_score=4"
+        },
+        {
+          "text": "a2: No CR1/CR2 craft flags",
+          "passed": false,
+          "evidence": "craft=['CR2', 'CR5']"
+        },
+        {
+          "text": "a3: Shows allowance, top 3 categories, log button",
+          "passed": true,
+          "evidence": "allowance, 3 categories and a log button present"
+        },
+        {
+          "text": "a4: Log-expense button at least 44px tall",
+          "passed": true,
+          "evidence": "button.cta measured 62.0px tall at 390px viewport (Playwright bounding box)"
+        },
+        {
+          "text": "a5: No purple/indigo gradient, glow or glassmorphism",
+          "passed": true,
+          "evidence": "no purple-gradient or backdrop-filter pattern"
+        },
+        {
+          "text": "a6: Two design choices explained by student context",
+          "passed": true,
+          "evidence": "Abou Tarek, microbus/metro, printing mulakhasat, EGP"
+        },
+        {
+          "text": "a9: No bracketed placeholders remain in visible copy",
+          "passed": true,
+          "evidence": "none found"
+        },
+        {
+          "text": "a7: audit_file.py reports COMPLIANT (brand gate)",
+          "passed": false,
+          "evidence": "NON-COMPLIANT, 7 violations"
+        },
+        {
+          "text": "a8: library_misuse == 0 or justified",
+          "passed": true,
+          "evidence": "library_misuse=0"
+        }
+      ],
+      "notes": [
+        "AI-look 4/100",
+        "craft ['CR2', 'CR5']",
+        "copy grade 2.1",
+        "brand NON-COMPLIANT (7)",
+        "library misuse 0",
+        "fingerprint b591c533d917bdd4"
       ]
     }
   ],

@@ -73,19 +73,20 @@ def render_result(paths, enabled, allow_network=False):
         return {"state": "SKIPPED", "detail": "playwright not installed"}
     worst = "PASS"
     fails = 0
+    net = {"network": True} if allow_network else {}
     for f in html:
         cmd = [sys.executable, os.path.join(HERE, "render_check.py"), "--json", f]
         if allow_network:
             cmd.append("--allow-network")
         data = _json_cmd(cmd)
         if data is None:
-            return {"state": "ERROR", "detail": "render_check did not run"}
+            return {"state": "ERROR", "detail": "render_check did not run", **net}
         fails += data.get("aa_failures", 0)
         if data["verdict"] == "INCONCLUSIVE":
             worst = "INCONCLUSIVE"
         elif data["verdict"] == "FAIL" and worst != "INCONCLUSIVE":
             worst = "FAIL"
-    return {"state": worst, "detail": "{} WCAG AA failures".format(fails),
+    return {**net, "state": worst, "detail": "{} WCAG AA failures".format(fails),
             "aa_failures": fails}
 
 
@@ -188,7 +189,7 @@ def proof_line(summary):
             ).format(
         verdict="PASS" if summary["passed"] else "FAIL",
         score=score, band=s["band"], craft=craft, lib=lib, grade=grade,
-        brand=b["verdict"], render=r["state"], reg=s["register"],
+        brand=b["verdict"], render=r["state"] + (" (network)" if r.get("network") else ""), reg=s["register"],
         src=(" ({})".format(b["source"]) if b.get("source") and b.get("fingerprint") else ""),
         rf=s["fingerprint"], bf=b["fingerprint"] or "-")
 
@@ -251,6 +252,10 @@ def selftest():
     checks.append(("an inconclusive render check fails the run",
                    not summarise(r_inc, rules)["passed"]))
 
+    r_net = dict(good, render={"state": "PASS", "detail": "0 WCAG AA failures", "network": True})
+    checks.append(("a render check that loaded the network says so in the line",
+                   "rendered PASS (network)" in proof_line(summarise(r_net, rules))))
+
     dead = {"scan": None, "copy": None, "brand": None}
     checks.append(("every guard missing fails the gate",
                    not summarise(dead, rules)["passed"]))
@@ -287,6 +292,8 @@ def main():
     summary = summarise(gather(args.paths, brand_dir, args.max_grade,
                                render=args.render,
                                allow_network=args.allow_network), load_rules())
+    if args.allow_network and not args.render:
+        sys.stderr.write("note: --allow-network does nothing without --render; no browser check ran.\n")
     if args.json:
         print(json.dumps(summary, indent=2))
     print(proof_line(summary))

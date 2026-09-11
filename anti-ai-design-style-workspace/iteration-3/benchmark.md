@@ -49,3 +49,5 @@ is unrecorded.
 The with-skill run took 3.8x the time and 1.65x the tokens of the baseline,
 most of it running the scanners and the brand guard and reading the two
 library notes. That is the price of the proof line.
+
+> Re-measured 2026-09-11 under rules fingerprint `b591c533d917bdd4` (after the interrogate fixes): every cell graded the same as before.

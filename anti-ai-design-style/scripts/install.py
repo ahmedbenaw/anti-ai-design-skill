@@ -13,6 +13,7 @@ says, done. Nothing outside <target>/.claude/ is touched.
 
 import argparse
 import os
+import re
 import shutil
 import sys
 import tempfile
@@ -123,11 +124,34 @@ def install_codex(target, skill_dir=SKILL_DIR, dry_run=False, out=sys.stdout):
                 fh.write(line)
     print("{} {} files into {}".format("Would copy" if dry_run else "Copied", len(jobs),
           os.path.join(target, ".agents", "skills", NAME_DIR)), file=out)
-    print("Also added a short 'Design checks' section to {} (created it if missing).".format(agents_md), file=out)
+    print("{} a short 'Design checks' section to {} (created if missing).".format(
+        "Would add" if dry_run else "Added", agents_md), file=out)
     print("Codex has no slash commands or hooks, so only the skill body is installed.\n"
           "What you will see next: in Codex, the skill loads when you ask for a design;\n"
           "it runs the same scanners and prints the same proof line.", file=out)
     return 0
+
+
+def uninstall_codex(target, dry_run=False, out=sys.stdout):
+    """Reverse install_codex: the .agents/skills tree and the AGENTS.md section."""
+    verb = "Would remove" if dry_run else "Removed"
+    tree = os.path.join(target, ".agents", "skills", NAME_DIR)
+    if os.path.isdir(tree):
+        if not dry_run:
+            shutil.rmtree(tree)
+        print("{} {}".format(verb, tree), file=out)
+    else:
+        print("Nothing to remove: no Codex copy of this skill in {}".format(tree), file=out)
+    agents_md = os.path.join(target, "AGENTS.md")
+    if os.path.isfile(agents_md):
+        body = open(agents_md, encoding="utf-8").read()
+        cut = re.sub(r"\n## Design checks\n\n[^\n]*anti-ai-design-style[^\n]*\n", "\n", body)
+        if cut != body:
+            if not dry_run:
+                with open(agents_md, "w", encoding="utf-8") as fh:
+                    fh.write(cut)
+            print("{} the 'Design checks' section from {}".format(verb, agents_md), file=out)
+    return EXIT_OK
 
 
 def install(target, skill_dir=SKILL_DIR, brand_dir=None, dry_run=False,
@@ -249,6 +273,23 @@ def selftest():
         checks.append(("uninstall removes what it installed",
                        not os.path.isfile(os.path.join(
                            target, ".claude", "hookify.x.local.md"))))
+
+        # Codex layout round trip, against the real skill folder.
+        cx = os.path.join(root, "codex")
+        buf = io.StringIO()
+        install_codex(cx, dry_run=True, out=buf)
+        checks.append(("codex dry run writes nothing and says 'Would'",
+                       not os.path.exists(os.path.join(cx, "AGENTS.md")) and
+                       "Would add" in buf.getvalue() and "Also added" not in buf.getvalue()))
+        install_codex(cx, out=io.StringIO())
+        tree = os.path.join(cx, ".agents", "skills", NAME_DIR)
+        checks.append(("codex install writes the tree and the AGENTS.md section",
+                       os.path.isfile(os.path.join(tree, "SKILL.md")) and
+                       "Design checks" in open(os.path.join(cx, "AGENTS.md")).read()))
+        uninstall_codex(cx, out=io.StringIO())
+        checks.append(("codex uninstall removes the tree and the AGENTS.md section",
+                       not os.path.exists(tree) and
+                       "Design checks" not in open(os.path.join(cx, "AGENTS.md")).read()))
     finally:
         shutil.rmtree(root, ignore_errors=True)
 
@@ -278,6 +319,8 @@ def main():
     if args.selftest:
         return selftest()
     target = os.path.abspath(args.target)
+    if args.codex and args.uninstall:
+        return uninstall_codex(target, dry_run=args.dry_run)
     if args.uninstall:
         return uninstall(target, dry_run=args.dry_run)
     if args.codex:
