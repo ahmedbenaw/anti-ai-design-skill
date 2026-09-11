@@ -383,23 +383,23 @@ single source to a rule.
 
 ## 6. Everything missed or left open, in one list
 
-**Status as of 2026-09-10.** Closed items keep their number so older notes still
+**Status as of 2026-09-11.** Closed items keep their number so older notes still
 line up.
 
 | # | Item | Status |
 |---|---|---|
-| 1 | Evals re-run with the brand gate | **Still open.** Deferred on purpose; the eval loop runs once, on final rules. `evals.json` still has no brand or library assertion. |
+| 1 | Evals re-run with the brand gate | **Closed** (aee812a). Iteration 2: with_skill 24/24, baseline 17/24, n = 1 per cell. All three baselines passed the AI-look guard and failed the brand guard. The gate was not tuned. |
 | 2 | Nine libraries installed, gsap-skills and pixijs-skills vendored | **Closed** (commit 2e06f47). |
 | 3 | Hookify rules and slash commands fired live | **Closed** (11a08b7, 7de9c0c). Four of the five had never fired; they bound to a field the event does not provide. |
 | 4 | `config-guide` is Slack-only; use `debug-plugins` | **Closed.** Both are named plainly in the setup guide as not checking local Claude Code. |
 | 5 | Description optimisation loop | **Run, and it measured nothing.** Every query scored a trigger rate of 0.0, both sides. The harness needs a tool call to detect and got none. No change applied. See `anti-ai-design-style-workspace/description-loop.md`. |
-| 6 | Exa never connected | **Still open, and only Ben can close it.** Exa is not in the connector directory; it has to be added as a custom connector at `https://mcp.exa.ai/mcp` and signed into. Every dossier states which route it used. |
-| 7 | No Vue, React Native or Flutter samples; mobile tells thin | **Closed.** 27 new K entries, 24 cloned generated repos and a 413-file human-built control. Three mobile rules now ship: MB1, MB2, MB3. |
+| 6 | Exa never connected | **Closed 2026-09-11** by Ben. Used once since, for the MB2 re-verification that produced MB4. The 2026-09 sweep was **not** re-run, and every dossier's stated route stands. |
+| 7 | No Vue, React Native or Flutter samples; mobile tells thin | **Closed.** 27 new K entries, 24 cloned generated repos and a 413-file human-built control. Four mobile rules now ship: MB1, MB2, MB3 and MB4. |
 | 8 | Register expires around 2028-03 | **Open by design.** "Keeping this register alive" now lives at the end of the register, with the steps. |
 | 9 | Cross-reference from `anti-antropik-design` back to this skill | **Written, not applied.** `proposals/anti-antropik-design.md`. The installed copy stays read-only. |
-| 10 | n=1 per eval cell | **Open.** Still true, still has to be said wherever a number is quoted. |
-| 11 | `scripts/__pycache__/` in the tree | **Closed.** Stripped before packaging; the `.skill` is 0.62 MB. |
-| 12 | Grader agents hit a 429 in iteration 1 | **Open**, and only matters when item 1 runs. |
+| 10 | n=1 per eval cell | **Open, and stated.** Iteration 2's benchmark says it in the header and again in `benchmark.json` metadata. Still has to be said wherever a number is quoted. |
+| 11 | `scripts/__pycache__/` in the tree | **Closed.** Stripped before packaging; the `.skill` is 0.63 MB. |
+| 12 | Grader agents hit a 429 in iteration 1 | **Sidestepped.** Iteration 2 graded the mechanical assertions with a script (`workspace/tools/grade.py`) and the judgment ones by reading, so no grader agents were spawned. The 429 risk returns if anyone goes back to agent grading. |
 
 New since the handover was written:
 
@@ -411,6 +411,23 @@ New since the handover was written:
 15. Seven candidate tells did not replicate and are recorded as counter-evidence
     in the register, including the straight-down shadow. A human-built control
     hit it 49/49.
+16. A `[STALE-RISK]` row said "re-verify before each release" and the release
+    happened without it. Worse, the register claimed MB2 covered two Expo
+    scaffolds and it only ever covered one. Source M36's `Feeds: MB2` was an
+    overclaim, and that is what hid the gap. MB4 closes it. The maintenance
+    checklist now has an eighth step: re-check the `[STALE-RISK]` rows.
+17. The two guards are close to orthogonal, and now there is a mechanism. Every
+    baseline brand failure in iteration 2 was a warm cream inside Delta-E 12 of
+    the brand neutrals. The cream-editorial escape from the AI look lands inside
+    the brand violation zone. A page can satisfy one guard by failing the other.
+18. Two tells another detector flags and this register scores 0 on: `side-tab`
+    accent borders and a flat type scale. One source each, below the bar, so no
+    rule was added. `workspace/iteration-2/cross-tool-findings.md` carries the
+    experiment that would settle each. `side-tab` could be a regex; the flat
+    type scale needs computed sizes, so it belongs in `render_check.py`.
+19. `a8` library misuse scored 0 in all six iteration-2 runs and never
+    discriminated. No eval uses an animation or map library. A fourth eval
+    would give the assertion something to score.
 
 ## 7. Non-negotiables for whoever picks this up
 
@@ -418,8 +435,10 @@ New since the handover was written:
 - Never add a tell from memory. Source ID in the compendium first.
 - Never hand-pick a hex value. `generate_palette.py`, then `audit_file.py`.
 - Never present a page without all three scanners and the proof line:
-  `Verified: AI-look score N/100 (band), craft flags N, library misuse N,
-  brand distance COMPLIANT, register 2026.09.`
+  `PASS: AI-look 0/100 (distinct), craft flags 0, library misuse 0, copy
+  grade 4.6, brand distance COMPLIANT, rendered PASS | register 2026.10,
+  rules b7cd873aa4831ab9, brand rules 5697117fa1b27195`
+  Quote what `verify_all.py` printed. Never compose the line by hand.
 - Never claim "proven human-made". The scanner measures the AI look.
 - Never edit the installed `anti-antropik-design` copy. Propose instead.
 - Write for a non-technical, possibly neurodivergent reader in every file
