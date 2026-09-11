@@ -125,20 +125,18 @@ based on reading the code, not on trust.
   skill tells the model to run its checks on canvas artboards. I will not
   describe this as a fourth install, because it is not one.
 
-## What happens next, in order
+## What happened next (status 2026-09-11)
 
-1. Routine fixes, test first: findings 2, 3, 5, 6, 7, 8, 9, 13.
-2. Port `anti-antropik-design` in as a verbatim copy under `vendor/`. The
-   locator prefers your installed copy and falls back to the vendored one.
-   The proof line will say which was used. Note: copying it "as is" also
-   copies the four small defects already listed in `proposals/`.
-3. The design-system standard, in three tiers: already measured; newly
-   measurable (test first); everything else as a labelled checklist.
-4. Packaging for Claude Code, Cowork and Codex, each verified live.
-5. A live-site audit mode using the in-app browser. Craft only, with screenshots for the judgment checklist. It keeps the standing line that no tool can tell AI-made from a picture.
-6. A fourth evaluation that uses a library, and a placeholder check.
-7. Re-run everything, re-package, update the handover.
+| Step | Status |
+|---|---|
+| 1. Routine fixes, test first | **Done** in `9c36fd3`. Ten CSS twins, `/design-fix` argument, `HOOKIFY_PATH`, exec bits, `.serena/`, SKILL.md at 300 lines, `lessons.md`. |
+| 2. Vendor `anti-antropik-design` | **Done** in `9c36fd3`, as-is. The installed copy wins; the proof line says `(installed)` or `(vendored)`; a selftest pins the vendored fingerprint. No licence file exists in the source, stated in `vendor/README.md`. |
+| 3. Design-system standard, three tiers | **Done** in `f5caa5b`. CR7, CR8, CR9 measured; `reference/design-system-checklist.md` for the rest, judged by a person, never scored. |
+| 4. Packaging | **Done** in `f5caa5b`. Codex via `install.py --codex`; Cowork is the plugin format that `claude plugin validate` passes; Claude Design is the same session. |
+| 5. Live-site audit mode | **Done** in `f5caa5b`. `--allow-network` plus `reference/live-audit.md`. |
+| 6. Placeholder check and fourth eval | Check **done**; the fourth eval is **running**. |
+| 7. Re-run, repackage, handover | After the fourth eval reports. |
 
-One question stays open for you at step 2, because it cannot be undone cleanly. Vendor the sibling as-is, including its known defects? Or vendor it with the four fixes applied and labelled? My recommendation is
-as-is, with the defects listed, because "as is" was your instruction and
-the fixes belong upstream.
+Finding 1 is now caught by the copy checker and by eval assertion `a9`.
+Finding 2 is closed with a red-then-green fixture per rule. Finding 3 is a
+one-line fix. Finding 4 is what the checklist in step 3 is for.

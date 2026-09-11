@@ -383,7 +383,7 @@ single source to a rule.
 
 ## 6. Everything missed or left open, in one list
 
-**Status as of 2026-09-11.** Closed items keep their number so older notes still
+**Status as of 2026-09-11, evening.** Closed items keep their number so older notes still
 line up.
 
 | # | Item | Status |
@@ -435,6 +435,25 @@ New since the handover was written:
 19. `a8` library misuse scored 0 in all six iteration-2 runs and never
     discriminated. No eval uses an animation or map library. A fourth eval
     would give the assertion something to score.
+
+## 6b. Sprint 2, 2026-09-11: the audit and what it changed
+
+Ben asked for an end-to-end audit of the skill as if it were the product,
+then approved every fix and the four additions. `workspace/AUDIT-REPORT.md`
+is the report; the status table at its end says what landed where.
+
+| # | Item | Status |
+|---|---|---|
+| 20 | Ten of thirty code rules only knew the Tailwind spelling | **Closed** (9c36fd3). CSS twin per rule, red fixture first, clean-CSS guard. `research/17-tailwind-vs-css.md`. Fingerprint moved twice, now `ee9ee6320a9a639b`. |
+| 21 | LA8 verified from claims, measured at 2 of 12 | **Closed.** Down-weighted 3 to 1, contested, as the register's own rule requires. |
+| 22 | `anti-antropik-design` vendored as fallback brand guard | **Closed** (9c36fd3). Installed copy wins; proof line says `(installed)` or `(vendored)`; `ANTI_ANTROPIK_NO_VENDORED=1` reproduces fail-closed. No licence file in the source; `vendor/README.md` says so. |
+| 23 | Pages shipping `[ CLINIC NAME ]` passed every check | **Closed** (f5caa5b). `copy_check` fails them; eval assertion `a9`; Step 1 asks for names. |
+| 24 | Design-system standard as checks | **Closed** (f5caa5b) in three tiers. CR7, CR8, CR9 measured, fixture first. The rest is `reference/design-system-checklist.md`, judged by a person, never scored. The scanner does not claim to check governance. |
+| 25 | Codex, Cowork, Claude Design | **Closed** (f5caa5b). `install.py --codex`; Cowork is the plugin format `claude plugin validate` passes, live upload is Ben's; Claude Design is the same session, not an install. |
+| 26 | Live-site audits | **Closed** (f5caa5b). `verify_all --render --allow-network`; `reference/live-audit.md`. Craft only; no pixel-based AI claim. |
+| 27 | `/design-fix` dropped its file argument | **Closed** (9c36fd3). |
+| 28 | Fourth eval with a library, so `a8` can discriminate | **Running.** Iteration 3, `scroll-story-with-library`. |
+| 29 | The sub-validator said the skill was not shipped by the plugin route | **Withdrawn.** The docs allow a root `SKILL.md`; `claude plugin validate` passes. |
 
 ## 7. Non-negotiables for whoever picks this up
 
