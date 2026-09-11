@@ -296,6 +296,26 @@ When you update it:
 5. Era-tag anything retired and keep it at 1 point as legacy. Do not delete.
 6. Bump the register version and update `rules.json` in the same change.
 7. Run `python3 scripts/check_citations.py`.
+8. Re-check every row carrying `[STALE-RISK]`. Scaffold tells expire when the
+   scaffold is rewritten, and nothing warns you: the rule keeps passing its
+   fixture while matching nothing real.
+
+### Provenance of the 2026-09 sweep
+
+The sweep that produced this version ran on WebSearch, WebFetch and alphaXiv,
+not Exa, because Exa was not authorized at the time. Each dossier in
+`research/` states the route it used. That route is unchanged and those
+findings stand as recorded.
+
+Exa was authorized on 2026-09-11, after the sweep had been committed. It has
+been used for exactly one thing so far, and the record should not imply more:
+the MB2 re-verification that produced MB4. The sweep itself was not re-run.
+
+| Date | Claim | Route | Outcome |
+|---|---|---|---|
+| 2026-09-11 | MB2's four literals still in the Expo tabs template | Exa, then the published npm tarball and `expo/expo` at `5ad6930` | Confirmed three ways |
+| 2026-09-11 | MB2 covers the default template too (M36) | Same | **Refuted.** The default template shares none of MB2's literals; MB4 added |
+| 2026-09-11 | When the default template restructured | npm versions 51-57 walked one by one | SDK 55, published 2026-01-21; sets MB4's era tag |
 
 ## Why this register is dated
 
