@@ -459,6 +459,28 @@
       "era": "2024+",
       "explain": "Three or more of Tailwind's stock hex values hard-coded in a Dart or Kotlin file. Tailwind is a web framework: these numbers have no way of reaching a native file except through a model that writes web code by default. Measured across 12 generated mobile repos and a 413-file human-built control, where it appeared zero times.",
       "fix": "Generate a palette for the app and use the tokens. If the project genuinely uses NativeWind or a shared Tailwind config, say so - this rule is scoped to native files for that reason."
+    },
+    {
+      "id": "MB4",
+      "name": "Untouched Expo default scaffold",
+      "only_ext": [
+        ".tsx",
+        ".ts",
+        ".jsx",
+        ".js"
+      ],
+      "patterns": [
+        "['\\\"]@/components/(hint-row|web-badge)['\\\"]",
+        "tabIcons/(home|explore)\\.png",
+        "Edit src/app/index\\.tsx to edit this screen\\.",
+        "half:\\s*2,\\s*one:\\s*4,\\s*two:\\s*8"
+      ],
+      "min_count": 2,
+      "points": 1,
+      "per_file": false,
+      "era": "2026+scaffold",
+      "explain": "These are create-expo-app's DEFAULT template, which is what a bare `npx create-expo-app` produces - a different scaffold from the tabs template MB2 covers, sharing none of its literals. `hint-row` and `web-badge` are the template's own guided-tour components, the tabIcons PNGs are its placeholder tab art, and the rest is its placeholder copy. Two or more surviving together means nobody has touched the starting screen. Same caveat as any scaffold tell: it says unfinished, not AI-written.",
+      "fix": "Delete the tour components and the placeholder copy, replace the two tab icons with your own art, and name the tabs after what they do."
     }
   ],
   "copy_tells": {

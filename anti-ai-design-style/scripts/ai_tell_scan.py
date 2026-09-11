@@ -482,6 +482,46 @@ class HomeTab extends StatelessWidget {
 }
 """
 
+# Transcribed from expo-template-default (published 57.0.23, and unchanged at
+# expo/expo@5ad6930). This is the scaffold a bare `npx create-expo-app` produces,
+# which is NOT the tabs template MB2 covers - the two share no literals at all.
+MOBILE_EXPO_DEFAULT_FIXTURE = """
+// src/app/index.tsx
+import { HintRow } from '@/components/hint-row';
+import { WebBadge } from '@/components/web-badge';
+import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+
+export default function Index() {
+  return <ThemedText>Edit src/app/index.tsx to edit this screen.</ThemedText>;
+}
+"""
+
+# The false-positive guard for MB4, kept permanently so the filter cannot be
+# quietly loosened later. Every literal in here was considered for MB4 and
+# rejected: `unstable-native-tabs` is a real API import a human must write,
+# Home/Explore are ordinary tab names, the greys are Radix Colors steps that
+# any human using Radix legitimately has, and MaxContentWidth is just a number.
+# A human app built on the same API must score 0.
+MOBILE_EXPO_HUMAN_FIXTURE = """
+// src/components/app-tabs.tsx - hand-built on the same public API
+import { NativeTabs } from 'expo-router/unstable-native-tabs';
+const palette = { backgroundElement: '#F0F0F3', backgroundSelected: '#E0E1E6',
+                  textSecondary: '#60646C' };
+export const MaxContentWidth = 800;
+export default function AppTabs() {
+  return (
+    <NativeTabs backgroundColor={palette.backgroundElement}>
+      <NativeTabs.Trigger name="index">
+        <NativeTabs.Trigger.Label>Home</NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="explore">
+        <NativeTabs.Trigger.Label>Explore</NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
+    </NativeTabs>
+  );
+}
+"""
+
 def selftest():
     rules = load_rules()
     prov1, tells1, craft1, lib1 = scan_texts({"slop.html": SLOP_FIXTURE}, rules)
@@ -495,10 +535,12 @@ def selftest():
     prov3, tells3, craft3, lib3 = scan_texts({"libs.html": LIB_MISUSE_FIXTURE}, rules)
     _, tells4, _, _ = scan_texts({"theme.dart": MOBILE_FIXTURE,
                                   "Color.kt": MOBILE_COMPOSE_FIXTURE,
-                                  "_layout.tsx": MOBILE_EXPO_FIXTURE}, rules)
+                                  "_layout.tsx": MOBILE_EXPO_FIXTURE,
+                                  "index.tsx": MOBILE_EXPO_DEFAULT_FIXTURE}, rules)
     _, tells5, _, _ = scan_texts({"theme.dart": MOBILE_CLEAN_FIXTURE}, rules)
+    _, tells6, _, _ = scan_texts({"app-tabs.tsx": MOBILE_EXPO_HUMAN_FIXTURE}, rules)
     mobile_ids = {f.rule_id for f in tells4}
-    missing_mobile = {"MB1", "MB2", "MB3"} - mobile_ids
+    missing_mobile = {"MB1", "MB2", "MB3", "MB4"} - mobile_ids
     lib_ids = {f.rule_id for f in lib3}
     expect_lib = {"LB1", "LB2", "LB3", "LB4", "LB5", "LB6", "LB7", "LB8",
                   "LB9", "LB10", "LB11", "LB12"}
@@ -513,6 +555,9 @@ def selftest():
     if tells5:
         problems.append("clean mobile fixture wrongly flagged: "
                         f"{[f.rule_id for f in tells5]}")
+    if any(f.rule_id == "MB4" for f in tells6):
+        problems.append("MB4 fired on a hand-built app using the same public API; "
+                        "the false-positive filter has been loosened")
     if missing_lib:
         problems.append(f"library fixture missed expected rules: {sorted(missing_lib)}")
     if lib2:

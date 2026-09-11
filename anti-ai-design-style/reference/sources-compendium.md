@@ -1604,7 +1604,7 @@ M1 to M10 are the mobile app sources. M11 to M20 are the UI and marketing copy s
 - **Feeds:** MB1
 
 ### M26 — Expo `expo-template-tabs` — `constants/Colors.ts` and `app/(tabs)/_layout.tsx`
-- **Source:** Primary artifact (official scaffold source); retrieved 2026-09-05. https://github.com/expo/expo/tree/main/templates/expo-template-tabs
+- **Source:** Primary artifact (official scaffold source); retrieved 2026-09-05, re-verified 2026-09-11 against published `expo-template-tabs@57.0.23` and `expo/expo@5ad6930`. https://github.com/expo/expo/tree/main/templates/expo-template-tabs
 - **Context:**
   - **Note:** this is the opt-in tabs template. What a bare `create-expo-app` produces is the *default* template, covered separately as M36 — its literals are different.
   - `constants/Colors.ts` hardcodes `const tintColorLight = '#2f95dc'; const tintColorDark = '#fff';` with `tabIconDefault: '#ccc'` in both schemes. Any app shipping `#2f95dc` has an untouched Expo theme.
@@ -1694,13 +1694,15 @@ M1 to M10 are the mobile app sources. M11 to M20 are the UI and marketing copy s
 - **Feeds:** evidence archive; no rule depends on it yet
 
 ### M36 — Expo `expo-template-default` — `src/constants/theme.ts`, `src/app/_layout.tsx`, `src/components/app-tabs.tsx`
-- **Source:** Primary artifact (official default scaffold source); retrieved 2026-09-05. https://github.com/expo/expo/tree/main/templates/expo-template-default
+- **Source:** Primary artifact (official default scaffold source); retrieved 2026-09-05, re-verified 2026-09-11 against published `expo-template-default@57.0.23` and `expo/expo@5ad6930`; the structure it describes is stable across SDK 55 (2026-01-21) through 58. https://github.com/expo/expo/tree/main/templates/expo-template-default
 - **Context:**
   - This — not `expo-template-tabs` (M26) — is what a bare `npx create-expo-app` produces, and is therefore the scaffold most AI-assisted React Native projects start from. Its literals differ from the tabs template's, so MOB2 needs both sets.
   - `src/constants/theme.ts` defines a **deliberately neutral, accent-free** palette: light `text #000000` / `background #ffffff` / `backgroundElement #F0F0F3` / `backgroundSelected #E0E1E6` / `textSecondary #60646C`, with dark-mode inverses. **There is no tint
   - Full notes: `reference/research/09-mobile-2026.md`.
 - **Tags:** `[ADOPT: feeds a scanner rule]`
-- **Feeds:** MB2
+- **Feeds:** MB4 (until 2026-09-11 this said MB2, which was an overclaim: MB2's
+  patterns are the tabs template's literals and this source shares none of them,
+  so nothing here reached a rule. MB4 closes that gap.)
 
 ---
 
