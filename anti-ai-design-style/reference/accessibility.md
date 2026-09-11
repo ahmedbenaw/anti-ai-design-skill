@@ -73,3 +73,23 @@ screen readers announce "sparkles rocket". ALL-CAPS labels: removes the
 word shapes dyslexic readers use. Walls of identical cards: choice
 overload, no hierarchy. Fixing the AI look and fixing accessibility are
 mostly the same work. That's why this skill scores both.
+
+## Every craft check, by ID
+
+These feed the craft score. None of them is evidence of AI. All of them are
+things a reader would notice.
+
+| Rule | What it catches | Why it matters |
+|---|---|---|
+| CR1 | Likely low-contrast body text | Light grey body text usually fails the 4.5:1 contrast minimum (WCAG 2.2, rule 1.4.3). |
+| CR2 | Animations without a reduced-motion path | The site animates but never checks the user's 'reduce motion' setting (WCAG 2.3.3 technique C39). |
+| CR3 | Focus outline removed | Keyboard users can't see where they are (WCAG 2.4.7). |
+| CR4 | Justified body text | Justified text creates uneven 'rivers' of space that are harder to read, especially for dyslexic readers (BDA guide; WCAG 1.4.8). |
+| CR5 | Tiny body text | Lots of very small text. |
+| CR6 | Uppercase running text | Uppercase removes the word shapes dyslexic readers rely on (BDA guide). |
+| CR7 | Tokens defined, then bypassed | Every raw hex that skips `var(--token)` is a colour dark mode and the brand guard cannot reach. |
+| CR8 | Dark mode by inversion | `filter: invert()` flips images and brand colours too, and contrast pairs stop holding. |
+| CR9 | Focus outline removed, nothing put back | `outline: none` with no `:focus-visible` leaves keyboard users lost (WCAG 2.2, 2.4.7 and 2.4.11). |
+
+CR7, CR8 and CR9 come from the design-system standard, sections 4, 8.3 and
+11.2. The full checklist is `reference/design-system-checklist.md`.

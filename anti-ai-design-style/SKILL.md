@@ -56,6 +56,14 @@ look is now a tell itself.
 That is the whole skill. The rest is detail for when a step is unclear or
 a finding is hard to fix.
 
+## Where this runs
+
+Claude Code: skill or plugin. Cowork: the same plugin folder, uploaded.
+Codex: `install.py --codex <project>` writes `.agents/skills/`; no commands
+or hooks there, so only the skill body ports. Claude Design is the `/design`
+canvas in this same session, not a separate install; its artboards go
+through Step 3 like any page.
+
 ## Who you are talking to
 
 Assume the user is a vibe coder: smart, non-technical, maybe neurodivergent.
@@ -82,6 +90,9 @@ Never generate a design from a bare request. First check the project for a
   result to `DESIGN.md`.
 - User away or in a hurry: draft the brief yourself from whatever context
   exists, state at the top that you assumed it, and continue.
+- Names, prices, addresses: ask for the real ones if a person is present.
+  If not, invent a clearly marked stand-in and say so in your first line.
+  Never ship `[ Clinic name ]` brackets; the copy checker fails them.
 
 Why this is step 1: generic output is what happens when the model has to
 guess taste. The brief removes the guessing. It is the single
@@ -107,10 +118,8 @@ that catch what briefs miss:
   visible focus, no colour-only meaning, copy at about grade 9.
 
 If another design skill is active (frontend-design, taste-suite,
-impeccable, anti-antropik-design), follow its aesthetic guidance for
-anything the register does not score.
-This skill is the measuring layer on top. They do not conflict: whatever
-is generated must still pass Step 3.
+impeccable), follow its aesthetic guidance for anything the register does
+not score. This skill is the measuring layer on top; Step 3 still applies.
 
 ### Step 3 — Scan. Always. Before presenting anything.
 
@@ -119,7 +128,7 @@ it loads. Set it once: `SKILL="<that path>"`. In the plugin install it is
 already there as `${CLAUDE_PLUGIN_ROOT}`. Your working directory is the user's
 project, not this folder, so a bare `scripts/...` will not be found.
 
-Once per conversation, prove the tools work.
+Once per conversation, prove the tools work:
 
 ```
 python3 "$SKILL"/scripts/ai_tell_scan.py --selftest   # must print SELFTEST: PASS
@@ -131,10 +140,10 @@ Then scan everything you made or edited. One command runs every guard:
 python3 "$SKILL"/scripts/verify_all.py <files or folder>
 ```
 
-Add `--render` to also load the page in a real browser and measure contrast,
-tap-target size, focus and reduced motion. That needs Playwright. Without it
-the line says `rendered SKIPPED` and nothing fails, because most of this skill
-works without a browser.
+Add `--render` to load the page in a real browser and measure contrast,
+targets, focus and reduced motion. It needs Playwright; without it the line
+says `rendered SKIPPED` and nothing fails. Add `--allow-network` only for a
+live site (`reference/live-audit.md`).
 
 It prints one line; Step 4 shows it. Its two fingerprints say which rules
 produced the verdict.
@@ -143,12 +152,6 @@ Exit code 0 means every guard ran and passed. If the brand guard is missing,
 the line says `brand distance NOT RUN` and the verdict is FAIL. A check that
 did not happen never counts as a check that passed.
 
-Want the findings themselves? Run the tools one at a time.
-
-```
-python3 "$SKILL"/scripts/ai_tell_scan.py <files or folder>
-python3 "$SKILL"/scripts/copy_check.py <pages and docs with prose>
-```
 
 **The second guard is not optional.** This skill measures distance from
 generic AI output, not from a company's brand. Fixing one can cause the
@@ -166,8 +169,7 @@ the line then says `(vendored)`. To use your own, install
 python3 "$(python3 "$SKILL"/scripts/find_brand_guard.py)"/scripts/audit_file.py <files> --suggest
 ```
 
-Do not choose colours by hand. Generate them:
-`generate_palette.py` in the brand guard prints a verified 16-role system:
+Do not choose colours by hand. The brand guard generates a verified 16-role system:
 
 ```
 python3 "$(python3 "$SKILL"/scripts/find_brand_guard.py)"/scripts/generate_palette.py \
@@ -175,11 +177,10 @@ python3 "$(python3 "$SKILL"/scripts/find_brand_guard.py)"/scripts/generate_palet
 ```
 Read `reference/brand-distance.md` for which type structures are excluded.
 
-Exit code 0 = pass. Exit code 1 = apply each finding's "do this" line
-(details in `reference/fixes.md`) and rescan. Up to three rounds. If
-something still fails after that, present honestly with what remains and
-why. Never weaken rules.json, never scan a stub instead of the real files,
-never present unscanned visual output.
+Exit 0 = pass. Exit 1 = apply each finding's "do this" line
+(`reference/fixes.md`) and rescan, up to three rounds. If something still
+fails, present honestly with what remains and why. Never weaken rules.json,
+never scan a stub, never present unscanned visual output.
 
 **The grade-9 gate** covers everything a user reads, including what you
 produce. `reference/research/`, `libraries/*.md` and the compendium are
@@ -200,21 +201,19 @@ fingerprints are not decoration. They say which rules gave this verdict.
 ```
 PASS: AI-look 0/100 (distinct), craft flags 0, library misuse 0, copy grade
 4.6, brand distance COMPLIANT, rendered PASS | register 2026.10, rules
-6b7abae241e662e5, brand rules 5697117fa1b27195 (installed)
+ee9ee6320a9a639b, brand rules 5697117fa1b27195 (installed)
 ```
 
-Paste the real one. Do not retype it, shorten it, or start it with a word the
-tool did not print.
+Paste the real one. Never retype it, shorten it, or add a word to it.
 
 Then at most three sentences on the choices that make the design this
 product's own. No design-theory lecture.
 
 ## Editing someone else's files
 
-Scan FIRST, before touching anything. Report pre-existing findings to the
-user instead of silently fixing or silently keeping them. Their page, their
-call. In fix mode, change presentation only; never behaviour or content
-meaning.
+Scan first. Report pre-existing findings to the user instead of silently
+fixing or keeping them; their page, their call. In fix mode change
+presentation only, never behaviour or meaning.
 
 ## When a library is involved
 
@@ -258,6 +257,8 @@ judgment check, not a scanner one.
 | `reference/fixes.md` | a scan failed and a fix isn't obvious |
 | `reference/accessibility.md` | any output work (the floors), or a11y questions |
 | `reference/setup-guide.md` | the user asks how to install/run anything |
+| `reference/design-system-checklist.md` | the judgment axis: is this a design system or a UI kit? Never scored, always read |
+| `reference/live-audit.md` | auditing a running site: save the page, `--allow-network`, screenshots, what pixels cannot prove |
 | `reference/sources-compendium.md` | "says who?": all 368 sources, tagged ADOPT or AVOID, with the master ban list and adopt list |
 | `reference/sources.md` + `reference/research/` | the full research dossiers behind the compendium |
 | `reference/brand-distance.md` | before any brand, identity or client-facing work; and whenever your fix drifts warm-cream |

@@ -4,11 +4,12 @@
     "exists": true,
     "ai_score": 2,
     "ai_verdict": "PASS",
-    "fingerprint": "6b7abae241e662e5",
+    "fingerprint": "ee9ee6320a9a639b",
     "near_proof": 0,
     "craft_ids": [
       "CR5",
-      "CR6"
+      "CR6",
+      "CR7"
     ],
     "library_misuse": 0,
     "library_ids": [],

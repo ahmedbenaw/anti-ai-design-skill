@@ -239,12 +239,22 @@ def scan_texts(texts, rules):
     for chk in rules["craft_checks"]["checks"]:
         if "requires" in chk:
             has_req = any(re.search(r, all_text) for r in chk["requires"])
-            missing = all(not re.search(mreg, all_text) for mreg in chk["missing"])
-            if has_req and missing:
-                findings_craft.append(Finding(chk["id"], chk["name"], 0,
-                                              list(texts), [],
-                                              chk["explain"], chk["fix"], "craft"))
-            continue
+            if "patterns" in chk:
+                # `requires` is a gate: the rule only applies when the
+                # precondition is on the page (tokens defined, a dark-mode
+                # block). The patterns below then do the counting.
+                if not has_req:
+                    continue
+            else:
+                # No patterns: the finding is "X present and Y absent", the
+                # shape CR2 uses for animation without a reduced-motion rule.
+                missing = all(not re.search(mreg, all_text)
+                              for mreg in chk.get("missing", []))
+                if has_req and missing:
+                    findings_craft.append(Finding(chk["id"], chk["name"], 0,
+                                                  list(texts), [],
+                                                  chk["explain"], chk["fix"], "craft"))
+                continue
         count, evidence, files = 0, [], []
         for pat in compile_patterns(chk.get("patterns", [])):
             for path, text in texts.items():
@@ -585,6 +595,23 @@ blockquote{border-left:3px solid #b4531f;padding-left:16px;margin:0}
 </body></html>
 """
 
+# Three design-system craft failures, each measurable from the code. They
+# feed the craft score, never the AI-look score. See design-system-checklist.md.
+TOKEN_CRAFT_FIXTURE = """
+<!doctype html><html><head><style>
+:root{--ink:#1b2a20;--paper:#f4f1e8;--signal:#b4531f}
+.a{color:#1b2a20}.b{background:#f4f1e8}.c{border-color:#b4531f}.d{color:#2a3b30}
+.e{background:#efe9dc}.f{color:#8a4a1c}.g{background:#e3ded2}.h{color:#334}
+.i{background:#ddd}.j{color:#222}.k{background:#fafafa}.l{color:#999}
+.m{border:1px solid #ccc}.n{background:#eee}
+@media (prefers-color-scheme: dark){html{filter:invert(1) hue-rotate(180deg)}}
+a:focus{outline:none}
+button:focus{outline:0}
+</style></head><body><a href="#">x</a><button>y</button></body></html>
+"""
+TOKEN_CRAFT_EXPECT = {"CR7", "CR8", "CR9"}
+
+
 def selftest():
     rules = load_rules()
     prov1, tells1, craft1, lib1 = scan_texts({"slop.html": SLOP_FIXTURE}, rules)
@@ -613,11 +640,19 @@ def selftest():
     css_missing = CSS_FORM_EXPECT - {f.rule_id for f in tells7}
     _, tells8, _, _ = scan_texts({"page.html": CSS_CLEAN_FIXTURE}, rules)
     css_false = {f.rule_id for f in tells8} & CSS_FORM_EXPECT
+    _, _, craft9, _ = scan_texts({"page.html": TOKEN_CRAFT_FIXTURE}, rules)
+    craft_missing = TOKEN_CRAFT_EXPECT - {f.rule_id for f in craft9}
+    _, _, craft10, _ = scan_texts({"page.html": CSS_CLEAN_FIXTURE}, rules)
+    craft_false = {f.rule_id for f in craft10} & TOKEN_CRAFT_EXPECT
 
     problems = []
     if css_missing:
         problems.append("plain-CSS form of these tells scored 0, only the Tailwind "
                         f"spelling is recognised: {sorted(css_missing)}")
+    if craft_missing:
+        problems.append(f"design-system craft rules did not fire on their fixture: {sorted(craft_missing)}")
+    if craft_false:
+        problems.append(f"design-system craft rules fired on the clean CSS page: {sorted(craft_false)}")
     if css_false:
         problems.append("a well-made plain-CSS page tripped these rules, so a CSS twin "
                         f"has been loosened: {sorted(css_false)}")

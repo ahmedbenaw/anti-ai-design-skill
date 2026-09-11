@@ -19,6 +19,7 @@ import tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SKILL_DIR = os.path.dirname(HERE)
+NAME_DIR = os.path.basename(SKILL_DIR) or "anti-ai-design-style"
 
 sys.path.insert(0, HERE)
 from find_brand_guard import locate  # noqa: E402
@@ -54,6 +55,27 @@ def plan_files(skill_dir=SKILL_DIR):
     return jobs
 
 
+# Codex reads skills from .agents/skills/<name>/SKILL.md and knows nothing
+# about slash commands, hooks or ${CLAUDE_PLUGIN_ROOT}. So the Codex layout is
+# the skill body and everything SKILL.md points at, and nothing else.
+CODEX_SKIP = {"commands", "hooks", "hookify", ".claude-plugin", "__pycache__",
+              "evals", ".impeccable"}
+
+
+def codex_files(skill_dir=SKILL_DIR):
+    """Every file the Codex copy needs, as (source, relative destination)."""
+    jobs = []
+    for root, dirs, files in os.walk(skill_dir):
+        dirs[:] = [d for d in dirs if d not in CODEX_SKIP]
+        for f in files:
+            if f.endswith((".pyc", ".DS_Store")):
+                continue
+            src = os.path.join(root, f)
+            rel = os.path.relpath(src, skill_dir)
+            jobs.append((src, os.path.join(".agents", "skills", NAME_DIR, rel)))
+    return jobs
+
+
 def shell_safe(path):
     """Quote a path that a shell would otherwise split.
 
@@ -79,6 +101,32 @@ def fill(text, skill_dir, brand_dir):
     text = text.replace('"%s"' % SKILL_TOKEN, shell_safe(skill_dir))
     text = text.replace(SKILL_TOKEN, shell_safe(skill_dir))
     return text
+
+
+def install_codex(target, skill_dir=SKILL_DIR, dry_run=False, out=sys.stdout):
+    """Write the Codex layout. Verbatim copies; no placeholders to fill."""
+    jobs = codex_files(skill_dir)
+    for src, rel in jobs:
+        dest = os.path.join(target, rel)
+        if dry_run:
+            continue
+        os.makedirs(os.path.dirname(dest), exist_ok=True)
+        shutil.copy2(src, dest)
+    agents_md = os.path.join(target, "AGENTS.md")
+    line = ("\n## Design checks\n\nBefore presenting any web or mobile UI, load the "
+            "`anti-ai-design-style` skill from `.agents/skills/` and quote the line "
+            "`verify_all.py` prints. Paths in that skill are relative to its own folder.\n")
+    if not dry_run:
+        existing = open(agents_md).read() if os.path.exists(agents_md) else ""
+        if "anti-ai-design-style" not in existing:
+            with open(agents_md, "a") as fh:
+                fh.write(line)
+    print("{} {} files into {}".format("Would copy" if dry_run else "Copied", len(jobs),
+          os.path.join(target, ".agents", "skills", NAME_DIR)), file=out)
+    print("Codex has no slash commands or hooks, so only the skill body is installed.\n"
+          "What you will see next: in Codex, the skill loads when you ask for a design;\n"
+          "it runs the same scanners and prints the same proof line.", file=out)
+    return 0
 
 
 def install(target, skill_dir=SKILL_DIR, brand_dir=None, dry_run=False,
@@ -220,6 +268,8 @@ def main():
                     help="show what would happen, change nothing")
     ap.add_argument("--uninstall", action="store_true",
                     help="remove the files this script installed")
+    ap.add_argument("--codex", action="store_true",
+                    help="install the Codex layout (.agents/skills/) instead")
     ap.add_argument("--selftest", action="store_true",
                     help="run the built-in checks and exit")
     args = ap.parse_args()
@@ -229,6 +279,10 @@ def main():
     target = os.path.abspath(args.target)
     if args.uninstall:
         return uninstall(target, dry_run=args.dry_run)
+    if args.codex:
+        if not os.path.isdir(target):
+            print("No such folder: {}".format(target)); return EXIT_ERROR
+        return install_codex(target, dry_run=args.dry_run)
     if not os.path.isdir(target):
         sys.stderr.write("No such folder: {}\n".format(target))
         return EXIT_ERROR

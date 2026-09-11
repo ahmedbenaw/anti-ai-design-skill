@@ -39,6 +39,12 @@
       "evidence": "3 mentions; flagged the placeholders honestly but left them in the file"
     },
     {
+      "id": "a9",
+      "text": "No bracketed placeholders remain in visible copy",
+      "passed": true,
+      "evidence": "none found"
+    },
+    {
       "id": "a7",
       "text": "audit_file.py reports COMPLIANT (brand gate)",
       "passed": false,

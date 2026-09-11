@@ -54,7 +54,7 @@ def _json_cmd(cmd):
         return None
 
 
-def render_result(paths, enabled):
+def render_result(paths, enabled, allow_network=False):
     """Run the rendered check if it can run at all.
 
     It is optional by design, and a missing browser must not fail the build:
@@ -74,8 +74,10 @@ def render_result(paths, enabled):
     worst = "PASS"
     fails = 0
     for f in html:
-        data = _json_cmd([sys.executable,
-                          os.path.join(HERE, "render_check.py"), "--json", f])
+        cmd = [sys.executable, os.path.join(HERE, "render_check.py"), "--json", f]
+        if allow_network:
+            cmd.append("--allow-network")
+        data = _json_cmd(cmd)
         if data is None:
             return {"state": "ERROR", "detail": "render_check did not run"}
         fails += data.get("aa_failures", 0)
@@ -87,7 +89,7 @@ def render_result(paths, enabled):
             "aa_failures": fails}
 
 
-def gather(paths, brand_dir, max_grade=9.0, render=False):
+def gather(paths, brand_dir, max_grade=9.0, render=False, allow_network=False):
     """brand_dir=None means the guard was not found. A guard that was found
     and then produced no JSON is a different failure and is reported as such,
     because telling someone to install a thing they already have is the kind
@@ -111,7 +113,7 @@ def gather(paths, brand_dir, max_grade=9.0, render=False):
     return {"scan": scan, "copy": copy, "brand": brand,
             "brand_found": brand_dir is not None,
             "brand_source": source_of(brand_dir) if brand_dir else None,
-            "render": render_result(paths, render)}
+            "render": render_result(paths, render, allow_network)}
 
 
 def summarise(results, rules):
@@ -267,6 +269,9 @@ def main():
     ap.add_argument("--max-grade", type=float, default=9.0)
     ap.add_argument("--json", action="store_true",
                     help="print the full summary as JSON as well")
+    ap.add_argument("--allow-network", action="store_true",
+                    help="let the rendered check load fonts, CDNs and images; "
+                         "use for live sites, never for the repeatable local check")
     ap.add_argument("--render", action="store_true",
                     help="also load the page in a browser and measure craft. "
                          "Needs playwright; skipped cleanly without it")
@@ -280,7 +285,8 @@ def main():
 
     brand_dir = locate()
     summary = summarise(gather(args.paths, brand_dir, args.max_grade,
-                               render=args.render), load_rules())
+                               render=args.render,
+                               allow_network=args.allow_network), load_rules())
     if args.json:
         print(json.dumps(summary, indent=2))
     print(proof_line(summary))

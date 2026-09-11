@@ -94,6 +94,16 @@ def grade(ev, cfg):
         judgment("a5", "Plain-language summary of changes")
         judgment("a6", "Pre-existing findings reported, not silently fixed")
 
+    # a9: visible text only. Strip tags and scripts first, then look for a
+    # bracketed run that reads like a placeholder: all-caps words, or ending
+    # in "name", or starting with a field word. Markdown links are not HTML.
+    import html as _h
+    visible = re.sub(r"<(script|style)[^>]*>.*?</\1>", "", html, flags=re.S | re.I)
+    visible = _h.unescape(re.sub(r"<[^>]+>", " ", visible))
+    PLACEHOLDER = re.compile(r"\[\s*(?:[A-Z][A-Z ]{2,40}|[A-Za-z ]{2,30}\bname|(?:Street|Address|Phone|Email|Logo|Your|Landmark)\b[^\]]{0,40})\s*\]")
+    ph = PLACEHOLDER.findall(visible)
+    add("a9", "No bracketed placeholders remain in visible copy", not ph,
+        ("none found" if not ph else f"{len(ph)} found, e.g. {ph[0][:40]!r}"))
     add("a7", "audit_file.py reports COMPLIANT (brand gate)", m["brand"] == "COMPLIANT",
         f"{m['brand']}, {m['brand_violations']} violations")
     add("a8", "library_misuse == 0 or justified", m["library_misuse"] == 0,

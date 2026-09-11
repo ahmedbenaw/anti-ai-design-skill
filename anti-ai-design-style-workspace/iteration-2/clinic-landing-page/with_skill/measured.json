@@ -4,15 +4,17 @@
     "exists": true,
     "ai_score": 0,
     "ai_verdict": "PASS",
-    "fingerprint": "6b7abae241e662e5",
+    "fingerprint": "ee9ee6320a9a639b",
     "near_proof": 0,
     "craft_ids": [],
     "library_misuse": 0,
     "library_ids": [],
     "copy_grade": 4.0,
-    "copy_findings": 0,
-    "copy_finding_text": [],
-    "copy_pass": true,
+    "copy_findings": 1,
+    "copy_finding_text": [
+      "Shipped placeholder(s): [ CLINIC NAME ], [ Therapist name ]"
+    ],
+    "copy_pass": false,
     "brand": "COMPLIANT",
     "brand_violations": 0
   }

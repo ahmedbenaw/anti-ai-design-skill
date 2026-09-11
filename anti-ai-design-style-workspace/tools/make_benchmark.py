@@ -62,6 +62,8 @@ out = {
 json.dump(out, open(f"{W}/benchmark.json", "w"), indent=2)
 wp = summary["with_skill"]["pass_rate"]["mean"]
 bp = summary["without_skill"]["pass_rate"]["mean"]
-print(f"  with_skill    {wp:.1%}   ({sum(r['result']['passed'] for r in runs if r['configuration']=='with_skill')}/24)")
-print(f"  without_skill {bp:.1%}   ({sum(r['result']['passed'] for r in runs if r['configuration']=='without_skill')}/24)")
+tw=sum(r['result']['total'] for r in runs if r['configuration']=='with_skill')
+tb=sum(r['result']['total'] for r in runs if r['configuration']=='without_skill')
+print(f"  with_skill    {wp:.1%}   ({sum(r['result']['passed'] for r in runs if r['configuration']=='with_skill')}/{tw})")
+print(f"  without_skill {bp:.1%}   ({sum(r['result']['passed'] for r in runs if r['configuration']=='without_skill')}/{tb})")
 print(f"  delta         {wp-bp:+.1%}")

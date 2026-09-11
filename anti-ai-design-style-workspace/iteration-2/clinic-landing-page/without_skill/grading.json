@@ -18,7 +18,7 @@
       "id": "a3",
       "text": "No CR1/CR2 craft flags",
       "passed": true,
-      "evidence": "craft=['CR5', 'CR6']"
+      "evidence": "craft=['CR5', 'CR6', 'CR7']"
     },
     {
       "id": "a4",
@@ -37,6 +37,12 @@
       "text": "No invented testimonials/stats/logo bars",
       "passed": true,
       "evidence": "no placeholder-person or fake-stat pattern in the HTML"
+    },
+    {
+      "id": "a9",
+      "text": "No bracketed placeholders remain in visible copy",
+      "passed": true,
+      "evidence": "none found"
     },
     {
       "id": "a7",

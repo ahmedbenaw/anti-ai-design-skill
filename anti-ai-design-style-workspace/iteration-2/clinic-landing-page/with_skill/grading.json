@@ -23,8 +23,8 @@
     {
       "id": "a4",
       "text": "copy_check passes (grade <= 9, no findings)",
-      "passed": true,
-      "evidence": "grade=4.0, findings=0"
+      "passed": false,
+      "evidence": "grade=4.0, findings=1"
     },
     {
       "id": "a5",
@@ -37,6 +37,12 @@
       "text": "No invented testimonials/stats/logo bars",
       "passed": true,
       "evidence": "no placeholder-person or fake-stat pattern in the HTML"
+    },
+    {
+      "id": "a9",
+      "text": "No bracketed placeholders remain in visible copy",
+      "passed": false,
+      "evidence": "7 found, e.g. '[ CLINIC NAME ]'"
     },
     {
       "id": "a7",

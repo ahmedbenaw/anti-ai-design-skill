@@ -126,6 +126,18 @@ def check_text(name, raw, rules, max_grade):
             f"{len(long_sents)} sentence(s) over 25 words (e.g. \"{example}\")",
             "Split them. One idea per sentence."))
 
+    # Shipped placeholders. A bracketed run that reads like a blank: words in
+    # capitals, something ending in "name", or a field word first. Citations
+    # like [1], keys like [Enter] and flags like [optional] do not match.
+    ph = re.findall(
+        r"\[\s*(?:[A-Z][A-Z ]{2,40}|[A-Za-z ]{2,30}\bname|"
+        r"(?:Street|Address|Phone|Email|Logo|Your|Landmark|Company|Insert|Placeholder)\b[^\]]{0,40})\s*\]",
+        text)
+    if ph:
+        findings.append((
+            f"Shipped placeholder(s): {', '.join(dict.fromkeys(p.strip() for p in ph[:3]))}",
+            "Ask for the real name, price or address. If nobody can answer, write a "
+            "clearly marked stand-in and say so at the top of your reply."))
     ct = rules["copy_tells"]
     # Headings are labels and cited titles, not the author's own marketing
     # copy. A paper called "Unlocking ..." is a proper noun, not a buzzword.
@@ -263,8 +275,22 @@ No account needed for the first month.
 """
 
 
+# A page that shipped with its blanks still in it. Honest about not inventing
+# a clinic, and still not something anyone would upload.
+PLACEHOLDER_COPY = """<h1>[ CLINIC NAME ] physiotherapy</h1>
+<p>Three therapists in Alexandria. Call [ Phone number ] or visit [ Street and building ].</p>
+<p>[ Therapist name ] runs the first visits.</p>"""
+
+# Square brackets that are not placeholders: citations, keyboard hints,
+# optional flags, and a markdown link. None of these may be flagged.
+BRACKETS_OK_COPY = """<p>See the register [1] and press [Enter] to continue. The --render flag is [optional].</p>
+<p><a href="/x">[read more]</a> about our bakery in Bab al-Louq.</p>"""
+
+
 def selftest():
     rules = load_rules()
+    _, f5 = check_text("placeholders.html", PLACEHOLDER_COPY, rules, 9)
+    _, f6 = check_text("brackets.html", BRACKETS_OK_COPY, rules, 9)
     g1, f1 = check_text("slop.txt", SLOP_COPY, rules, 9)
     g2, f2 = check_text("clean.txt", CLEAN_COPY, rules, 9)
     _, f3 = check_text("current-era.txt", CURRENT_ERA_COPY, rules, 9)
@@ -278,6 +304,10 @@ def selftest():
         problems.append(
             "honest marketing copy wrongly flagged as AI cadence: "
             f"{[x[0] for x in f4]}")
+    if not any("placeholder" in x[0].lower() for x in f5):
+        problems.append(f"shipped [ CLINIC NAME ] placeholders were not caught: {[x[0] for x in f5]}")
+    if any("placeholder" in x[0].lower() for x in f6):
+        problems.append(f"ordinary square brackets wrongly flagged as placeholders: {[x[0] for x in f6]}")
     if len(f1) < 3:
         problems.append(f"slop copy raised only {len(f1)} findings: {[x[0] for x in f1]}")
     if f2:

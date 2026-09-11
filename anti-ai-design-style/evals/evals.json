@@ -47,6 +47,11 @@
           "id": "a8",
           "text": "ai_tell_scan.py --json reports library_misuse == 0, or every hit is justified in the response",
           "check": "library"
+        },
+        {
+          "id": "a9",
+          "text": "No bracketed placeholders like [ CLINIC NAME ] or [ Therapist name ] remain in visible copy",
+          "check": "copy"
         }
       ]
     },
@@ -96,6 +101,11 @@
           "id": "a8",
           "text": "ai_tell_scan.py --json reports library_misuse == 0, or every hit is justified in the response",
           "check": "library"
+        },
+        {
+          "id": "a9",
+          "text": "No bracketed placeholders like [ CLINIC NAME ] or [ Therapist name ] remain in visible copy",
+          "check": "copy"
         }
       ]
     },
@@ -147,6 +157,65 @@
           "id": "a8",
           "text": "ai_tell_scan.py --json reports library_misuse == 0, or every hit is justified in the response",
           "check": "library"
+        },
+        {
+          "id": "a9",
+          "text": "No bracketed placeholders like [ CLINIC NAME ] or [ Therapist name ] remain in visible copy",
+          "check": "copy"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "scroll-story-with-library",
+      "prompt": "Make me a one-page 'how we make it' story for my olive oil press in Siwa, Egypt. Single HTML file (save as story.html). Five short sections that reveal as you scroll, with a small map at the end showing the press. Use GSAP for the scroll animation and Leaflet for the map, loaded from a CDN. Keep it calm, not flashy, and make sure it works for people who turn animations off.",
+      "expected_output": "story.html using GSAP ScrollTrigger and Leaflet correctly: reduced-motion respected, no library misuse (no animate-on-everything, map has a proper tile attribution and no default marker soup), AI-look under 20, brand COMPLIANT, and a proof line.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "a1",
+          "text": "ai_tell_scan.py reports AI-look score below 20 on story.html",
+          "check": "scanner"
+        },
+        {
+          "id": "a2",
+          "text": "No CR1/CR2 craft flags; reduced motion honoured for the scroll animation",
+          "check": "scanner"
+        },
+        {
+          "id": "a3",
+          "text": "Five sections and a map are present",
+          "check": "judgment"
+        },
+        {
+          "id": "a4",
+          "text": "copy_check.py passes on story.html",
+          "check": "copy"
+        },
+        {
+          "id": "a5",
+          "text": "At least three details that could only belong to a Siwa olive press",
+          "check": "judgment"
+        },
+        {
+          "id": "a6",
+          "text": "No invented testimonials, awards or statistics",
+          "check": "judgment"
+        },
+        {
+          "id": "a7",
+          "text": "audit_file.py reports COMPLIANT (brand gate)",
+          "check": "brand"
+        },
+        {
+          "id": "a8",
+          "text": "ai_tell_scan.py --json reports library_misuse == 0, or every hit is justified in the response",
+          "check": "library"
+        },
+        {
+          "id": "a9",
+          "text": "No bracketed placeholders remain in visible copy",
+          "check": "copy"
         }
       ]
     }

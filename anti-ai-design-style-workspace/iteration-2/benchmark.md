@@ -9,8 +9,8 @@ no variance claim is made. Treat every delta as directional.
 
 | Configuration | Assertions passed | Pass rate |
 |---|---|---|
-| with_skill | 24 / 24 | **100%** |
-| without_skill (baseline) | 16 / 24 | 67% |
+| with_skill | 25 / 27 | **93%** |
+| without_skill (baseline) | 19 / 27 | 70% |
 
 Iteration 1 used 18 assertions and with_skill scored 18/18. That was a
 ceiling: the set could not tell a good run from a better one. This iteration
@@ -21,12 +21,19 @@ taking the set to 24. `a7` is the one that moved.
 
 | Eval | with_skill | baseline | AI-look (with / base) | Craft flags (with / base) | Brand (with / base) |
 |---|---|---|---|---|---|
-| clinic-landing-page | 8/8 | 6/8 | 0 / 2 | none / CR5, CR6 | COMPLIANT / **NON-COMPLIANT (8)** |
-| student-budget-app-screen | 8/8 | 6/8 | 0 / 4 | none / CR2, CR5 | COMPLIANT / **NON-COMPLIANT (7)** |
-| deslop-lovable-page | 8/8 | 4/8 | 0 / 20 | none / CR2, CR6 | COMPLIANT / **NON-COMPLIANT (4)** |
+| clinic-landing-page | 7/9 | 7/9 | 0 / 2 | none / CR5, CR6 | COMPLIANT / **NON-COMPLIANT (8)** |
+| student-budget-app-screen | 9/9 | 7/9 | 0 / 4 | none / CR2, CR5 | COMPLIANT / **NON-COMPLIANT (7)** |
+| deslop-lovable-page | 9/9 | 5/9 | 0 / 20 | none / CR2, CR6 | COMPLIANT / **NON-COMPLIANT (4)** |
 
 The deslop input scored 52 with craft flags CR1, CR2, CR5 and brand
 NON-COMPLIANT before either run touched it.
+
+**Regraded twice.** Second time: a ninth assertion, `a9` no shipped
+placeholders, was added after the audit found `[ CLINIC NAME ]` in a passing
+page. The clinic with_skill run now fails `a9`. It also fails `a4`, because
+the copy checker itself now catches placeholders, so one defect costs two
+assertions. That is stated rather than hidden. The three baselines pass
+`a9`, which is why their total rose. Basis is now 27, not 24.
 
 **Regraded once.** After the audit, ten rules gained a plain-CSS form
 (`research/17-tailwind-vs-css.md`). Three baseline pages moved. Clinic went 0 to 2, budget 0 to 4, deslop 18 to

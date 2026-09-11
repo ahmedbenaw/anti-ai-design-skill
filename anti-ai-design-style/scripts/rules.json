@@ -637,6 +637,43 @@
         "min_count": 3,
         "explain": "Uppercase removes the word shapes dyslexic readers rely on (BDA guide). Fine for tiny labels, not for sentences.",
         "fix": "Use sentence case for anything longer than a word or two."
+      },
+      {
+        "id": "CR7",
+        "name": "Tokens defined, then bypassed",
+        "requires": [
+          "--[a-z][a-z0-9-]*:\\s*#[0-9a-fA-F]{3,6}\\b"
+        ],
+        "patterns": [
+          "(?<!-)\\b(?:color|background|background-color|border|border-color|fill|stroke):\\s*[^;{}]*#[0-9a-fA-F]{3,6}\\b"
+        ],
+        "min_count": 12,
+        "explain": "The page defines colour tokens with custom properties and then types twelve or more raw hex colours into component rules anyway. Once a token system exists, each bypass is a value that dark mode, theming and the brand guard cannot reach. Design-system checklist, section 4.",
+        "fix": "Route each colour through var(--token). Add a token where one is missing rather than typing the hex."
+      },
+      {
+        "id": "CR8",
+        "name": "Dark mode by inversion",
+        "requires": [
+          "prefers-color-scheme:\\s*dark"
+        ],
+        "patterns": [
+          "filter:\\s*invert\\(\\s*(?:1|100%)\\s*\\)"
+        ],
+        "explain": "The dark theme is the light theme run through filter: invert(). Images, brand colours and shadows invert with it, and contrast pairs that passed in light mode no longer hold. A dark palette is designed, not flipped. Design-system checklist, section 4.",
+        "fix": "Define dark-mode token values in the prefers-color-scheme block and drop the filter. Re-check contrast in dark mode."
+      },
+      {
+        "id": "CR9",
+        "name": "Focus outline removed, nothing put back",
+        "patterns": [
+          ":focus\\s*\\{[^}]*outline:\\s*(?:none|0)\\b"
+        ],
+        "missing": [
+          ":focus-visible"
+        ],
+        "explain": "outline: none on :focus with no :focus-visible rule anywhere means keyboard users cannot see where they are. WCAG 2.2 rules 2.4.7 and 2.4.11. Design-system checklist, section 6.",
+        "fix": "Keep a visible focus style. Use :focus-visible to show it for keyboard and hide it for mouse, instead of removing it."
       }
     ]
   },

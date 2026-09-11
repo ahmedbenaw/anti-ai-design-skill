@@ -39,6 +39,12 @@
       "evidence": "4 mentions of placeholder/fake/assumption findings reported to the user"
     },
     {
+      "id": "a9",
+      "text": "No bracketed placeholders remain in visible copy",
+      "passed": true,
+      "evidence": "none found"
+    },
+    {
       "id": "a7",
       "text": "audit_file.py reports COMPLIANT (brand gate)",
       "passed": true,
