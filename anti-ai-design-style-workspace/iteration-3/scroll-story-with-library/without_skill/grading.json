@@ -1,0 +1,61 @@
+{
+  "eval": "scroll-story-with-library",
+  "config": "without_skill",
+  "expectations": [
+    {
+      "id": "a1",
+      "text": "AI-look score below 20",
+      "passed": true,
+      "evidence": "ai_score=2"
+    },
+    {
+      "id": "a2",
+      "text": "No CR1/CR2 craft flags",
+      "passed": true,
+      "evidence": "craft=none"
+    },
+    {
+      "id": "a3",
+      "text": "Five sections and a map are present",
+      "passed": true,
+      "evidence": "5 numbered sections (grove, harvest, press, rest, bottle) plus a 'Where to find us' Leaflet map with OSM attribution"
+    },
+    {
+      "id": "a4",
+      "text": "copy_check.py passes on story.html",
+      "passed": false,
+      "evidence": "grade=4.5, findings=1"
+    },
+    {
+      "id": "a5",
+      "text": "At least three details that could only belong to a Siwa olive press",
+      "passed": true,
+      "evidence": "Siwi olive variety; springs not the Nile; ~50 km from the Libyan border; salt lakes; Matrouh Governorate"
+    },
+    {
+      "id": "a6",
+      "text": "No invented testimonials, awards or statistics",
+      "passed": true,
+      "evidence": "no testimonials, awards or statistics; 'a few hundred very old trees' is descriptive, not a proof number; '100%'/'85%' hits are CSS and ScrollTrigger"
+    },
+    {
+      "id": "a9",
+      "text": "No bracketed placeholders remain in visible copy",
+      "passed": true,
+      "evidence": "none found"
+    },
+    {
+      "id": "a7",
+      "text": "audit_file.py reports COMPLIANT (brand gate)",
+      "passed": false,
+      "evidence": "NON-COMPLIANT, 4 violations"
+    },
+    {
+      "id": "a8",
+      "text": "library_misuse == 0 or justified",
+      "passed": true,
+      "evidence": "library_misuse=0"
+    }
+  ],
+  "response_chars": 1565
+}

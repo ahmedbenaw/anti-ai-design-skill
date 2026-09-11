@@ -2,7 +2,7 @@
 
 **What this file is.** Every "AI design tell" this skill acts on, with the evidence
 behind it. Nothing in the skill's rules or scanner exists without an entry here.
-Register version: **2026.10** (dated on purpose: tells drift; see "Why this
+Register version: **2026.10** (rules fingerprint `ee9ee6320a9a639b`) (dated on purpose: tells drift; see "Why this
 register is dated" at the end).
 
 **How to read an entry.**

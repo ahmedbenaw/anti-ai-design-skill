@@ -1,0 +1,1 @@
+FAIL: AI-look 2/100 (distinct), craft flags 0, library misuse 0, copy grade 4.5, brand distance NON-COMPLIANT, rendered FAIL | register 2026.10, rules ee9ee6320a9a639b, brand rules 5697117fa1b27195 (installed)

@@ -1,0 +1,16 @@
+=== Rendered craft check: anti-ai-design-style-workspace/iteration-3/scroll-story-with-library/with_skill/outputs/story.html ===
+measured 29 text nodes, 1 tap targets, in a real browser
+blocked 4 third-party request(s) so the result is repeatable; 31 author style rules still applied.
+Webfonts or extras did not load, so glyph widths differ a little. Contrast and
+focus are unaffected. Use --allow-network for exact text metrics.
+
+[RC2] Pointer targets at least 24x24 CSS px  (WCAG 2.5.8 AA) x1
+   - a 274x21px - "Open this spot on OpenStreetMap"
+   do this: Give it at least 24x24 CSS px, or leave a 24px gap around it. Padding counts; the visible box does not have to grow.
+
+[RC3] Pointer targets at least 44x44 CSS px  (WCAG 2.5.5 AAA (advice, not a failure)) x1
+   - a 274x21px - "Open this spot on OpenStreetMap"
+   do this: Apple asks for 44pt and Material for 48dp on touch. This is above what WCAG requires at AA, so treat it as a quality bar rather than a violation.
+
+Craft only. This does not detect whether a design was AI-generated, and no published tool does.
+Verdict: FAIL (1 AA failures)

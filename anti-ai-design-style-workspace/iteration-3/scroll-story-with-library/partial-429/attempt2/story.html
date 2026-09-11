@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How We Make It — Siwa Olive Oil</title>
+<meta name="description" content="How our olive oil is made in the Siwa Oasis, Egypt, from harvest to bottle.">
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+<style>
+  :root {
+    --bg: #f6f2ea;
+    --ink: #2b2a26;
+    --muted: #6b675e;
+    --olive: #5f6b3c;
+    --rule: #d9d2c3;
+    --measure: 36rem;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.125rem;
+    line-height: 1.65;
+  }
+
+  header, section, footer {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding: 0 1.25rem;
+  }
+
+  header {
+    padding-top: 5rem;
+    padding-bottom: 4rem;
+    text-align: center;
+  }
+
+  header h1 {
+    font-size: 2.25rem;
+    font-weight: normal;
+    margin: 0 0 0.5rem;
+    letter-spacing: 0.01em;
+  }
+
+  header p {
+    color: var(--muted);
+    margin: 0;
+    font-style: italic;
+  }
+
+  .step {
+    padding-top: 3.5rem;
+    padding-bottom: 3.5rem;
+    border-top: 1px solid var(--rule);
+  }
+
+  .step .num {
+    display: block;
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--olive);
+    margin-bottom: 0.75rem;
+  }
+
+  .step h2 {
+    font-size: 1.6rem;
+    font-weight: normal;
+    margin: 0 0 1rem;
+  }
+
+  .step p { margin: 0 0 1rem; }
+  .step p:last-child { margin-bottom: 0; }
+
+  .where {
+    padding-top: 3.5rem;
+    padding-bottom: 4rem;
+    border-top: 1px solid var(--rule);
+  }
+
+  .where h2 {
+    font-size: 1.6rem;
+    font-weight: normal;
+    margin: 0 0 1rem;
+  }
+
+  .where p { margin: 0 0 1.25rem; }
+
+  #map {
+    height: 300px;
+    width: 100%;
+    border-radius: 4px;
+    border: 1px solid var(--rule);
+    background: #e9e4d8;
+  }
+
+  .map-fallback {
+    font-size: 0.95rem;
+    color: var(--muted);
+    margin-top: 0.75rem;
+  }
+
+  footer {
+    padding-bottom: 3rem;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  /* Reduced motion: no smooth scrolling. Content is visible by default
+     regardless, since only JS hides anything, and only when motion is allowed. */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>How We Make It</h1>
+  <p>Olive oil from the Siwa Oasis, Egypt</p>
+</header>
+
+<main>
+
+  <section class="step" id="grove">
+    <span class="num">One</span>
+    <h2>The grove</h2>
+    <p>Siwa sits in a hollow of the Western Desert, three hundred kilometres from the sea. The olives grow between date palms, watered by springs that have run since before anyone kept records.</p>
+    <p>Most of our trees are the old Siwi variety. They are slow, small-fruited, and used to the heat.</p>
+  </section>
+
+  <section class="step" id="harvest">
+    <span class="num">Two</span>
+    <h2>The harvest</h2>
+    <p>We pick from late October into November, by hand and with small rakes, onto nets laid under the trees. Nothing is shaken from the branches.</p>
+    <p>The fruit is picked when it has just started to turn, still mostly green. That is when the oil is at its most peppery.</p>
+  </section>
+
+  <section class="step" id="press">
+    <span class="num">Three</span>
+    <h2>The press</h2>
+    <p>Olives go to the press the same day they are picked. They are washed, the leaves are blown off, and the fruit is crushed to a paste.</p>
+    <p>The paste is worked gently for about half an hour, then the oil is separated from the water and the pulp. We keep everything cool. No heat, no solvents, no second pressing.</p>
+  </section>
+
+  <section class="step" id="rest">
+    <span class="num">Four</span>
+    <h2>The rest</h2>
+    <p>Fresh oil is cloudy. We let it settle in steel tanks for a few weeks, out of the light, so the sediment drops on its own.</p>
+    <p>We taste each tank before it is bottled. If it is not right, it does not go out under our name.</p>
+  </section>
+
+  <section class="step" id="bottle">
+    <span class="num">Five</span>
+    <h2>The bottle</h2>
+    <p>We bottle in dark glass, in small runs, with the harvest year on the label. Oil is best in its first year, so we would rather you finish a bottle than keep it.</p>
+    <p>What is left over goes back to the grove: the pomace as compost, the leaves and prunings as mulch.</p>
+  </section>
+
+  <section class="where" id="where">
+    <h2>Where to find us</h2>
+    <p>The press is in the Siwa Oasis, Matrouh Governorate, Egypt. Visitors are welcome during the harvest; write ahead and we will set a time.</p>
+    <div id="map" role="img" aria-label="Map showing the location of the olive press in the Siwa Oasis, Egypt"></div>
+    <p class="map-fallback">Siwa Oasis, Egypt &middot; approximately 29.20&deg; N, 25.52&deg; E</p>
+  </section>
+
+</main>
+
+<footer>
+  Made in Siwa.
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+(function () {
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Scroll reveal. Everything is visible by default in CSS; GSAP only hides
+  // and reveals sections when it has loaded and the visitor allows motion.
+  if (!reduceMotion && window.gsap && window.ScrollTrigger) {
+    gsap.registerPlugin(ScrollTrigger);
+    document.querySelectorAll('.step, .where h2, .where p').forEach(function (el) {
+      gsap.from(el, {
+        opacity: 0,
+        y: 20,
+        duration: 0.9,
+        ease: 'power1.out',
+        scrollTrigger: { trigger: el, start: 'top 85%', once: true }
+      });
+    });
+  }
+
+  // Map. Not animated by GSAP so Leaflet's tile positioning is left alone.
+  if (window.L) {
+    var press = [29.2032, 25.5196];
+    var map = L.map('map', {
+      center: press,
+      zoom: 12,
+      scrollWheelZoom: false,
+      zoomAnimation: !reduceMotion,
+      fadeAnimation: !reduceMotion,
+      markerZoomAnimation: !reduceMotion
+    });
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+    L.marker(press).addTo(map).bindPopup('The press, Siwa Oasis');
+  }
+})();
+</script>
+
+</body>
+</html>

@@ -123,6 +123,7 @@ def install_codex(target, skill_dir=SKILL_DIR, dry_run=False, out=sys.stdout):
                 fh.write(line)
     print("{} {} files into {}".format("Would copy" if dry_run else "Copied", len(jobs),
           os.path.join(target, ".agents", "skills", NAME_DIR)), file=out)
+    print("Also added a short 'Design checks' section to {} (created it if missing).".format(agents_md), file=out)
     print("Codex has no slash commands or hooks, so only the skill body is installed.\n"
           "What you will see next: in Codex, the skill loads when you ask for a design;\n"
           "it runs the same scanners and prints the same proof line.", file=out)

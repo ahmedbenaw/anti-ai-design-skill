@@ -1,0 +1,1 @@
+online run: Page.goto timed out at 15 s loading the CDN scripts over the flaky network during this session (2026-09-11); recorded as rendered ERROR, not as a page fault. Re-run with --allow-network on a stable connection.

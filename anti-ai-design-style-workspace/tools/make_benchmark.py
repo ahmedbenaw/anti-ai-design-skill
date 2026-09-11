@@ -6,10 +6,12 @@ This workspace uses named eval directories with one run per cell, matching
 iteration 1, so the numbers are assembled here instead of restructuring the
 workspace and breaking the comparison with iteration 1.
 """
-import json, statistics, datetime, glob, os
+import json, statistics, datetime, glob, os, sys
 
-W = "anti-ai-design-style-workspace/iteration-2"
-EVALS = [("clinic-landing-page", 0), ("student-budget-app-screen", 1), ("deslop-lovable-page", 2)]
+W = sys.argv[1].rstrip("/") if len(sys.argv) > 1 else "anti-ai-design-style-workspace/iteration-2"
+EVALS = []
+for meta in sorted(glob.glob(os.path.join(W, "*", "eval_metadata.json"))):
+    d = json.load(open(meta)); EVALS.append((d["eval_name"], d["eval_id"]))
 runs, by_cfg = [], {"with_skill": [], "without_skill": []}
 
 for name, eid in EVALS:
@@ -17,6 +19,10 @@ for name, eid in EVALS:
         g = json.load(open(f"{W}/{name}/{cfg}/grading.json"))
         t = json.load(open(f"{W}/{name}/{cfg}/timing.json"))
         m = json.load(open(f"{W}/{name}/{cfg}/measured.json"))[0]
+        unjudged = [e["id"] for e in g["expectations"] if e["passed"] is None]
+        if unjudged:
+            sys.exit(f"REFUSING: {name}/{cfg} has unjudged assertions {unjudged}; "
+                     "record a verdict with evidence in grade.py before building a benchmark")
         exp = [{"text": f"{e['id']}: {e['text']}", "passed": bool(e["passed"]), "evidence": e["evidence"]}
                for e in g["expectations"]]
         passed = sum(1 for e in exp if e["passed"])

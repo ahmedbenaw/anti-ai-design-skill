@@ -1,0 +1,17 @@
+
+=== AI-look scan (register 2026.10, fingerprint ee9ee6320a9a639b) ===
+Files scanned: 1
+
+AI-look score: 2/100  ->  distinct - no meaningful AI-look signals
+
+AI-look tells found (1):
+  [TY5] ALL-CAPS tracked eyebrow labels  (+2)
+      found: letter-spacing: 0.14em;
+    text-transform: uppercase, letter-spacing: 0.14em;
+    text-transform: uppercase
+      why it matters: Tiny ALL-CAPS labels above every heading. Also harder to read for dyslexic users.
+      do this: Delete eyebrows that say nothing. Keep at most one, only if it carries real information.
+
+Verdict: PASS (threshold: AI score under 20 and no near-proof findings)
+Next step: present it, with the proof line: "AI-look score 2/100 (distinct - no meaningful AI-look signals), register 2026.10, fingerprint ee9ee6320a9a639b."
+  (Full proof line, all guards: python3 scripts/verify_all.py <files>)

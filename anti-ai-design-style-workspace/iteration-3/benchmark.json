@@ -1,0 +1,199 @@
+{
+  "metadata": {
+    "skill_name": "anti-ai-design-style",
+    "skill_path": "/Users/ben/Downloads/Repos/Anti-AI-design skill/anti-ai-design-style",
+    "executor_model": "claude-opus-5",
+    "timestamp": "2026-09-11T12:47:08.491707+00:00",
+    "evals_run": [
+      3
+    ],
+    "runs_per_configuration": 1,
+    "note": "n = 1 per cell. No stddev claim is made across repeats; the stddev fields describe spread across the three evals, not across repeats."
+  },
+  "runs": [
+    {
+      "eval_id": 3,
+      "eval_name": "scroll-story-with-library",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 9,
+        "failed": 0,
+        "total": 9,
+        "time_seconds": 828.7,
+        "tokens": 166360,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "a1: AI-look score below 20",
+          "passed": true,
+          "evidence": "ai_score=0"
+        },
+        {
+          "text": "a2: No CR1/CR2 craft flags",
+          "passed": true,
+          "evidence": "craft=none"
+        },
+        {
+          "text": "a3: Five sections and a map are present",
+          "passed": true,
+          "evidence": "5 <section> steps (01-05) plus a Leaflet map section with OSM attribution and the address as text"
+        },
+        {
+          "text": "a4: copy_check.py passes on story.html",
+          "passed": true,
+          "evidence": "grade=3.2, findings=0"
+        },
+        {
+          "text": "a5: At least three details that could only belong to a Siwa olive press",
+          "passed": true,
+          "evidence": "springs not the Nile; salty sandy soil; groves in date-palm shade; near the fortress of Shali; Matrouh Governorate; town-centre pin flagged as a stand-in"
+        },
+        {
+          "text": "a6: No invented testimonials, awards or statistics",
+          "passed": true,
+          "evidence": "no testimonials, awards or counts; '27 degrees' is a process claim, not proof; only '100%'/'85%' hits are CSS max-width and a ScrollTrigger start"
+        },
+        {
+          "text": "a9: No bracketed placeholders remain in visible copy",
+          "passed": true,
+          "evidence": "none found"
+        },
+        {
+          "text": "a7: audit_file.py reports COMPLIANT (brand gate)",
+          "passed": true,
+          "evidence": "COMPLIANT, 0 violations"
+        },
+        {
+          "text": "a8: library_misuse == 0 or justified",
+          "passed": true,
+          "evidence": "library_misuse=0"
+        }
+      ],
+      "notes": [
+        "AI-look 0/100",
+        "craft none",
+        "copy grade 3.2",
+        "brand COMPLIANT (0)",
+        "library misuse 0",
+        "fingerprint ee9ee6320a9a639b"
+      ]
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "scroll-story-with-library",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.7778,
+        "passed": 7,
+        "failed": 2,
+        "total": 9,
+        "time_seconds": 216.4,
+        "tokens": 100601,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "a1: AI-look score below 20",
+          "passed": true,
+          "evidence": "ai_score=2"
+        },
+        {
+          "text": "a2: No CR1/CR2 craft flags",
+          "passed": true,
+          "evidence": "craft=none"
+        },
+        {
+          "text": "a3: Five sections and a map are present",
+          "passed": true,
+          "evidence": "5 numbered sections (grove, harvest, press, rest, bottle) plus a 'Where to find us' Leaflet map with OSM attribution"
+        },
+        {
+          "text": "a4: copy_check.py passes on story.html",
+          "passed": false,
+          "evidence": "grade=4.5, findings=1"
+        },
+        {
+          "text": "a5: At least three details that could only belong to a Siwa olive press",
+          "passed": true,
+          "evidence": "Siwi olive variety; springs not the Nile; ~50 km from the Libyan border; salt lakes; Matrouh Governorate"
+        },
+        {
+          "text": "a6: No invented testimonials, awards or statistics",
+          "passed": true,
+          "evidence": "no testimonials, awards or statistics; 'a few hundred very old trees' is descriptive, not a proof number; '100%'/'85%' hits are CSS and ScrollTrigger"
+        },
+        {
+          "text": "a9: No bracketed placeholders remain in visible copy",
+          "passed": true,
+          "evidence": "none found"
+        },
+        {
+          "text": "a7: audit_file.py reports COMPLIANT (brand gate)",
+          "passed": false,
+          "evidence": "NON-COMPLIANT, 4 violations"
+        },
+        {
+          "text": "a8: library_misuse == 0 or justified",
+          "passed": true,
+          "evidence": "library_misuse=0"
+        }
+      ],
+      "notes": [
+        "AI-look 2/100",
+        "craft none",
+        "copy grade 4.5",
+        "brand NON-COMPLIANT (4)",
+        "library misuse 0",
+        "fingerprint ee9ee6320a9a639b"
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 828.7,
+        "stddev": 0.0,
+        "min": 828.7,
+        "max": 828.7
+      },
+      "tokens": {
+        "mean": 166360,
+        "stddev": 0.0,
+        "min": 166360,
+        "max": 166360
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.7778,
+        "stddev": 0.0,
+        "min": 0.7778,
+        "max": 0.7778
+      },
+      "time_seconds": {
+        "mean": 216.4,
+        "stddev": 0.0,
+        "min": 216.4,
+        "max": 216.4
+      },
+      "tokens": {
+        "mean": 100601,
+        "stddev": 0.0,
+        "min": 100601,
+        "max": 100601
+      }
+    }
+  }
+}

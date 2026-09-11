@@ -1,0 +1,11 @@
+anti-ai-design-style-workspace/iteration-3/scroll-story-with-library/without_skill/outputs/story.html  (6 colours, 10 font families)
+  FAIL #6D7A3D  lines 16  (1 uses)
+       fails as neutral (C1 8.02 Delta-E from brand value #788C5D, needs >= 12) and as accent (C1 8.02 Delta-E from brand value #788C5D, needs >= 12)
+  FAIL #E9E4D6  lines 110  (1 uses)
+       fails as neutral (C1 1.96 Delta-E from brand value #E8E6DC, effectively identical) and as accent (C1 1.96 Delta-E from brand value #E8E6DC, needs >= 12)
+  FAIL #F7F3EA  lines 13  (1 uses)
+       fails as neutral (C1 2.69 Delta-E from brand value #FAF9F5, effectively identical) and as accent (C1 2.69 Delta-E from brand value #FAF9F5, needs >= 12)
+  FAIL font "georgia"  lines 18  T1 excluded typeface
+
+mode exclude | standard v2.0 | brand Anthropic | fingerprint 5697117fa1b27195 | 6 colours, 10 fonts checked
+VERDICT: NON-COMPLIANT (4 violations)

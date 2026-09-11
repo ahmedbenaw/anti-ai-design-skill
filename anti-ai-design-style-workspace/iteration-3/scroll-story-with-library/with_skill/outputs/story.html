@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How we make it – olive oil pressed in Siwa</title>
+<meta name="description" content="How our olive oil is grown, picked, pressed and bottled in the Siwa oasis, Egypt. With a map of the press.">
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+<style>
+  :root {
+    --bg: #FAF9F9;
+    --bg-sunken: #F0EFEF;
+    --ink: #313030;
+    --ink-2: #666566;
+    --line: #919091;
+    --accent: #423900;
+    --accent-hover: #2C2500;
+    --measure: 62ch;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { background: var(--bg); }
+
+  body {
+    margin: 0;
+    color: var(--ink);
+    background: var(--bg);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 1.125rem;
+    line-height: 1.6;
+  }
+
+  a { color: var(--accent); text-underline-offset: 0.15em; }
+  a:hover { color: var(--accent-hover); }
+  a:focus-visible,
+  button:focus-visible,
+  #map:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  header, section, footer {
+    padding: 4rem 1.25rem;
+  }
+
+  .inner {
+    max-width: var(--measure);
+    margin: 0 auto;
+  }
+
+  header {
+    padding-top: 5rem;
+    padding-bottom: 3rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    line-height: 1.2;
+    margin: 0 0 1rem;
+  }
+
+  .lede {
+    color: var(--ink-2);
+    margin: 0;
+  }
+
+  .steps {
+    counter-reset: step;
+    padding: 0;
+  }
+
+  .step {
+    border-top: 1px solid var(--line);
+    padding: 3rem 1.25rem;
+  }
+
+  .step:last-of-type {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .step .inner {
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    gap: 0 1rem;
+    align-items: baseline;
+  }
+
+  .step-number {
+    color: var(--ink-2);
+    font-size: 1rem;
+    font-variant-numeric: tabular-nums;
+    grid-row: 1;
+  }
+
+  .step h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.25;
+    margin: 0 0 0.75rem;
+    grid-column: 2;
+  }
+
+  .step p {
+    margin: 0 0 1rem;
+    grid-column: 2;
+  }
+
+  .step p:last-child { margin-bottom: 0; }
+
+  .aside-note {
+    grid-column: 2;
+    padding: 1rem 1.25rem;
+    margin-top: 0.5rem;
+    background: var(--bg-sunken);
+    color: var(--ink-2);
+    font-size: 1rem;
+  }
+
+  .place {
+    background: var(--bg-sunken);
+  }
+
+  #map {
+    height: 320px;
+    max-width: 100%;
+    margin: 1.5rem 0 1rem;
+    border: 1px solid var(--line);
+    background: var(--bg-sunken);
+  }
+
+  .leaflet-container {
+    font-family: inherit;
+    font-size: 0.9375rem;
+  }
+
+  address {
+    font-style: normal;
+    margin: 0 0 1rem;
+  }
+
+  dl {
+    margin: 0;
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.25rem 1rem;
+  }
+
+  dt { color: var(--ink-2); }
+  dd { margin: 0; }
+
+  footer {
+    color: var(--ink-2);
+    font-size: 1rem;
+    padding-top: 2rem;
+  }
+
+  @media (max-width: 30rem) {
+    .step .inner { grid-template-columns: 1fr; }
+    .step h2, .step p, .aside-note { grid-column: 1; }
+    dl { grid-template-columns: 1fr; }
+    dt { margin-top: 0.5rem; }
+  }
+
+  /* Motion is added only by the script below, and only when the visitor
+     has not asked for reduced motion. With animations off, or with no
+     JavaScript, every section is simply visible. */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="inner">
+    <h1>How we make it</h1>
+    <p class="lede">Olive oil from one press in the Siwa oasis, Egypt. Five steps, from the tree to the bottle in your kitchen.</p>
+  </div>
+</header>
+
+<main>
+  <div class="steps">
+
+    <section class="step" aria-labelledby="s1">
+      <div class="inner">
+        <span class="step-number" aria-hidden="true">01</span>
+        <h2 id="s1">Where the trees grow</h2>
+        <p>Siwa is an oasis in Egypt's Western Desert, close to the Libyan border. Its water comes from springs, not the Nile. The soil is sandy and holds a lot of salt.</p>
+        <p>Olive trees like this. The days are hot and dry, the nights are cool, and the trees are rarely wet. Our groves sit between the date palms, in the shade they give.</p>
+      </div>
+    </section>
+
+    <section class="step" aria-labelledby="s2">
+      <div class="inner">
+        <span class="step-number" aria-hidden="true">02</span>
+        <h2 id="s2">When we pick</h2>
+        <p>We pick in autumn, when the fruit has turned from green to purple but is not yet black. Earlier gives a sharper, greener oil. Later gives more oil but a flatter taste. We go for the middle.</p>
+        <p>The fruit comes off by hand and with small rakes, onto nets under the tree. Nothing is picked up off the ground. Bruised fruit goes into a separate crate and does not become our oil.</p>
+      </div>
+    </section>
+
+    <section class="step" aria-labelledby="s3">
+      <div class="inner">
+        <span class="step-number" aria-hidden="true">03</span>
+        <h2 id="s3">How we press</h2>
+        <p>The olives are pressed on the same day they are picked. A day's wait in the heat is enough to start the fruit turning, and you can taste it.</p>
+        <p>We wash the fruit, crush it whole with the stones in, and stir the paste slowly. The paste is kept under 27 degrees the whole time. Then the oil is spun out of the paste. No heat, no chemicals, nothing added.</p>
+        <div class="aside-note">"Cold pressed" on our label means this: the paste never goes above 27 degrees Celsius.</div>
+      </div>
+    </section>
+
+    <section class="step" aria-labelledby="s4">
+      <div class="inner">
+        <span class="step-number" aria-hidden="true">04</span>
+        <h2 id="s4">Before it is bottled</h2>
+        <p>Fresh oil is cloudy. We let it rest in closed steel tanks so the fine bits settle to the bottom on their own. We draw the clear oil off the top and leave the rest behind.</p>
+        <p>It goes into dark glass, because light spoils oil faster than time does. Every bottle carries the month it was pressed. Keep it closed, cool and out of the sun, and use it within a year.</p>
+      </div>
+    </section>
+
+    <section class="step place" aria-labelledby="s5">
+      <div class="inner">
+        <span class="step-number" aria-hidden="true">05</span>
+        <h2 id="s5">Where the press is</h2>
+        <p>The press is in the town of Siwa, near the old fortress of Shali. Ask us before you come, and we will show you round.</p>
+
+        <div id="map" role="application" aria-label="Map of Siwa town showing the location of the olive press"></div>
+
+        <address>
+          <strong>The olive press, Siwa</strong><br>
+          Siwa town, Matrouh Governorate, Egypt
+        </address>
+        <dl>
+          <dt>Map position</dt>
+          <dd>29.2041 N, 25.5195 E</dd>
+          <dt>Directions</dt>
+          <dd><a href="https://www.openstreetmap.org/?mlat=29.2041&amp;mlon=25.5195#map=15/29.2041/25.5195">Open this spot on OpenStreetMap</a></dd>
+        </dl>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  <div class="inner">
+    <p>Olive oil grown, pressed and bottled in Siwa, Egypt.</p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+<script>
+  (function () {
+    var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    /* Scroll reveal. One gentle move per section, played once.
+       gsap.matchMedia() only runs this when the visitor allows motion,
+       so with reduced motion on, nothing is ever hidden. */
+    if (window.gsap && window.ScrollTrigger) {
+      gsap.registerPlugin(ScrollTrigger);
+      var mm = gsap.matchMedia();
+      mm.add("(prefers-reduced-motion: no-preference)", function () {
+        var steps = document.querySelectorAll(".step .inner");
+        for (var i = 0; i < steps.length; i++) {
+          gsap.from(steps[i], {
+            autoAlpha: 0,
+            y: 12,
+            duration: 0.7,
+            ease: "power1.out",
+            scrollTrigger: {
+              trigger: steps[i],
+              start: "top 85%",
+              toggleActions: "play none none none"
+            }
+          });
+        }
+      });
+    }
+
+    /* The map. The address and coordinates above are the text version;
+       the map adds to them, it does not replace them. */
+    if (window.L) {
+      /* STAND-IN: the centre of Siwa town. Replace with the real
+         position of the press before sharing this page. */
+      var press = [29.2041, 25.5195];
+
+      var map = L.map("map", {
+        scrollWheelZoom: false,
+        zoomAnimation: !reduceMotion,
+        fadeAnimation: !reduceMotion,
+        markerZoomAnimation: !reduceMotion
+      }).setView(press, 14);
+
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
+
+      var popup = document.createElement("p");
+      popup.textContent = "The olive press, Siwa town";
+
+      L.marker(press, { alt: "The olive press, Siwa town" })
+        .addTo(map)
+        .bindPopup(popup);
+    }
+  })();
+</script>
+
+</body>
+</html>

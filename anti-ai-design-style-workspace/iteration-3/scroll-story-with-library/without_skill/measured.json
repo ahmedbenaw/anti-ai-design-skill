@@ -1,0 +1,21 @@
+[
+  {
+    "file": "anti-ai-design-style-workspace/iteration-3/scroll-story-with-library/without_skill/outputs/story.html",
+    "exists": true,
+    "ai_score": 2,
+    "ai_verdict": "PASS",
+    "fingerprint": "ee9ee6320a9a639b",
+    "near_proof": 0,
+    "craft_ids": [],
+    "library_misuse": 0,
+    "library_ids": [],
+    "copy_grade": 4.5,
+    "copy_findings": 1,
+    "copy_finding_text": [
+      "1 sentence(s) over 25 words (e.g. \"Many of them are older than anyone can remember, and most are...\")"
+    ],
+    "copy_pass": false,
+    "brand": "NON-COMPLIANT",
+    "brand_violations": 4
+  }
+]

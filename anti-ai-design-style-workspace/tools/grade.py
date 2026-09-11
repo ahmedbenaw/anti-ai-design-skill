@@ -1,17 +1,34 @@
 #!/usr/bin/env python3
 """Grade the mechanical assertions from captured measurements.
 
-Judgment assertions are left for a reading pass and marked "judgment" here, so
-that nothing silently counts as passed because a script could not check it.
-"""
-import json, os, re, sys
+Usage: grade.py [iteration-dir]   (default: iteration-2)
 
-W = "anti-ai-design-style-workspace/iteration-2"
-EVALS = {
-    "clinic-landing-page": "clinic.html",
-    "student-budget-app-screen": "budget-home.html",
-    "deslop-lovable-page": "fixed.html",
-}
+Reads each eval's eval_metadata.json for its name and assertions, and picks
+the output page as the one .html in outputs/ that is not input.html, the way
+capture.sh does. Judgment assertions are left as None until a reading pass
+records a verdict with evidence; the benchmark builder refuses to count a
+None as a pass or a fail.
+"""
+import glob, json, os, re, sys
+
+W = sys.argv[1].rstrip("/") if len(sys.argv) > 1 else "anti-ai-design-style-workspace/iteration-2"
+
+
+def evals_in(w):
+    out = {}
+    for meta in sorted(glob.glob(os.path.join(w, "*", "eval_metadata.json"))):
+        d = json.load(open(meta))
+        out[d["eval_name"]] = d
+    return out
+
+
+def output_html(run_dir):
+    cands = [p for p in glob.glob(os.path.join(run_dir, "outputs", "*.html"))
+             if os.path.basename(p) != "input.html"]
+    return cands[0] if cands else None
+
+
+EVALS = evals_in(W)
 
 PLACEHOLDER_PEOPLE = re.compile(r"pravatar|John Doe|Jane Smith|Sarah Chen|randomuser\.me", re.I)
 FAKE_STATS = re.compile(r"10[,.]?000\+|10K\+|99\.9%\s*uptime|Trusted by\s*[\d,]+\+", re.I)
@@ -22,7 +39,7 @@ PURPLE_GRAD = re.compile(r"linear-gradient\([^)]*(#(6|7|8)[0-9a-f]{2}(f|e|d)[0-9
 def grade(ev, cfg):
     d = f"{W}/{ev}/{cfg}"
     m = json.load(open(f"{d}/measured.json"))[0]
-    html_path = f"{d}/outputs/{EVALS[ev]}"
+    html_path = output_html(d) or ""
     html = open(html_path, encoding="utf-8", errors="replace").read() if os.path.exists(html_path) else ""
     resp_path = f"{d}/outputs/response.md"
     resp = open(resp_path, encoding="utf-8", errors="replace").read() if os.path.exists(resp_path) else ""
@@ -37,6 +54,14 @@ def grade(ev, cfg):
     # The button height is measured on the button element at 390px viewport -
     # iteration 1 passed this by reading the phone frame's 844px instead.
     JUDGED = {
+      ("scroll-story-with-library","with_skill"): {
+         "a3": (True, "5 <section> steps (01-05) plus a Leaflet map section with OSM attribution and the address as text"),
+         "a5": (True, "springs not the Nile; salty sandy soil; groves in date-palm shade; near the fortress of Shali; Matrouh Governorate; town-centre pin flagged as a stand-in"),
+         "a6": (True, "no testimonials, awards or counts; '27 degrees' is a process claim, not proof; only '100%'/'85%' hits are CSS max-width and a ScrollTrigger start")},
+      ("scroll-story-with-library","without_skill"): {
+         "a3": (True, "5 numbered sections (grove, harvest, press, rest, bottle) plus a 'Where to find us' Leaflet map with OSM attribution"),
+         "a5": (True, "Siwi olive variety; springs not the Nile; ~50 km from the Libyan border; salt lakes; Matrouh Governorate"),
+         "a6": (True, "no testimonials, awards or statistics; 'a few hundred very old trees' is descriptive, not a proof number; '100%'/'85%' hits are CSS and ScrollTrigger")},
       ("clinic-landing-page","with_skill"): {"a5": (True, "EGP x6, WhatsApp/wa.me x9, Alexandria x7, hours x4, therapists x16")},
       ("clinic-landing-page","without_skill"): {"a5": (True, "EGP x12, WhatsApp/wa.me x15, Alexandria x11, hours x7, therapists x23")},
       ("student-budget-app-screen","with_skill"): {
@@ -84,7 +109,7 @@ def grade(ev, cfg):
             not (PURPLE_GRAD.search(html) or GLASSY.search(html)),
             "no purple-gradient or backdrop-filter pattern")
         judgment("a6", "Two design choices explained by student context")
-    else:
+    elif ev == "deslop-lovable-page":
         add("a1", "AI-look score below 20 (input scores 52)", ai_ok, f"ai_score={m['ai_score']} (input=52)")
         add("a2", "No placeholder people remain", not PLACEHOLDER_PEOPLE.search(html),
             "no pravatar/John Doe/Jane Smith/Sarah Chen in the HTML")
@@ -93,6 +118,15 @@ def grade(ev, cfg):
         judgment("a4", "Product and real information preserved")
         judgment("a5", "Plain-language summary of changes")
         judgment("a6", "Pre-existing findings reported, not silently fixed")
+    else:
+        # Any newer eval: the shared mechanical set, judgment items by id text.
+        add("a1", "AI-look score below 20", ai_ok, f"ai_score={m['ai_score']}")
+        add("a2", "No CR1/CR2 craft flags", not (craft & {"CR1", "CR2"}), f"craft={sorted(craft) or 'none'}")
+        for a in EVALS[ev]["assertions"]:
+            if a["check"] == "judgment":
+                judgment(a["id"], a["text"])
+            elif a["id"] == "a4":
+                add("a4", a["text"], bool(m["copy_pass"]), f"grade={m['copy_grade']}, findings={m['copy_findings']}")
 
     # a9: visible text only. Strip tags and scripts first, then look for a
     # bracketed run that reads like a placeholder: all-caps words, or ending
@@ -115,6 +149,8 @@ if __name__ == "__main__":
     allr = []
     for ev in EVALS:
         for cfg in ("with_skill", "without_skill"):
+            if not os.path.exists(f"{W}/{ev}/{cfg}/measured.json"):
+                continue
             g = grade(ev, cfg)
             json.dump(g, open(f"{W}/{ev}/{cfg}/grading.json", "w"), indent=2)
             allr.append(g)
