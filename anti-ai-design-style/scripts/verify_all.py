@@ -10,6 +10,12 @@ So this runs all of them and prints a single verdict line. If a guard could
 not run, the line says so and the verdict is FAIL. A missing check never
 reads as a passing check. Exit 0 means every guard actually ran and passed.
 
+The brand check is this skill's own (brand_distance.py), so it cannot go
+missing. When a copy of anti-antropik-design happens to be installed, its
+verdict is fetched too and the two are compared: agreement is reported as
+`(native, cross-checked)` and a disagreement fails the run rather than being
+silently resolved in our own favour.
+
 Usage:
   python3 verify_all.py page.html styles.css
   python3 verify_all.py page.html --json
@@ -134,14 +140,20 @@ def gather(paths, brand_dir, max_grade=9.0, render=False, allow_network=False):
                       "--json"] + list(paths))
     copy = _json_cmd([sys.executable, os.path.join(HERE, "copy_check.py"),
                       "--json", "--max-grade", str(max_grade)] + list(paths))
-    brand = None
-    if brand_dir:
-        brand = _json_cmd([sys.executable,
-                           os.path.join(brand_dir, "scripts", "audit_file.py"),
-                           "--json"] + list(paths))
+    brand = _json_cmd([sys.executable, os.path.join(HERE, "brand_distance.py"),
+                       "--json"] + list(paths))
+    cross = None
+    if brand_dir and brand:
+        theirs = _json_cmd([sys.executable,
+                            os.path.join(brand_dir, "scripts", "audit_file.py"),
+                            "--json"] + list(paths))
+        if theirs:
+            cross = {"path": brand_dir, "their_verdict": theirs.get("verdict"),
+                     "their_violations": theirs.get("violations"),
+                     "agrees": (theirs.get("verdict") == brand.get("verdict")
+                                and theirs.get("violations") == brand.get("violations"))}
     return {"scan": scan, "copy": copy, "brand": brand,
-            "brand_found": brand_dir is not None,
-            "brand_source": source_of(brand_dir) if brand_dir else None,
+            "brand_found": True, "brand_source": "native", "brand_cross": cross,
             "render": render_result(paths, render, allow_network)}
 
 
@@ -177,15 +189,26 @@ def summarise(results, rules):
              "grade": max(grades) if grades else None,
              "findings": findings}
 
+    cross = results.get("brand_cross")
     if brand is None:
-        found = results.get("brand_found", False)
-        b = {"ok": False, "fingerprint": None,
-             "verdict": "DID NOT RUN" if found else NOT_RUN}
+        # The native check is in this folder, so this is a crash, not a
+        # missing install. Say which, because the advice differs.
+        b = {"ok": False, "fingerprint": None, "verdict": "DID NOT RUN",
+             "source": "native"}
     else:
         b = {"ok": brand["verdict"] == "COMPLIANT",
              "verdict": brand["verdict"],
              "fingerprint": brand.get("exclusion_fingerprint"),
-             "source": results.get("brand_source")}
+             "source": results.get("brand_source") or "native"}
+        if cross:
+            b["cross_checked"] = cross
+            if not cross.get("agrees"):
+                # Two implementations of one standard disagreeing means one of
+                # them is wrong, and we do not get to assume it is theirs.
+                b["ok"] = False
+                b["verdict"] = "%s (cross-check DISAGREES: %s said %s)" % (
+                    brand["verdict"], os.path.basename(cross["path"]),
+                    cross.get("their_verdict"))
 
     # A skipped render check does not fail the run: it is optional, and
     # unlike the brand guard it measures craft the other scanners already
@@ -218,7 +241,10 @@ def proof_line(summary):
         verdict="PASS" if summary["passed"] else "FAIL",
         score=score, band=s["band"], craft=craft, lib=lib, grade=grade,
         brand=b["verdict"], render=r["state"] + (" (network)" if r.get("network") else ""), reg=s["register"],
-        src=(" ({})".format(b["source"]) if b.get("source") and b.get("fingerprint") else ""),
+        src=(" ({})".format(
+            "native, cross-checked" if (b.get("cross_checked") or {}).get("agrees")
+            else b.get("source"))
+            if b.get("source") and b.get("fingerprint") else ""),
         rf=s["fingerprint"], bf=b["fingerprint"] or "-")
 
 
@@ -239,6 +265,19 @@ def selftest():
     checks.append(("all three passing gives PASS", ok["passed"]))
     checks.append(("PASS line names both fingerprints",
                    "abc123" in proof_line(ok) and "def456" in proof_line(ok)))
+
+    native = dict(good, brand={"verdict": "COMPLIANT", "exclusion_fingerprint": "def456"},
+                  brand_source="native")
+    checks.append(("the line names the brand check as native",
+                   "(native)" in proof_line(summarise(native, rules))))
+    crossed = dict(native, brand_cross={"agrees": True, "path": "/somewhere"})
+    checks.append(("a cross-check that agrees is named in the line",
+                   "(native, cross-checked)" in proof_line(summarise(crossed, rules))))
+    disagree = dict(native, brand_cross={"agrees": False, "path": "/somewhere",
+                                         "their_verdict": "NON-COMPLIANT"})
+    d = summarise(disagree, rules)
+    checks.append(("a cross-check that disagrees fails the gate", not d["passed"]))
+    checks.append(("a disagreement is visible in the line", "DISAGREES" in proof_line(d)))
 
     missing = dict(good, brand=None)
     m = summarise(missing, rules)
@@ -319,7 +358,7 @@ def main():
     if not args.paths:
         ap.error("give me at least one file to check")
 
-    brand_dir = locate()
+    brand_dir = locate(allow_vendored=False)   # optional cross-check only
     summary = summarise(gather(args.paths, brand_dir, args.max_grade,
                                render=args.render,
                                allow_network=args.allow_network), load_rules())
@@ -328,11 +367,11 @@ def main():
     if args.json:
         print(json.dumps(summary, indent=2))
     print(proof_line(summary))
-    if not brand_dir:
+    if summary["brand"]["verdict"] == "DID NOT RUN":
         sys.stderr.write(
-            "\nThe brand guard did not run, so this is a FAIL no matter what "
-            "the other checks said.\nInstall anti-antropik-design, or set "
-            "ANTI_ANTROPIK_PATH to point at it.\n")
+            "\nThe brand check crashed, so this is a FAIL no matter what the "
+            "other checks said.\nRun scripts/brand_distance.py by hand on the "
+            "same files to see its error.\n")
     return 0 if summary["passed"] else 1
 
 

@@ -331,3 +331,27 @@ Every ban list in the wild is an undated snapshot. This one carries a version
 and era tags, so future updates can retire tells. CO1 and LA12 are already
 retired, kept at 1 point as legacy signals. When updating: re-run the K methodology (clone
 verified generated repos, count), don't trust articles alone.
+
+## Brand distance, 2026-09-11
+
+Brand distance used to be measured by calling the `anti-antropik-design`
+skill, with a verbatim copy vendored inside this one as a fallback. Both are
+gone. `scripts/brand_distance.py` is this skill's own implementation of that
+standard, version 2.0, signature level.
+
+Why it changed: shipping another skill's files inside this one meant
+redistributing work that carried no licence. A port removes the question.
+
+How it was verified, before it was trusted:
+
+| Check | Result |
+|---|---|
+| Verdict-for-verdict against an installed copy, 42 pages | 42 same, 0 different |
+| Exclusion fingerprint | `5697117fa1b27195`, identical |
+| CIEDE2000 against the published Sharma test pair | matches to 1e-3 |
+| Both eval iterations re-measured | every cell unchanged |
+
+An installed copy is now an optional cross-check. When present, both run and
+a disagreement fails the verdict. Colour data comes from the W3C named-colour
+table and from Tailwind's own MIT-licensed package, whose licence ships in
+`scripts/data/`.

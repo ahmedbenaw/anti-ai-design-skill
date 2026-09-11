@@ -132,12 +132,16 @@ Two things worth knowing about how these work:
 You don't need any of the above. Open `templates/prompt-packs.md`, fill in
 `templates/design-brief.md`, and copy the block for your tool.
 
-### If the brand guard is not installed
+### About the brand check
 
-A copy ships inside this skill at `vendor/anti-antropik-design`. It is used
-only when no installed copy is found, and the proof line then ends with
-`(vendored)`. Your own installed copy always wins. To point at a copy
-somewhere else, set `ANTI_ANTROPIK_PATH`.
+It ships inside this skill and needs nothing installed. The proof line ends
+with `(native)`.
+
+If you also have the `anti-antropik-design` skill installed, the two are run
+together and the line says `(native, cross-checked)`. That is a second opinion
+from a separate implementation of the same standard. If they ever disagree,
+the run fails on purpose and you should report it. To point at a copy kept
+somewhere unusual, set `ANTI_ANTROPIK_PATH`.
 
 ### If hookify lives somewhere else
 

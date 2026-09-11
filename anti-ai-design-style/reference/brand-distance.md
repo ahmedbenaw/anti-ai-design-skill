@@ -11,7 +11,7 @@ skill knows about. It scored 0 out of 100. It also used warm cream, a bookish
 serif and a terracotta accent.
 
 Ben spotted it: that is Claude's own design language. So the example was
-measured with the `anti-antropik-design` skill's scanner:
+measured by `scripts/brand_distance.py`, which ships with this skill:
 
 ```
 FAIL #F5F1E8
@@ -40,7 +40,7 @@ deslop.html     FAIL #FBFBF9, georgia, source serif  NON-COMPLIANT (4 violations
 So 4 of 4 skill-generated pages passed the AI-look scanner and landed on the
 brand anyway. That is the measured reason this guard is a gate, not advice.
 The brief now says "generate the palette, then name it", the commands run
-`audit_file.py`, and the stop hook refuses "done" without a COMPLIANT line.
+`brand_distance.py`, and the stop hook refuses "done" without a COMPLIANT line.
 The trap is structural: "escape generic AI" and "escape the cream editorial
 look" pull in the same direction, straight into the warm off-white, serif,
 terracotta corner.
@@ -50,7 +50,7 @@ terracotta corner.
 | Guard | Question it answers | What it cannot see |
 |---|---|---|
 | `scripts/ai_tell_scan.py` (this skill) | Does this look like generic AI output? | Whether the design sits on top of a specific real brand |
-| `anti-antropik-design/scripts/audit_file.py` | Is this provably distant from a named brand? | Whether the design is generic in every other way |
+| `scripts/brand_distance.py` | Is this provably distant from a named brand? | Whether the design is generic in every other way |
 
 They disagree usefully. A page can be brand-distant and still generic. A page
 can be distinctive and still be sitting inside someone's trade dress.
@@ -59,11 +59,11 @@ can be distinctive and still be sitting inside someone's trade dress.
 
 ```
 python3 scripts/ai_tell_scan.py <files>                     # this skill
-python3 <anti-antropik>/scripts/exclusion_check.py --selftest
-python3 <anti-antropik>/scripts/audit_file.py <files> --suggest
+python3 "$SKILL"/scripts/brand_distance.py --selftest
+python3 "$SKILL"/scripts/brand_distance.py <files> --suggest
 ```
 
-Both must pass before you present. `audit_file.py` prints suggested
+Both must pass before you present. `--suggest` prints replacement
 replacement hex values when it fails, so the fix is usually one substitution.
 
 ## Generate the palette, do not pick it by hand
@@ -88,7 +88,7 @@ working, and it is exactly the trap the first example fell into.
 
 ## The typography half
 
-`anti-antropik-design` also excludes typefaces, not just colours. Its list
+The standard also excludes typefaces, not just colours. The list
 includes Poppins, Lora and their substitutes, and Georgia is on it. It also
 excludes the *structure* of a geometric sans heading over a bookish serif body,
 whatever the family names.
@@ -111,4 +111,5 @@ example uses sans plus mono, which is why it now passes.
 The rule CO6 check in `scripts/rules.json` catches the cream-serif-terracotta
 conjunction on its own, at low weight. That is a smoke alarm, not a
 measurement. For real brand distance you need the Delta-E maths, which lives in
-`anti-antropik-design`. Install it alongside this one.
+`anti-antropik-design`. Installing it alongside this one adds a cross-check
+and its palette generator, but the brand measurement here does not need it.

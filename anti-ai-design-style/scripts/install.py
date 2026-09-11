@@ -35,7 +35,6 @@ SKILL_TOKEN = "${CLAUDE_PLUGIN_ROOT}"
 
 EXIT_OK = 0
 EXIT_ERROR = 1
-EXIT_NO_BRAND_GUARD = 3
 
 
 def plan_files(skill_dir=SKILL_DIR):
@@ -174,16 +173,9 @@ def install(target, skill_dir=SKILL_DIR, brand_dir=None, dry_run=False,
 
     out.write("\nPaths filled in:\n")
     out.write("  this skill      {}\n".format(skill_dir))
-    out.write("  brand guard     {}\n".format(brand_dir or "NOT FOUND"))
+    out.write("  brand check     this skill's own (scripts/brand_distance.py)\n")
+    out.write("  cross-check     {}\n".format(brand_dir or "none installed (optional)"))
 
-    if not brand_dir:
-        out.write(
-            "\nHeads up: the brand guard (anti-antropik-design) is not "
-            "installed.\nThe files are in place and will find it on their own "
-            "once it is. Until then\nevery verify_all.py run reports 'brand "
-            "distance NOT RUN' and fails, on purpose.\nInstall it, or set "
-            "ANTI_ANTROPIK_PATH to point at it.\n")
-        return EXIT_NO_BRAND_GUARD
 
     out.write("\nWhat you will see next: open Claude Code in this folder and "
               "edit a web page.\nWhen it writes something that looks "
@@ -245,8 +237,9 @@ def selftest():
         bare = os.path.join(root, "proj2")
         code = install(bare, skill, None, out=io.StringIO())
         rule2 = open(os.path.join(bare, ".claude", "hookify.x.local.md")).read()
-        checks.append(("missing guard exits 3", code == EXIT_NO_BRAND_GUARD))
-        checks.append(("missing guard still installs a complete file",
+        checks.append(("no installed sibling is an ordinary success: the brand "
+                       "check ships here", code == EXIT_OK))
+        checks.append(("no installed sibling still installs a complete file",
                        SKILL_TOKEN not in rule2 and skill in rule2))
 
         spacey_skill = os.path.join(root, "a skill dir")

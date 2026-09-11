@@ -3,7 +3,7 @@
     "skill_name": "anti-ai-design-style",
     "skill_path": "/Users/ben/Downloads/Repos/Anti-AI-design skill/anti-ai-design-style",
     "executor_model": "claude-opus-5",
-    "timestamp": "2026-09-11T12:55:39.138950+00:00",
+    "timestamp": "2026-09-11T14:54:34.700800+00:00",
     "evals_run": [
       3
     ],
@@ -63,7 +63,7 @@
           "evidence": "none found"
         },
         {
-          "text": "a7: audit_file.py reports COMPLIANT (brand gate)",
+          "text": "a7: brand_distance.py reports COMPLIANT (brand gate)",
           "passed": true,
           "evidence": "COMPLIANT, 0 violations"
         },
@@ -134,7 +134,7 @@
           "evidence": "none found"
         },
         {
-          "text": "a7: audit_file.py reports COMPLIANT (brand gate)",
+          "text": "a7: brand_distance.py reports COMPLIANT (brand gate)",
           "passed": false,
           "evidence": "NON-COMPLIANT, 4 violations"
         },

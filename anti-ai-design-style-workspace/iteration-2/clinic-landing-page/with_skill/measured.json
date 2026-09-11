@@ -16,6 +16,8 @@
     ],
     "copy_pass": false,
     "brand": "COMPLIANT",
-    "brand_violations": 0
+    "brand_violations": 0,
+    "brand_fingerprint": "5697117fa1b27195",
+    "brand_cross_check": "agrees"
   }
 ]

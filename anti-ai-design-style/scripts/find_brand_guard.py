@@ -1,19 +1,21 @@
 #!/usr/bin/env python3
-"""Find the anti-antropik-design skill on this machine.
+"""Find an installed anti-antropik-design skill, if there is one.
 
-Why this exists: the brand guard is the second half of the verification, and
-it lives outside this skill. Its path differs per machine and, when it is
-installed as a plugin, changes between sessions. Hard-coding a path means the
-guard silently stops running, and a silently skipped guard is worse than no
-guard - it produces a verdict that looks complete and is not.
+This used to be load-bearing: the brand half of every verdict came from that
+skill, so a missing copy meant `brand distance NOT RUN` and a FAIL. It is not
+load-bearing any more. This skill measures brand distance itself, in
+scripts/brand_distance.py, against the same published standard.
 
-So this searches and validates: a directory only counts if it actually
-contains scripts/audit_file.py. An installed copy always wins. When none is
-installed, the copy vendored inside this skill is used and the proof line says
-`(vendored)`, so the fallback is visible, never silent. Exit 2 means "nothing
-usable at all", and the callers treat that as a FAIL, never as a pass. Set
-ANTI_ANTROPIK_NO_VENDORED=1 to refuse every vendored copy, which is how the
-tests reach that path.
+What a found copy is still good for:
+
+  * a cross-check. verify_all.py asks it for a second opinion and fails the
+    run if the two implementations disagree, which is how a port earns trust.
+  * generate_palette.py, which builds a verified 16-role colour system. That
+    tool has no equivalent here yet.
+
+So "not found" is now an ordinary outcome, not a failure. Exit 2 still means
+nothing usable was found, and callers treat that as "no cross-check", never
+as a failed check.
 """
 
 import argparse
@@ -34,17 +36,13 @@ def _usable(path):
     return bool(path) and os.path.isfile(os.path.join(path, MARKER))
 
 
-VENDORED = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                        "vendor", NAME)
 
 
 def source_of(path):
-    """'vendored' when the guard is a copy shipped inside a `vendor/` folder.
+    """Where a found copy came from. Kept for the proof line's source tag.
 
     Structural, not positional: a second copy of this skill in a plugin cache
-    carries its own vendor/ folder, and the plugin glob can find it. It must
-    be labelled vendored there too, or the proof line would say (installed)
-    about a frozen copy.
+    carries its own vendor/ folder, and the plugin glob can find it.
     """
     try:
         real = os.path.realpath(path)
@@ -72,14 +70,6 @@ def candidates(home=None, env=None, allow_vendored=True):
     out.extend(sorted(glob.glob(
         os.path.join(home, "Library", "Application Support", "Claude",
                      "**", "skills", NAME), recursive=True)))
-    # The copy vendored inside this skill comes last. It never competes on
-    # modification time with an installed copy: a freshly copied folder is
-    # always the newest, and it must never win on that basis.
-    # ANTI_ANTROPIK_NO_VENDORED=1 switches the fallback off. Tests that must
-    # see the fail-closed path use it, and it crosses subprocess boundaries
-    # where a function argument cannot.
-    if allow_vendored and not env.get("ANTI_ANTROPIK_NO_VENDORED"):
-        out.append(VENDORED)
     return out
 
 
@@ -110,12 +100,8 @@ def selftest():
     try:
         empty_home = os.path.join(root, "empty-home")
         os.makedirs(empty_home)
-        checks.append(("nothing installed returns None (vendored copy excluded)",
-                       locate(home=empty_home, env={}, allow_vendored=False) is None))
-        checks.append(("nothing installed falls back to the vendored copy",
-                       locate(home=empty_home, env={}) == VENDORED))
-        checks.append(("ANTI_ANTROPIK_NO_VENDORED=1 switches the fallback off",
-                       locate(home=empty_home, env={"ANTI_ANTROPIK_NO_VENDORED": "1"}) is None))
+        checks.append(("nothing installed returns None",
+                       locate(home=empty_home, env={}) is None))
 
         real = os.path.join(root, "real", NAME)
         os.makedirs(os.path.join(real, "scripts"))
@@ -153,25 +139,11 @@ def selftest():
                        locate(home=home, env={}) ==
                        os.path.join(home, ".claude", "skills", NAME)))
         shutil.rmtree(os.path.join(home, ".claude", "skills"))
-        checks.append(("ANTI_ANTROPIK_NO_VENDORED=1 also removes a plugin-cache vendored copy",
+        checks.append(("ANTI_ANTROPIK_NO_VENDORED=1 refuses a plugin-cache vendored copy",
                        locate(home=home, env={"ANTI_ANTROPIK_NO_VENDORED": "1"}) is None))
     finally:
         shutil.rmtree(root, ignore_errors=True)
 
-    # The vendored copy must report the fingerprint this skill's proof lines
-    # were written against. If the installed copy is ever updated and this
-    # copy is not, the two fingerprints in the proof line will differ.
-    try:
-        with tempfile.NamedTemporaryFile("w", suffix=".html", delete=False) as fh:
-            fh.write("<!doctype html><html><body><p>x</p></body></html>"); tiny = fh.name
-        out = subprocess.run([sys.executable, os.path.join(VENDORED, "scripts", "audit_file.py"),
-                              "--json", tiny], capture_output=True, text=True, timeout=60).stdout
-        fp = json.loads(out[out.index("{"):]).get("exclusion_fingerprint")
-        os.unlink(tiny)
-    except Exception as e:  # noqa: BLE001
-        fp = "error: {}".format(e)
-    checks.append(("vendored copy reports fingerprint 5697117fa1b27195 (got {})".format(fp),
-                   fp == "5697117fa1b27195"))
     for label, ok in checks:
         print("  {} {}".format("ok  " if ok else "FAIL", label))
     passed = all(ok for _, ok in checks)
@@ -191,11 +163,11 @@ def main():
     path = locate()
     if not path:
         sys.stderr.write(
-            "brand guard NOT FOUND.\n"
-            "This skill needs anti-antropik-design to check brand distance.\n"
-            "Fix it in one of two ways:\n"
-            "  1. Put the skill in ~/.claude/skills/anti-antropik-design\n"
-            "  2. Or point this at it: export ANTI_ANTROPIK_PATH=/path/to/it\n")
+            "No installed anti-antropik-design found.\n"
+            "Brand distance still runs: this skill measures it itself, in\n"
+            "scripts/brand_distance.py. An installed copy only adds a\n"
+            "cross-check and the generate_palette.py tool.\n"
+            "To point at one: export ANTI_ANTROPIK_PATH=/path/to/it\n")
         return 2
     print(path)
     return 0

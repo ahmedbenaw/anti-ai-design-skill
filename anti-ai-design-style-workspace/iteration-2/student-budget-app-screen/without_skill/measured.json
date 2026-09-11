@@ -17,6 +17,8 @@
     "copy_finding_text": [],
     "copy_pass": true,
     "brand": "NON-COMPLIANT",
-    "brand_violations": 7
+    "brand_violations": 7,
+    "brand_fingerprint": "5697117fa1b27195",
+    "brand_cross_check": "agrees"
   }
 ]

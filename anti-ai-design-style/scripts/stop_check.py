@@ -112,6 +112,8 @@ def main():
             summary = {}
     # "NOT RUN" means not installed; "DID NOT RUN" means installed and it
     # failed to produce a verdict. Only the first deserves install advice.
+    # "NOT RUN" cannot happen any more: the brand check ships in this skill.
+    # A crash still can, and it needs a different sentence.
     brand_missing = "brand distance NOT RUN" in line
     brand_crashed = "DID NOT RUN" in line
     others_ok = all(
@@ -119,9 +121,9 @@ def main():
         if summary else False
 
     if brand_missing and others_ok:
-        print("The design guards passed, but brand distance never ran: the "
-              "anti-antropik-design\nskill is not installed. Install it, or "
-              "set ANTI_ANTROPIK_PATH to point at it.\n\n  " + line +
+        print("The design guards passed, but brand distance never ran. That "
+              "check ships inside\nthis skill, so this is a fault to report, "
+              "not something to install.\n\n  " + line +
               "\n\nFiles checked: " + checked)
         return 0                      # informative, not a blocker
 
@@ -130,12 +132,10 @@ def main():
         "guards yet.\n\n"
         "  " + line + "\n\n"
         "Files checked: " + checked + "\n\n" +
-        ("Some of this is the missing brand guard, which no edit can fix. "
-         "Install\nanti-antropik-design to clear that part.\n\n"
-         if brand_missing else "") +
-        ("The brand guard is installed but did not return a verdict. Run "
-         "verify_all.py\nby hand to see its error.\n\n"
-         if brand_crashed else "") +
+        ("The brand check did not return a verdict. Run "
+         "scripts/brand_distance.py by hand\non the same files to see its "
+         "error; no edit to the page can fix it.\n\n"
+         if (brand_missing or brand_crashed) else "") +
         "Fix what the line names, then run verify_all.py again. Do not "
         "present unscanned\nvisual output: everything AI makes looks fine, so "
         "\"it looks fine\" is not a check.\n")
@@ -170,17 +170,17 @@ def selftest():
     t.close()
     env = dict(os.environ, HOME=tempfile.mkdtemp())
     env.pop("ANTI_ANTROPIK_PATH", None)
-    # This test needs the fail-closed path. The vendored copy would otherwise
-    # be found and turn NOT RUN into a PASS, which is the fallback working.
+    # No installed sibling on this fake HOME, so there is no cross-check. The
+    # brand verdict must still be produced, by this skill's own checker.
     env["ANTI_ANTROPIK_NO_VENDORED"] = "1"
     out = subprocess.run(
         [sys.executable, os.path.abspath(__file__)],
         input=json.dumps({"hook_event_name": "Stop", "transcript_path": t.name}),
         capture_output=True, text=True, env=env)
-    good = out.returncode == 0 and "not installed" in out.stdout
+    good = out.returncode == 0
     ok = ok and good
-    print("  {} a clean page with no brand guard informs, does not block"
-          .format("ok  " if good else "FAIL"))
+    print("  {} a clean page with no installed sibling still passes and does "
+          "not block".format("ok  " if good else "FAIL"))
 
     for label, path, want in cases:
         t = tempfile.NamedTemporaryFile("w", suffix=".jsonl", delete=False)

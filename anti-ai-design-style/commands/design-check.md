@@ -16,14 +16,17 @@ The user wants to know whether their design reads as AI-generated.
    Then run these for the findings:
    - `python3 "${CLAUDE_PLUGIN_ROOT}"/scripts/ai_tell_scan.py <the files from step 1>`
    - `python3 "${CLAUDE_PLUGIN_ROOT}"/scripts/copy_check.py <the files from step 1>` (pages and docs)
-   - `python3 "$(python3 "${CLAUDE_PLUGIN_ROOT}"/scripts/find_brand_guard.py)"/scripts/audit_file.py <the files from step 1> --suggest`
+   - `python3 "${CLAUDE_PLUGIN_ROOT}"/scripts/brand_distance.py <the files from step 1> --suggest`
      (only when brand distance failed; it prints replacement hex values)
-3. If the line says `brand distance NOT RUN`, say this first, in plain words.
-   The second guard is not installed. So the verdict is FAIL for a reason
-   that has nothing to do with their design. Tell them to install
-   `anti-antropik-design`, or to set `ANTI_ANTROPIK_PATH` to point at it. Then
-   report the rest of the findings normally. Do not let a first-time user think
-   their page failed on its merits when the checker was simply missing.
+3. If the line says `brand distance DID NOT RUN`, say this first, in plain
+   words. That checker ships inside this skill. So it is a fault in the tool,
+   not in their page. No edit of theirs can clear it. Run
+   `scripts/brand_distance.py` on the same files to see the error. Then report
+   the rest of the findings normally. Never let a first-time user think their
+   page failed on its merits when a checker broke.
+   If the line says `cross-check DISAGREES`, say that too. A separate copy of
+   the standard reached a different verdict. Nobody should trust the result
+   until a person looks at it.
 4. Report back in plain language, for a non-technical reader:
    - Start with the verify_all line exactly as printed, then one sentence
      saying what it means.

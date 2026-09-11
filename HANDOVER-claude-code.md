@@ -133,9 +133,14 @@ Current measured state (re-verify in Task 0, do not trust this table):
    lets the page show the real product. It fails when it decorates a page
    that has nothing to show." Leaflet and SurveyJS are the antidote for JD2,
    polish without depth. They add function, not motion.
-9. **Readability exemption is explicit.** `reference/research/` and
-   `reference/libraries/*.md` are evidence archives and are exempt from the
-   grade-9 gate. Everything a user reads is not exempt.
+9. **Readability exemption is explicit.** `reference/research/`,
+   `reference/libraries/*.md` and `reference/sources-compendium.md` are
+   evidence archives and are exempt from the grade-9 gate. They are lists of
+   sources, quotes and citations, not prose anyone reads start to finish.
+   Everything a user reads is not exempt. (The compendium was added to this
+   list on 2026-09-11, when a sweep of every document first included it. It
+   had never been inside the gate; this records the fact rather than quietly
+   dropping it.)
 10. **The audience.** Vibe coders, non-technical, neurodivergent. Plain
     words, one action per step, one question at a time, time estimates,
     say what they will see next. That is a requirement on every doc and on
@@ -454,6 +459,7 @@ is the report; the status table at its end says what landed where.
 | 27 | `/design-fix` dropped its file argument | **Closed** (9c36fd3). |
 | 28 | Fourth eval with a library, so `a8` can discriminate | **Done.** Iteration 3, `scroll-story-with-library`: with_skill 9/9, baseline 7/9 (copy, brand). `a8` still did not discriminate (0 for 4); kept as a guard, recorded in `iteration-3/benchmark.md`. |
 | 29 | The sub-validator said the skill was not shipped by the plugin route | **Withdrawn.** The docs allow a root `SKILL.md`; `claude plugin validate` passes. |
+| 31 | Brand distance ported into this skill; vendored copy deleted | **Done.** `scripts/brand_distance.py`, verified 42 pages verdict-for-verdict against an installed copy with an identical fingerprint `5697117fa1b27195`. Proof line now says `(native)` or `(native, cross-checked)`; a disagreement fails. |
 | 30 | Adversarial review of the sprint-2 scanner changes (three reviewers, read-only) | **Done.** 17 findings, all reproduced, 13 fixes fixture-first; one critical (a plugin-cache copy's vendored guard was labelled installed and beat a real install). `workspace/interrogate/VERDICT.md`. Fingerprint `b591c533d917bdd4`. |
 
 ## 7. Non-negotiables for whoever picks this up

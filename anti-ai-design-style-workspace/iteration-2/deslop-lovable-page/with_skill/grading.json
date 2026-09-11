@@ -4,9 +4,9 @@
   "expectations": [
     {
       "id": "a1",
-      "text": "AI-look score below 20 (input scores 52)",
+      "text": "AI-look score below 20 (input scores 50)",
       "passed": true,
-      "evidence": "ai_score=0 (input=52)"
+      "evidence": "ai_score=0 (input=50)"
     },
     {
       "id": "a2",
@@ -46,7 +46,7 @@
     },
     {
       "id": "a7",
-      "text": "audit_file.py reports COMPLIANT (brand gate)",
+      "text": "brand_distance.py reports COMPLIANT (brand gate)",
       "passed": true,
       "evidence": "COMPLIANT, 0 violations"
     },

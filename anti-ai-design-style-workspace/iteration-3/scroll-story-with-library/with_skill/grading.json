@@ -46,7 +46,7 @@
     },
     {
       "id": "a7",
-      "text": "audit_file.py reports COMPLIANT (brand gate)",
+      "text": "brand_distance.py reports COMPLIANT (brand gate)",
       "passed": true,
       "evidence": "COMPLIANT, 0 violations"
     },

@@ -3,7 +3,7 @@
     "skill_name": "anti-ai-design-style",
     "skill_path": "/Users/ben/Downloads/Repos/Anti-AI-design skill/anti-ai-design-style",
     "executor_model": "claude-opus-5",
-    "timestamp": "2026-09-11T12:55:38.978422+00:00",
+    "timestamp": "2026-09-11T14:54:34.583584+00:00",
     "evals_run": [
       0,
       2,
@@ -65,7 +65,7 @@
           "evidence": "7 found, e.g. '[ CLINIC NAME ]'"
         },
         {
-          "text": "a7: audit_file.py reports COMPLIANT (brand gate)",
+          "text": "a7: brand_distance.py reports COMPLIANT (brand gate)",
           "passed": true,
           "evidence": "COMPLIANT, 0 violations"
         },
@@ -136,7 +136,7 @@
           "evidence": "none found"
         },
         {
-          "text": "a7: audit_file.py reports COMPLIANT (brand gate)",
+          "text": "a7: brand_distance.py reports COMPLIANT (brand gate)",
           "passed": false,
           "evidence": "NON-COMPLIANT, 8 violations"
         },
@@ -172,9 +172,9 @@
       },
       "expectations": [
         {
-          "text": "a1: AI-look score below 20 (input scores 52)",
+          "text": "a1: AI-look score below 20 (input scores 50)",
           "passed": true,
-          "evidence": "ai_score=0 (input=52)"
+          "evidence": "ai_score=0 (input=50)"
         },
         {
           "text": "a2: No placeholder people remain",
@@ -207,7 +207,7 @@
           "evidence": "none found"
         },
         {
-          "text": "a7: audit_file.py reports COMPLIANT (brand gate)",
+          "text": "a7: brand_distance.py reports COMPLIANT (brand gate)",
           "passed": true,
           "evidence": "COMPLIANT, 0 violations"
         },
@@ -243,9 +243,9 @@
       },
       "expectations": [
         {
-          "text": "a1: AI-look score below 20 (input scores 52)",
+          "text": "a1: AI-look score below 20 (input scores 50)",
           "passed": false,
-          "evidence": "ai_score=20 (input=52)"
+          "evidence": "ai_score=20 (input=50)"
         },
         {
           "text": "a2: No placeholder people remain",
@@ -278,7 +278,7 @@
           "evidence": "none found"
         },
         {
-          "text": "a7: audit_file.py reports COMPLIANT (brand gate)",
+          "text": "a7: brand_distance.py reports COMPLIANT (brand gate)",
           "passed": false,
           "evidence": "NON-COMPLIANT, 4 violations"
         },
@@ -349,7 +349,7 @@
           "evidence": "none found"
         },
         {
-          "text": "a7: audit_file.py reports COMPLIANT (brand gate)",
+          "text": "a7: brand_distance.py reports COMPLIANT (brand gate)",
           "passed": true,
           "evidence": "COMPLIANT, 0 violations"
         },
@@ -420,7 +420,7 @@
           "evidence": "none found"
         },
         {
-          "text": "a7: audit_file.py reports COMPLIANT (brand gate)",
+          "text": "a7: brand_distance.py reports COMPLIANT (brand gate)",
           "passed": false,
           "evidence": "NON-COMPLIANT, 7 violations"
         },

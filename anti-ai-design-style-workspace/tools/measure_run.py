@@ -59,20 +59,18 @@ def measure(path):
     r["copy_pass"] = (r["copy_grade"] is not None
                       and r["copy_grade"] <= 9.0 and r["copy_findings"] == 0)
 
+    # The brand check ships inside the skill now, so this cannot be missing.
+    # An installed anti-antropik-design is recorded as a cross-check only.
+    b = _json_cmd([PY, os.path.join(SKILL, "scripts", "brand_distance.py"), "--json", path])
+    r["brand"] = b.get("verdict") or b.get("_error", "?")
+    v = b.get("violations")
+    r["brand_violations"] = v if isinstance(v, int) else len(v or [])
+    r["brand_fingerprint"] = b.get("exclusion_fingerprint")
     bd = brand_dir()
-    if bd:
-        af = os.path.join(bd, "scripts", "audit_file.py")
-        if os.path.exists(af):
-            b = _json_cmd([PY, af, "--json", path])
-            r["brand"] = b.get("verdict") or b.get("status") or b.get("_error", "?")
-            v = b.get("violations")
-            # audit_file.py reports violations as a count on some paths and as
-            # a list on others; accept either rather than guessing.
-            r["brand_violations"] = v if isinstance(v, int) else len(v or [])
-        else:
-            r["brand"] = "NOT RUN (audit_file.py missing)"
-    else:
-        r["brand"] = "NOT RUN (guard not found)"
+    if bd and os.path.exists(os.path.join(bd, "scripts", "audit_file.py")):
+        t = _json_cmd([PY, os.path.join(bd, "scripts", "audit_file.py"), "--json", path])
+        r["brand_cross_check"] = ("agrees" if t.get("verdict") == r["brand"]
+                                  else "DISAGREES: %s" % t.get("verdict"))
     return r
 
 

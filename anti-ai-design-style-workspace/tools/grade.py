@@ -138,7 +138,7 @@ def grade(ev, cfg):
     ph = PLACEHOLDER.findall(visible)
     add("a9", "No bracketed placeholders remain in visible copy", not ph,
         ("none found" if not ph else f"{len(ph)} found, e.g. {ph[0][:40]!r}"))
-    add("a7", "audit_file.py reports COMPLIANT (brand gate)", m["brand"] == "COMPLIANT",
+    add("a7", "brand_distance.py reports COMPLIANT (brand gate)", m["brand"] == "COMPLIANT",
         f"{m['brand']}, {m['brand_violations']} violations")
     add("a8", "library_misuse == 0 or justified", m["library_misuse"] == 0,
         f"library_misuse={m['library_misuse']}")

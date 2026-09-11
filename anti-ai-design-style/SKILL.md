@@ -148,9 +148,9 @@ then reads `rendered PASS (network)`.
 
 It prints one line; Step 4 shows it, with the two rule fingerprints.
 
-Exit code 0 means every guard ran and passed. If the brand guard is missing,
-the line says `brand distance NOT RUN` and the verdict is FAIL. A check that
-did not happen never counts as a check that passed.
+Exit code 0 means every guard ran and passed. If a guard could not run, the
+line says so and the verdict is FAIL. A check that did not happen never
+counts as a check that passed.
 
 **The second guard is not optional.** This skill measures distance from
 generic AI output, not from a company's brand. Fixing one can cause the
@@ -158,17 +158,19 @@ other. The first `fixed-example.html` scored 0 here and
 NON-COMPLIANT there. Rule CO6 now scores the cream-serif-terracotta
 combination, but the point stands. `verify_all.py` runs both guards.
 
-If the line says `brand distance NOT RUN`, say so first, in plain words. The
-second checker was not found, so the FAIL is about a missing tool. A copy
-ships in `vendor/anti-antropik-design` and is used when nothing else exists;
-the line then says `(vendored)`. To use your own, install
-`anti-antropik-design` or set `ANTI_ANTROPIK_PATH`. For its hex suggestions:
+Brand distance is measured by `scripts/brand_distance.py`, which ships here.
+Nothing needs installing for it. When a copy of `anti-antropik-design` happens
+to be installed, `verify_all.py` asks it for a second opinion and the line says
+`(native, cross-checked)`. If the two ever disagree the run FAILS, because one
+of the implementations is wrong and it is not safe to assume which. For
+replacement hex values that clear the standard:
 
 ```
-python3 "$(python3 "$SKILL"/scripts/find_brand_guard.py)"/scripts/audit_file.py <files> --suggest
+python3 "$SKILL"/scripts/brand_distance.py <files> --suggest
 ```
 
-Do not choose colours by hand. The brand guard generates a verified 16-role system:
+Do not choose colours by hand. An installed `anti-antropik-design` also
+generates a verified 16-role system:
 
 ```
 python3 "$(python3 "$SKILL"/scripts/find_brand_guard.py)"/scripts/generate_palette.py \

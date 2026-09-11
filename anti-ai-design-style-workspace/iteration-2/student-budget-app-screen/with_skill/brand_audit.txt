@@ -1,5 +1,4 @@
 anti-ai-design-style-workspace/iteration-2/student-budget-app-screen/with_skill/outputs/budget-home.html  (11 colours, 8 font families)
-  clean
 
 mode exclude | standard v2.0 | brand Anthropic | fingerprint 5697117fa1b27195 | 11 colours, 8 fonts checked
 VERDICT: COMPLIANT (0 violations)

@@ -72,3 +72,19 @@ Design-hook messages were written up as findings about delivered pages. The
 tool's own detector, run afterwards, returned nothing on every delivered page.
 The hook fires on drafts. Run the tool yourself, on the artefact, with a
 positive control proving it was switched on.
+
+## Vendoring someone else's skill was the wrong shape
+
+The brand guard lives in another skill. To stop a fresh machine failing every
+verdict, a verbatim copy was vendored inside this one. It worked, and it was
+honest about which copy ran. It was still wrong: publishing this skill would
+have redistributed 35 files that carried no licence.
+
+The fix was not a licence hunt. It was to implement the standard here, then
+prove the implementation rather than assert it. Three proofs: 42 pages
+compared verdict-for-verdict against the original, an identical exclusion
+fingerprint, and a published colour-science test vector. The original is now a cross-check,
+and the two disagreeing is itself a failure.
+
+The general lesson: a dependency you cannot ship is a dependency you do not
+have. Port it or drop it, and prove the port against the thing it replaces.
