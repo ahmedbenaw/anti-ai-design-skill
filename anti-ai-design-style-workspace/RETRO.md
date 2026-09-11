@@ -43,16 +43,27 @@ runs captured `budget-home.html` mid-flight. Nothing was corrupted, and the
 later diff was the agent's own work, but the commit was meaningless. Do not
 commit a workspace with live runs in it.
 
+**I wrote up a tool's warnings as findings without running the tool.** The
+design hook flagged four things on eval outputs. I put them in a findings file
+and committed it. Running that tool's own detector afterwards returned zero
+findings on all six artifacts. The hook fires on every write. It was
+reporting drafts the agents then fixed. I had even said in the same session
+that I would not treat a hook message as a result. A warning is a lead. Run
+the tool yourself, on the artifact you are claiming something about, with a
+positive control proving it was switched on.
+
 **My own prose failed this skill's copy checker six times.** Every one was a
 sentence over 25 words. Fixed every time, never exempted. Once I committed
 before running the check and had to amend. Run the check, then commit.
 
 ## What to carry forward
 
-1. **`side-tab` and the flat type scale.** Two tells another detector calls
-   obvious and this register scores 0 on. One source each, below the bar.
-   `iteration-2/cross-tool-findings.md` has the experiment for each. Note that
-   they need different machinery: one is a regex, one needs a browser.
+1. **`side-tab`.** A verified gap, shown on a page built to show it rather
+   than on an eval output: 2 anti-patterns there, 0/100 PASS here. It is not a
+   cheap regex. The rule compares one border against the other three, against
+   the radius, and against colour neutrality, so it needs the cascade
+   resolved. `iteration-2/cross-tool-findings.md` has the experiment and the
+   control problem that comes with it.
 2. **A fourth eval that uses a library.** `a8` library misuse scored 0 in all
    six runs and never discriminated, because no task here pulls in an
    animation or map library. The assertion is fine; the eval set is missing a
