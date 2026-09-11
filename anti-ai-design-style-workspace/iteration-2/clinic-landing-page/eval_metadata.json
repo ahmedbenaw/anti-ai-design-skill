@@ -1,0 +1,47 @@
+{
+  "eval_id": 0,
+  "eval_name": "clinic-landing-page",
+  "prompt": "I run a small physiotherapy clinic in Alexandria, Egypt with 3 therapists. Make me a one-page website in plain HTML (single file, I'll upload it to my hosting). People need to see our services, prices in EGP, opening hours, and book by WhatsApp. I'm not a designer. Just make it look good and NOT like every other clinic website. Save it as clinic.html.",
+  "assertions": [
+    {
+      "id": "a1",
+      "text": "ai_tell_scan.py reports AI-look score below 20 on the output",
+      "check": "scanner"
+    },
+    {
+      "id": "a2",
+      "text": "No near-proof (provenance) findings in the output",
+      "check": "scanner"
+    },
+    {
+      "id": "a3",
+      "text": "No low-contrast (CR1) or missing reduced-motion (CR2) craft flags",
+      "check": "scanner"
+    },
+    {
+      "id": "a4",
+      "text": "copy_check.py passes on the output page (no buzzwords, no fake stats, reading grade 9 or lower)",
+      "check": "copy"
+    },
+    {
+      "id": "a5",
+      "text": "The page contains at least three elements that could only belong to this clinic (Alexandria, EGP prices, WhatsApp booking, named services or hours)",
+      "check": "judgment"
+    },
+    {
+      "id": "a6",
+      "text": "No invented testimonials, statistics, or logo bars",
+      "check": "judgment"
+    },
+    {
+      "id": "a7",
+      "text": "anti-antropik-design audit_file.py reports COMPLIANT on the output (brand-distance gate)",
+      "check": "brand"
+    },
+    {
+      "id": "a8",
+      "text": "ai_tell_scan.py --json reports library_misuse == 0, or every hit is justified in the response",
+      "check": "library"
+    }
+  ]
+}

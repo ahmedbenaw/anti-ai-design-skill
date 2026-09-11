@@ -8,12 +8,46 @@
       "expected_output": "A single self-contained clinic.html that is specific to this clinic (Alexandria, EGP, WhatsApp booking, three therapists), passes the AI-tell scanner (score under 20, no provenance hits), meets accessibility floors, and ends with a proof line.",
       "files": [],
       "assertions": [
-        {"id": "a1", "text": "ai_tell_scan.py reports AI-look score below 20 on the output", "check": "scanner"},
-        {"id": "a2", "text": "No near-proof (provenance) findings in the output", "check": "scanner"},
-        {"id": "a3", "text": "No low-contrast (CR1) or missing reduced-motion (CR2) craft flags", "check": "scanner"},
-        {"id": "a4", "text": "copy_check.py passes on the output page (no buzzwords, no fake stats, reading grade 9 or lower)", "check": "copy"},
-        {"id": "a5", "text": "The page contains at least three elements that could only belong to this clinic (Alexandria, EGP prices, WhatsApp booking, named services or hours)", "check": "judgment"},
-        {"id": "a6", "text": "No invented testimonials, statistics, or logo bars", "check": "judgment"}
+        {
+          "id": "a1",
+          "text": "ai_tell_scan.py reports AI-look score below 20 on the output",
+          "check": "scanner"
+        },
+        {
+          "id": "a2",
+          "text": "No near-proof (provenance) findings in the output",
+          "check": "scanner"
+        },
+        {
+          "id": "a3",
+          "text": "No low-contrast (CR1) or missing reduced-motion (CR2) craft flags",
+          "check": "scanner"
+        },
+        {
+          "id": "a4",
+          "text": "copy_check.py passes on the output page (no buzzwords, no fake stats, reading grade 9 or lower)",
+          "check": "copy"
+        },
+        {
+          "id": "a5",
+          "text": "The page contains at least three elements that could only belong to this clinic (Alexandria, EGP prices, WhatsApp booking, named services or hours)",
+          "check": "judgment"
+        },
+        {
+          "id": "a6",
+          "text": "No invented testimonials, statistics, or logo bars",
+          "check": "judgment"
+        },
+        {
+          "id": "a7",
+          "text": "anti-antropik-design audit_file.py reports COMPLIANT on the output (brand-distance gate)",
+          "check": "brand"
+        },
+        {
+          "id": "a8",
+          "text": "ai_tell_scan.py --json reports library_misuse == 0, or every hit is justified in the response",
+          "check": "library"
+        }
       ]
     },
     {
@@ -23,12 +57,46 @@
       "expected_output": "A phone-width HTML mockup with the three required elements, touch targets at least 44px, no gradient balance card / glow / generic fintech treatment, scanner score under 20, and a proof line.",
       "files": [],
       "assertions": [
-        {"id": "a1", "text": "ai_tell_scan.py reports AI-look score below 20 on the output", "check": "scanner"},
-        {"id": "a2", "text": "No low-contrast (CR1) or missing reduced-motion (CR2) craft flags", "check": "scanner"},
-        {"id": "a3", "text": "Shows allowance left, top 3 categories, and a log-expense button", "check": "judgment"},
-        {"id": "a4", "text": "The log-expense button is at least 44px tall (min-height/padding in CSS)", "check": "judgment"},
-        {"id": "a5", "text": "No purple/indigo gradient balance card, glow, or glassmorphism", "check": "scanner"},
-        {"id": "a6", "text": "At least two design choices are explained by the student context (e.g. EGP, allowance timing, campus references)", "check": "judgment"}
+        {
+          "id": "a1",
+          "text": "ai_tell_scan.py reports AI-look score below 20 on the output",
+          "check": "scanner"
+        },
+        {
+          "id": "a2",
+          "text": "No low-contrast (CR1) or missing reduced-motion (CR2) craft flags",
+          "check": "scanner"
+        },
+        {
+          "id": "a3",
+          "text": "Shows allowance left, top 3 categories, and a log-expense button",
+          "check": "judgment"
+        },
+        {
+          "id": "a4",
+          "text": "The log-expense button is at least 44px tall (min-height/padding in CSS)",
+          "check": "judgment"
+        },
+        {
+          "id": "a5",
+          "text": "No purple/indigo gradient balance card, glow, or glassmorphism",
+          "check": "scanner"
+        },
+        {
+          "id": "a6",
+          "text": "At least two design choices are explained by the student context (e.g. EGP, allowance timing, campus references)",
+          "check": "judgment"
+        },
+        {
+          "id": "a7",
+          "text": "anti-antropik-design audit_file.py reports COMPLIANT on the output (brand-distance gate)",
+          "check": "brand"
+        },
+        {
+          "id": "a8",
+          "text": "ai_tell_scan.py --json reports library_misuse == 0, or every hit is justified in the response",
+          "check": "library"
+        }
       ]
     },
     {
@@ -36,14 +104,50 @@
       "name": "deslop-lovable-page",
       "prompt": "My cofounder says this landing page (input.html, it was generated by Lovable) looks like AI slop. Fix it so it looks like a real designer made it. Do NOT change what the product does or remove real information. Save the result as fixed.html and tell me what you changed in plain words.",
       "expected_output": "fixed.html with the same product and information, AI-look score dropped from 52 to under 20, no placeholder people, honest replacement of fake stats, a plain-language change summary, and a proof line.",
-      "files": ["input.html"],
+      "files": [
+        "input.html"
+      ],
       "assertions": [
-        {"id": "a1", "text": "ai_tell_scan.py reports AI-look score below 20 on fixed.html (input scores 52)", "check": "scanner"},
-        {"id": "a2", "text": "No placeholder people (pravatar/John Doe/Sarah Chen) remain", "check": "scanner"},
-        {"id": "a3", "text": "No fake stats (10K+, 99.9% uptime, Trusted by N+) remain", "check": "scanner"},
-        {"id": "a4", "text": "The product (invoicing app) and its real information are preserved", "check": "judgment"},
-        {"id": "a5", "text": "The response includes a plain-language summary of changes", "check": "judgment"},
-        {"id": "a6", "text": "Pre-existing findings were reported to the user, not silently fixed", "check": "judgment"}
+        {
+          "id": "a1",
+          "text": "ai_tell_scan.py reports AI-look score below 20 on fixed.html (input scores 52)",
+          "check": "scanner"
+        },
+        {
+          "id": "a2",
+          "text": "No placeholder people (pravatar/John Doe/Sarah Chen) remain",
+          "check": "scanner"
+        },
+        {
+          "id": "a3",
+          "text": "No fake stats (10K+, 99.9% uptime, Trusted by N+) remain",
+          "check": "scanner"
+        },
+        {
+          "id": "a4",
+          "text": "The product (invoicing app) and its real information are preserved",
+          "check": "judgment"
+        },
+        {
+          "id": "a5",
+          "text": "The response includes a plain-language summary of changes",
+          "check": "judgment"
+        },
+        {
+          "id": "a6",
+          "text": "Pre-existing findings were reported to the user, not silently fixed",
+          "check": "judgment"
+        },
+        {
+          "id": "a7",
+          "text": "anti-antropik-design audit_file.py reports COMPLIANT on the output (brand-distance gate)",
+          "check": "brand"
+        },
+        {
+          "id": "a8",
+          "text": "ai_tell_scan.py --json reports library_misuse == 0, or every hit is justified in the response",
+          "check": "library"
+        }
       ]
     }
   ]
