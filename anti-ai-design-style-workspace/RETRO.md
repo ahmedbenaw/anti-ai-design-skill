@@ -58,12 +58,12 @@ before running the check and had to amend. Run the check, then commit.
 
 ## What to carry forward
 
-1. **`side-tab`.** A verified gap, shown on a page built to show it rather
-   than on an eval output: 2 anti-patterns there, 0/100 PASS here. It is not a
-   cheap regex. The rule compares one border against the other three, against
-   the radius, and against colour neutrality, so it needs the cascade
-   resolved. `iteration-2/cross-tool-findings.md` has the experiment and the
-   control problem that comes with it.
+1. **`side-tab` is closed, not carried.** It was measured after this retro
+   was first written: 2 of 12 verified-generated repos, with 9 of the 12
+   instances in one repo. No rule. See `research/16-side-tab-tailwind.md`.
+   What remains open is the **plain-CSS** form, which needs the cascade
+   resolved and so belongs in `render_check.py`, not `rules.json`.
+
 2. **A fourth eval that uses a library.** `a8` library misuse scored 0 in all
    six runs and never discriminated, because no task here pulls in an
    animation or map library. The assertion is fine; the eval set is missing a

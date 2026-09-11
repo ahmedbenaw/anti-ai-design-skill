@@ -195,6 +195,7 @@ added or changed for any of them.
 | Expo default-template greys `#F0F0F3` / `#E0E1E6` / `#60646C` as an MB4 signature | Present in every version 55–58, but they are Radix Colors grey steps | **Fails the false-positive bar.** Any human using Radix legitimately has them. Excluded from MB4 and pinned by its guard fixture. |
 | `expo-router/unstable-native-tabs` import as an MB4 signature | Present in every version 55–58 | **Fails the bar.** It is the real public API a human must import to use native tabs. Excluded. |
 | `Home` / `Explore` tab labels, `MaxContentWidth`, `backgroundElement:` / `backgroundSelected:` | Present in every version 55–58 | **Fail the bar.** All are things a designer would plausibly write. Excluded from MB4. |
+| Side-tab accent border (`border-l-4` + a colour), which another design tool calls "the most recognizable tell of AI-generated UIs" | **2 of 12** verified-generated repos (K16–K23 Bolt, K39–K42 Lovable). 12 instances in total, **9 of them in one repo's admin dashboard**. See `research/16-side-tab-tailwind.md` | **Fails the bar.** Concentration, not prevalence. MB3 cleared at 5 of 12. No rule. The page that prompted the check was a hand-authored fixture with no Lovable provenance marker, so its three side-tabs record a belief about generated output rather than a measurement of it. |
 
 ## Part 3 — Copy tells `[scanner]` on strings, `[judgment]` on voice
 

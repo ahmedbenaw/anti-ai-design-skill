@@ -42,29 +42,33 @@ body{font-family:Inter,sans-serif}
 That is a reproducible disagreement on a page either tool can read. It is
 worth more than the four hook messages, because it can be re-run.
 
-## 1. `side-tab` — a real gap, and harder to close than it looks
+## 1. `side-tab` — measured, and it does not replicate
 
-No rule covers it. `grep` for `side.tab`, `border-left` and
-`border-inline-start` across `rules.json` and `tells-register.md` finds
-nothing.
+**Resolved 2026-09-11.** This was listed as a candidate. It has now been
+counted, and it fails.
 
-The definition is not "a page contains `border-left`". Reading the detector's source, it fires on four conditions at once. The
-left or right border is at least 2px. Its colour is not neutral. It is at
-least twice the other three sides, or they are 1px or less. And the tag is
-not one of roughly thirty safe tags, `blockquote` among them. With a border radius it fires at 2px; without one it
-needs 3px.
+Across the 12 verified-generated repos of the K sweep, only **2** carry any
+side-tab at all. **9 of the 12 instances sit in one repo's admin dashboard.**
+MB3 cleared the bar at 5 of 12. This does not.
 
-A regex over CSS text would get partial recall. It could not apply any of the
-other conditions, because each needs the other sides, the radius and the
-colour resolved together. So this is not a cheap `rules.json` addition.
+The page that raised the question is `deslop-lovable-page/inputs/input.html`.
+It is described as Lovable output and carries **zero** Lovable provenance
+markers. It is a hand-authored fixture. Its three side-tabs record what
+someone believed generated output looks like, and the verified corpus
+disagrees.
 
-- **Sources:** the other tool's registry, plus the reproducible case above.
-  Still one measurement short of the register's bar.
-- **What would settle it:** count it across the K corpus of verified-generated
-  repos and a human-built control, the way MB3 was done. The control is the
-  hard part. The FlutterFlow control is Dart, and this is web CSS, so a
-  pre-2022 human web corpus would have to be assembled first.
-- **Status:** candidate. No rule, no weight, nothing changed.
+No human control group was assembled, and none was needed. A control matters
+when the generated rate is high. At 2 of 12 the generated side already failed.
+
+Full method, tiers, recall and gaps: `research/16-side-tab-tailwind.md`.
+**Decision: no rule.** Counter-evidence row added to the register.
+
+One caveat on the other tool, from reading its source. Its Tailwind matcher is
+a bare `/\bborder-[lrse]-(\d+)\b/` with no safe-tag test and no colour test,
+unlike the plain-CSS matchers beside it, which have both. So it flags a
+`blockquote` with a left rule, and it flags two equally thick sides. That is
+not carelessness. In shadcn-style code the colour genuinely cannot be resolved
+from text, so the stricter test would catch almost nothing.
 
 ## 2. `overused-font` — not a gap, a calibration difference
 

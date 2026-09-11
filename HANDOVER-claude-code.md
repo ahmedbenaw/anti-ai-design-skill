@@ -420,14 +420,18 @@ New since the handover was written:
     baseline brand failure in iteration 2 was a warm cream inside Delta-E 12 of
     the brand neutrals. The cream-editorial escape from the AI look lands inside
     the brand violation zone. A page can satisfy one guard by failing the other.
-18. A verified gap against another detector, on a page built to show it:
-    `workspace/iteration-2/cross-tool/positive-control.html` scores 2
-    anti-patterns there and **0/100 PASS** here. `side-tab` is the real hole.
-    Bare Inter is a deliberate difference, because TY2 is a pairing rule. A
-    flat type scale needs computed sizes, so it belongs in `render_check.py`.
-    Note the correction in that file: the first write-up of this used design-hook
-    messages and was wrong. Every one of the six iteration-2 artifacts is clean
-    under the other tool's own detector.
+18. `side-tab` is **measured and refuted**, not an open gap. 2 of 12
+    verified-generated repos carry one, and 9 of the 12 instances are in a
+    single repo's admin dashboard. MB3 cleared at 5 of 12. No rule; a
+    counter-evidence row in the register and the full method in
+    `research/16-side-tab-tailwind.md`. The page that raised it was a
+    hand-authored fixture with no Lovable provenance marker, so its three
+    side-tabs record a belief rather than a measurement. Bare Inter remains a
+    deliberate difference, since TY2 is a pairing rule. A flat type scale
+    needs computed sizes and belongs in `render_check.py`. Note the correction
+    in `cross-tool-findings.md`. The first write-up used design-hook messages
+    and was wrong. All six iteration-2 artifacts are clean under the other
+    tool's own detector.
 19. `a8` library misuse scored 0 in all six iteration-2 runs and never
     discriminated. No eval uses an animation or map library. A fourth eval
     would give the assertion something to score.
