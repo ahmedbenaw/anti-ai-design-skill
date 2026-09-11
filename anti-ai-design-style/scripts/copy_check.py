@@ -173,7 +173,10 @@ def check_text(name, raw, rules, max_grade):
     # Count dashes in running prose only. A dash used as a separator in a
     # heading ("Part 1 - Setup") or a list label ("- `cmd` - what it does")
     # is typography, not the AI writing cadence the register describes.
-    no_code = re.sub(r"```.*?```", " ", raw, flags=re.DOTALL)
+    # For HTML, count in the visible text: script payloads (Next.js data,
+    # translations) carry their own dashes and are not the author's voice.
+    source = text if name.lower().endswith((".html", ".htm")) else raw
+    no_code = re.sub(r"```.*?```", " ", source, flags=re.DOTALL)
     no_code = re.sub(r"\A---.*?---", " ", no_code, flags=re.DOTALL)
     prose_lines = []
     for ln in no_code.splitlines():
@@ -284,6 +287,15 @@ PLACEHOLDER_COPY = """<h1>[ CLINIC NAME ] physiotherapy</h1>
 
 # Square brackets that are not placeholders: citations, keyboard hints,
 # optional flags, and a markdown link. None of these may be flagged.
+# A Next.js page carries its data as script payloads. Dashes inside those
+# ("Sunday - Thursday", "9 AM - 5 PM", repeated per locale) are not the
+# author's prose; only the visible text counts.
+REACT_COMMENTS_COPY = """<html><body><h1>Invest<!-- --> <em>fractionally</em> <!-- -->in real estate.</h1>
+<p>Start your journey with us in real estate easily and securely.</p>
+<small>All rights reserved - Fadl Stationery 2026</small>
+<script>self.__next_f.push([1,"{\\"hours\\":\\"Sunday - Thursday\\",\\"time\\":\\"9 AM - 5 PM\\",\\"a\\":\\"x - y\\",\\"b\\":\\"x - y\\",\\"c\\":\\"x - y\\",\\"d\\":\\"x - y\\"}"])</script>
+</body></html>"""
+
 BRACKETS_OK_COPY = """<p>See the register [1] and press [Enter] to continue. The --render flag is [optional].</p>
 <p><a href="/x">[read more]</a> about our bakery in Bab al-Louq.</p>
 <p>[NOTE] Grab the menu as a [PDF]. Shipping by [DHL]. Press [ESC] to close. [BETA] features are marked.</p>"""
@@ -293,11 +305,14 @@ def selftest():
     rules = load_rules()
     _, f5 = check_text("placeholders.html", PLACEHOLDER_COPY, rules, 9)
     _, f6 = check_text("brackets.html", BRACKETS_OK_COPY, rules, 9)
+    _, f7 = check_text("react.html", REACT_COMMENTS_COPY, rules, 9)
     g1, f1 = check_text("slop.txt", SLOP_COPY, rules, 9)
     g2, f2 = check_text("clean.txt", CLEAN_COPY, rules, 9)
     _, f3 = check_text("current-era.txt", CURRENT_ERA_COPY, rules, 9)
     _, f4 = check_text("honest.txt", HONEST_MARKETING_COPY, rules, 9)
     problems = []
+    if any("dash" in x[0].lower() for x in f7):
+        problems.append(f"React text-node comments counted as dashes: {[x[0] for x in f7]}")
     if not any("cadence" in x[0].lower() for x in f3):
         problems.append(
             "current-era AI copy was not caught as cadence: "
