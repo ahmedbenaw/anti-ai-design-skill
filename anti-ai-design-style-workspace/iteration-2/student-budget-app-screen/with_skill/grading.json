@@ -1,0 +1,55 @@
+{
+  "eval": "student-budget-app-screen",
+  "config": "with_skill",
+  "expectations": [
+    {
+      "id": "a1",
+      "text": "AI-look score below 20",
+      "passed": true,
+      "evidence": "ai_score=0"
+    },
+    {
+      "id": "a2",
+      "text": "No CR1/CR2 craft flags",
+      "passed": true,
+      "evidence": "craft=none"
+    },
+    {
+      "id": "a3",
+      "text": "Shows allowance, top 3 categories, log button",
+      "passed": true,
+      "evidence": "3 class=cat rows: Fares/Handouts/Food on campus, plus allowance and one button"
+    },
+    {
+      "id": "a4",
+      "text": "Log-expense button at least 44px tall",
+      "passed": true,
+      "evidence": "button.log measured 56.0px tall at 390px viewport (Playwright bounding box)"
+    },
+    {
+      "id": "a5",
+      "text": "No purple/indigo gradient, glow or glassmorphism",
+      "passed": true,
+      "evidence": "no purple-gradient or backdrop-filter pattern"
+    },
+    {
+      "id": "a6",
+      "text": "Two design choices explained by student context",
+      "passed": true,
+      "evidence": "'23 microbus rides and 7 metro trips', 'photocopy kiosk by gate 3, 1 EGP a page'"
+    },
+    {
+      "id": "a7",
+      "text": "audit_file.py reports COMPLIANT (brand gate)",
+      "passed": true,
+      "evidence": "COMPLIANT, 0 violations"
+    },
+    {
+      "id": "a8",
+      "text": "library_misuse == 0 or justified",
+      "passed": true,
+      "evidence": "library_misuse=0"
+    }
+  ],
+  "response_chars": 1380
+}

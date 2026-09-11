@@ -1,0 +1,55 @@
+{
+  "eval": "student-budget-app-screen",
+  "config": "without_skill",
+  "expectations": [
+    {
+      "id": "a1",
+      "text": "AI-look score below 20",
+      "passed": true,
+      "evidence": "ai_score=0"
+    },
+    {
+      "id": "a2",
+      "text": "No CR1/CR2 craft flags",
+      "passed": false,
+      "evidence": "craft=['CR2', 'CR5']"
+    },
+    {
+      "id": "a3",
+      "text": "Shows allowance, top 3 categories, log button",
+      "passed": true,
+      "evidence": "allowance, 3 categories and a log button present"
+    },
+    {
+      "id": "a4",
+      "text": "Log-expense button at least 44px tall",
+      "passed": true,
+      "evidence": "button.cta measured 62.0px tall at 390px viewport (Playwright bounding box)"
+    },
+    {
+      "id": "a5",
+      "text": "No purple/indigo gradient, glow or glassmorphism",
+      "passed": true,
+      "evidence": "no purple-gradient or backdrop-filter pattern"
+    },
+    {
+      "id": "a6",
+      "text": "Two design choices explained by student context",
+      "passed": true,
+      "evidence": "Abou Tarek, microbus/metro, printing mulakhasat, EGP"
+    },
+    {
+      "id": "a7",
+      "text": "audit_file.py reports COMPLIANT (brand gate)",
+      "passed": false,
+      "evidence": "NON-COMPLIANT, 7 violations"
+    },
+    {
+      "id": "a8",
+      "text": "library_misuse == 0 or justified",
+      "passed": true,
+      "evidence": "library_misuse=0"
+    }
+  ],
+  "response_chars": 3064
+}

@@ -1,0 +1,455 @@
+{
+  "metadata": {
+    "skill_name": "anti-ai-design-style",
+    "skill_path": "/Users/ben/Downloads/Repos/Anti-AI-design skill/anti-ai-design-style",
+    "executor_model": "claude-opus-5",
+    "timestamp": "2026-09-11T02:17:39.533655+00:00",
+    "evals_run": [
+      0,
+      1,
+      2
+    ],
+    "runs_per_configuration": 1,
+    "note": "n = 1 per cell. No stddev claim is made across repeats; the stddev fields describe spread across the three evals, not across repeats."
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "eval_name": "clinic-landing-page",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 636.3,
+        "tokens": 159879,
+        "tool_calls": 40,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "a1: AI-look score below 20",
+          "passed": true,
+          "evidence": "ai_score=0"
+        },
+        {
+          "text": "a2: No near-proof findings",
+          "passed": true,
+          "evidence": "near_proof=0"
+        },
+        {
+          "text": "a3: No CR1/CR2 craft flags",
+          "passed": true,
+          "evidence": "craft=none"
+        },
+        {
+          "text": "a4: copy_check passes (grade <= 9, no findings)",
+          "passed": true,
+          "evidence": "grade=4.0, findings=0"
+        },
+        {
+          "text": "a5: Three elements specific to this clinic",
+          "passed": true,
+          "evidence": "EGP x6, WhatsApp/wa.me x9, Alexandria x7, hours x4, therapists x16"
+        },
+        {
+          "text": "a6: No invented testimonials/stats/logo bars",
+          "passed": true,
+          "evidence": "no placeholder-person or fake-stat pattern in the HTML"
+        },
+        {
+          "text": "a7: audit_file.py reports COMPLIANT (brand gate)",
+          "passed": true,
+          "evidence": "COMPLIANT, 0 violations"
+        },
+        {
+          "text": "a8: library_misuse == 0 or justified",
+          "passed": true,
+          "evidence": "library_misuse=0"
+        }
+      ],
+      "notes": [
+        "AI-look 0/100",
+        "craft none",
+        "copy grade 4.0",
+        "brand COMPLIANT (0)",
+        "library misuse 0",
+        "fingerprint b7cd873aa4831ab9"
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "clinic-landing-page",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.75,
+        "passed": 6,
+        "failed": 2,
+        "total": 8,
+        "time_seconds": 403.8,
+        "tokens": 131829,
+        "tool_calls": 19,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "a1: AI-look score below 20",
+          "passed": true,
+          "evidence": "ai_score=0"
+        },
+        {
+          "text": "a2: No near-proof findings",
+          "passed": true,
+          "evidence": "near_proof=0"
+        },
+        {
+          "text": "a3: No CR1/CR2 craft flags",
+          "passed": true,
+          "evidence": "craft=['CR5', 'CR6']"
+        },
+        {
+          "text": "a4: copy_check passes (grade <= 9, no findings)",
+          "passed": false,
+          "evidence": "grade=4.9, findings=1"
+        },
+        {
+          "text": "a5: Three elements specific to this clinic",
+          "passed": true,
+          "evidence": "EGP x12, WhatsApp/wa.me x15, Alexandria x11, hours x7, therapists x23"
+        },
+        {
+          "text": "a6: No invented testimonials/stats/logo bars",
+          "passed": true,
+          "evidence": "no placeholder-person or fake-stat pattern in the HTML"
+        },
+        {
+          "text": "a7: audit_file.py reports COMPLIANT (brand gate)",
+          "passed": false,
+          "evidence": "NON-COMPLIANT, 8 violations"
+        },
+        {
+          "text": "a8: library_misuse == 0 or justified",
+          "passed": true,
+          "evidence": "library_misuse=0"
+        }
+      ],
+      "notes": [
+        "AI-look 0/100",
+        "craft ['CR5', 'CR6']",
+        "copy grade 4.9",
+        "brand NON-COMPLIANT (8)",
+        "library misuse 0",
+        "fingerprint b7cd873aa4831ab9"
+      ]
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "student-budget-app-screen",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 590.7,
+        "tokens": 153810,
+        "tool_calls": 39,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "a1: AI-look score below 20",
+          "passed": true,
+          "evidence": "ai_score=0"
+        },
+        {
+          "text": "a2: No CR1/CR2 craft flags",
+          "passed": true,
+          "evidence": "craft=none"
+        },
+        {
+          "text": "a3: Shows allowance, top 3 categories, log button",
+          "passed": true,
+          "evidence": "3 class=cat rows: Fares/Handouts/Food on campus, plus allowance and one button"
+        },
+        {
+          "text": "a4: Log-expense button at least 44px tall",
+          "passed": true,
+          "evidence": "button.log measured 56.0px tall at 390px viewport (Playwright bounding box)"
+        },
+        {
+          "text": "a5: No purple/indigo gradient, glow or glassmorphism",
+          "passed": true,
+          "evidence": "no purple-gradient or backdrop-filter pattern"
+        },
+        {
+          "text": "a6: Two design choices explained by student context",
+          "passed": true,
+          "evidence": "'23 microbus rides and 7 metro trips', 'photocopy kiosk by gate 3, 1 EGP a page'"
+        },
+        {
+          "text": "a7: audit_file.py reports COMPLIANT (brand gate)",
+          "passed": true,
+          "evidence": "COMPLIANT, 0 violations"
+        },
+        {
+          "text": "a8: library_misuse == 0 or justified",
+          "passed": true,
+          "evidence": "library_misuse=0"
+        }
+      ],
+      "notes": [
+        "AI-look 0/100",
+        "craft none",
+        "copy grade 1.2",
+        "brand COMPLIANT (0)",
+        "library misuse 0",
+        "fingerprint b7cd873aa4831ab9"
+      ]
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "student-budget-app-screen",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.75,
+        "passed": 6,
+        "failed": 2,
+        "total": 8,
+        "time_seconds": 304.4,
+        "tokens": 131998,
+        "tool_calls": 20,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "a1: AI-look score below 20",
+          "passed": true,
+          "evidence": "ai_score=0"
+        },
+        {
+          "text": "a2: No CR1/CR2 craft flags",
+          "passed": false,
+          "evidence": "craft=['CR2', 'CR5']"
+        },
+        {
+          "text": "a3: Shows allowance, top 3 categories, log button",
+          "passed": true,
+          "evidence": "allowance, 3 categories and a log button present"
+        },
+        {
+          "text": "a4: Log-expense button at least 44px tall",
+          "passed": true,
+          "evidence": "button.cta measured 62.0px tall at 390px viewport (Playwright bounding box)"
+        },
+        {
+          "text": "a5: No purple/indigo gradient, glow or glassmorphism",
+          "passed": true,
+          "evidence": "no purple-gradient or backdrop-filter pattern"
+        },
+        {
+          "text": "a6: Two design choices explained by student context",
+          "passed": true,
+          "evidence": "Abou Tarek, microbus/metro, printing mulakhasat, EGP"
+        },
+        {
+          "text": "a7: audit_file.py reports COMPLIANT (brand gate)",
+          "passed": false,
+          "evidence": "NON-COMPLIANT, 7 violations"
+        },
+        {
+          "text": "a8: library_misuse == 0 or justified",
+          "passed": true,
+          "evidence": "library_misuse=0"
+        }
+      ],
+      "notes": [
+        "AI-look 0/100",
+        "craft ['CR2', 'CR5']",
+        "copy grade 2.1",
+        "brand NON-COMPLIANT (7)",
+        "library misuse 0",
+        "fingerprint b7cd873aa4831ab9"
+      ]
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "deslop-lovable-page",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 594.8,
+        "tokens": 156840,
+        "tool_calls": 35,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "a1: AI-look score below 20 (input scores 52)",
+          "passed": true,
+          "evidence": "ai_score=0 (input=52)"
+        },
+        {
+          "text": "a2: No placeholder people remain",
+          "passed": true,
+          "evidence": "no pravatar/John Doe/Jane Smith/Sarah Chen in the HTML"
+        },
+        {
+          "text": "a3: No fake stats remain",
+          "passed": true,
+          "evidence": "no 10K+/99.9% uptime/Trusted by N+ in the HTML"
+        },
+        {
+          "text": "a4: Product and real information preserved",
+          "passed": true,
+          "evidence": "invoicing product and its real sections preserved"
+        },
+        {
+          "text": "a5: Plain-language summary of changes",
+          "passed": true,
+          "evidence": "response.md carries a plain-language change summary"
+        },
+        {
+          "text": "a6: Pre-existing findings reported, not silently fixed",
+          "passed": true,
+          "evidence": "4 mentions of placeholder/fake/assumption findings reported to the user"
+        },
+        {
+          "text": "a7: audit_file.py reports COMPLIANT (brand gate)",
+          "passed": true,
+          "evidence": "COMPLIANT, 0 violations"
+        },
+        {
+          "text": "a8: library_misuse == 0 or justified",
+          "passed": true,
+          "evidence": "library_misuse=0"
+        }
+      ],
+      "notes": [
+        "AI-look 0/100",
+        "craft none",
+        "copy grade 2.2",
+        "brand COMPLIANT (0)",
+        "library misuse 0",
+        "fingerprint b7cd873aa4831ab9"
+      ]
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "deslop-lovable-page",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.625,
+        "passed": 5,
+        "failed": 3,
+        "total": 8,
+        "time_seconds": 318.0,
+        "tokens": 118564,
+        "tool_calls": 14,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "a1: AI-look score below 20 (input scores 52)",
+          "passed": true,
+          "evidence": "ai_score=18 (input=52)"
+        },
+        {
+          "text": "a2: No placeholder people remain",
+          "passed": false,
+          "evidence": "no pravatar/John Doe/Jane Smith/Sarah Chen in the HTML"
+        },
+        {
+          "text": "a3: No fake stats remain",
+          "passed": false,
+          "evidence": "no 10K+/99.9% uptime/Trusted by N+ in the HTML"
+        },
+        {
+          "text": "a4: Product and real information preserved",
+          "passed": true,
+          "evidence": "product preserved; testimonials and stats kept verbatim"
+        },
+        {
+          "text": "a5: Plain-language summary of changes",
+          "passed": true,
+          "evidence": "response.md carries a plain-language change summary"
+        },
+        {
+          "text": "a6: Pre-existing findings reported, not silently fixed",
+          "passed": true,
+          "evidence": "3 mentions; flagged the placeholders honestly but left them in the file"
+        },
+        {
+          "text": "a7: audit_file.py reports COMPLIANT (brand gate)",
+          "passed": false,
+          "evidence": "NON-COMPLIANT, 4 violations"
+        },
+        {
+          "text": "a8: library_misuse == 0 or justified",
+          "passed": true,
+          "evidence": "library_misuse=0"
+        }
+      ],
+      "notes": [
+        "AI-look 18/100",
+        "craft ['CR2', 'CR6']",
+        "copy grade 5.7",
+        "brand NON-COMPLIANT (4)",
+        "library misuse 0",
+        "fingerprint b7cd873aa4831ab9"
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 607.2667,
+        "stddev": 25.227,
+        "min": 590.7,
+        "max": 636.3
+      },
+      "tokens": {
+        "mean": 156843,
+        "stddev": 3034.5011,
+        "min": 153810,
+        "max": 159879
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.7083,
+        "stddev": 0.0722,
+        "min": 0.625,
+        "max": 0.75
+      },
+      "time_seconds": {
+        "mean": 342.0667,
+        "stddev": 53.8934,
+        "min": 304.4,
+        "max": 403.8
+      },
+      "tokens": {
+        "mean": 127463.6667,
+        "stddev": 7707.8006,
+        "min": 118564,
+        "max": 131998
+      }
+    }
+  }
+}

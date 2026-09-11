@@ -1,0 +1,11 @@
+anti-ai-design-style-workspace/iteration-2/deslop-lovable-page/without_skill/outputs/fixed.html  (8 colours, 11 font families)
+  FAIL #E0DCD2  lines 13  (1 uses)
+       fails as neutral (C1 2.35 Delta-E from brand value #E8E6DC, effectively identical) and as accent (C1 2.35 Delta-E from brand value #E8E6DC, needs >= 12)
+  FAIL #F3F1EC  lines 10  (1 uses)
+       fails as neutral (C1 1.72 Delta-E from brand value #FAF9F5, effectively identical) and as accent (C1 1.72 Delta-E from brand value #FAF9F5, needs >= 12)
+  FAIL #FBFAF8  lines 9  (1 uses)
+       fails as neutral (C1 1.05 Delta-E from brand value #FAF9F5, effectively identical) and as accent (C1 1.05 Delta-E from brand value #FAF9F5, needs >= 12)
+  FAIL font "georgia"  lines 17  T1 excluded typeface
+
+mode exclude | standard v2.0 | brand Anthropic | fingerprint 5697117fa1b27195 | 8 colours, 11 fonts checked
+VERDICT: NON-COMPLIANT (4 violations)

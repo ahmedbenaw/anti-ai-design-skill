@@ -3,3 +3,4 @@ graphify-out/
 .venv-render/
 __pycache__/
 .DS_Store
+.impeccable/

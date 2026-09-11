@@ -1,0 +1,26 @@
+[
+  {
+    "file": "anti-ai-design-style-workspace/iteration-2/deslop-lovable-page/without_skill/outputs/fixed.html",
+    "exists": true,
+    "ai_score": 18,
+    "ai_verdict": "PASS",
+    "fingerprint": "b7cd873aa4831ab9",
+    "near_proof": 0,
+    "craft_ids": [
+      "CR2",
+      "CR6"
+    ],
+    "library_misuse": 0,
+    "library_ids": [],
+    "copy_grade": 5.7,
+    "copy_findings": 3,
+    "copy_finding_text": [
+      "Buzzwords: effortless, game-changer, seamless",
+      "AI cadence phrases (structural): it's not just, whether you're a",
+      "Unverifiable-looking stat: \"Trusted by 10,000+\""
+    ],
+    "copy_pass": false,
+    "brand": "NON-COMPLIANT",
+    "brand_violations": 4
+  }
+]

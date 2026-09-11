@@ -1,0 +1,24 @@
+[
+  {
+    "file": "anti-ai-design-style-workspace/iteration-2/clinic-landing-page/without_skill/outputs/clinic.html",
+    "exists": true,
+    "ai_score": 0,
+    "ai_verdict": "PASS",
+    "fingerprint": "b7cd873aa4831ab9",
+    "near_proof": 0,
+    "craft_ids": [
+      "CR5",
+      "CR6"
+    ],
+    "library_misuse": 0,
+    "library_ids": [],
+    "copy_grade": 4.9,
+    "copy_findings": 1,
+    "copy_finding_text": [
+      "5 sentence(s) over 25 words (e.g. \"A three-therapist clinic where you get the same pair of hands every...\")"
+    ],
+    "copy_pass": false,
+    "brand": "NON-COMPLIANT",
+    "brand_violations": 8
+  }
+]

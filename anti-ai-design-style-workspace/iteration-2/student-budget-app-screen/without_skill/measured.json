@@ -1,0 +1,22 @@
+[
+  {
+    "file": "anti-ai-design-style-workspace/iteration-2/student-budget-app-screen/without_skill/outputs/budget-home.html",
+    "exists": true,
+    "ai_score": 0,
+    "ai_verdict": "PASS",
+    "fingerprint": "b7cd873aa4831ab9",
+    "near_proof": 0,
+    "craft_ids": [
+      "CR2",
+      "CR5"
+    ],
+    "library_misuse": 0,
+    "library_ids": [],
+    "copy_grade": 2.1,
+    "copy_findings": 0,
+    "copy_finding_text": [],
+    "copy_pass": true,
+    "brand": "NON-COMPLIANT",
+    "brand_violations": 7
+  }
+]

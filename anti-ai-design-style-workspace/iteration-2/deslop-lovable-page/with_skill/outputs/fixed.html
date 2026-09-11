@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>InvoiceFlow — billing software for small teams</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F4FAFF;
+    --sheet: #FFFFFF;
+    --sunken: #E9F0F6;
+    --rule: #888F94;
+    --rule-strong: #6C7378;
+    --ink: #2B3136;
+    --ink-quiet: #60666C;
+    --mark: #00431F;
+    --mark-deep: #002D13;
+    --paid: #006E2A;
+    --late: #78001B;
+    --sans: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.6;
+  }
+
+  .page { max-width: 62rem; margin: 0 auto; padding: 0 1.5rem; }
+  .prose { max-width: 34em; }
+
+  a { color: var(--mark); }
+  a:hover { color: var(--mark-deep); }
+
+  :focus-visible {
+    outline: 3px solid var(--mark);
+    outline-offset: 3px;
+  }
+
+  header.top {
+    border-bottom: 1px solid var(--rule);
+    padding: 1.25rem 0;
+  }
+  .top .page { display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: baseline; }
+  .wordmark { font-family: var(--mono); font-weight: 600; font-size: 1.0625rem; letter-spacing: -0.01em; }
+  .top nav { display: flex; gap: 1.25rem; flex-wrap: wrap; }
+  .top nav a { font-size: 0.9375rem; padding: 0.5rem 0; display: inline-block; min-height: 44px; }
+
+  .lede { padding: 4.5rem 0 3.5rem; }
+  h1 {
+    font-size: 2.25rem;
+    line-height: 1.15;
+    font-weight: 600;
+    margin: 0 0 1.25rem;
+    max-width: 16em;
+  }
+  .lede p { margin: 0 0 1.5rem; font-size: 1.125rem; }
+  .note { color: var(--ink-quiet); font-size: 0.9375rem; }
+
+  .actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2rem; }
+  .btn {
+    font: inherit;
+    font-size: 1rem;
+    min-height: 48px;
+    padding: 0.75rem 1.25rem;
+    border-radius: 3px;
+    cursor: pointer;
+    border: 1px solid var(--mark);
+    display: inline-flex;
+    align-items: center;
+  }
+  .btn-solid { background: var(--mark); color: #FFFFFF; text-decoration: none; }
+  .btn-solid:hover { background: var(--mark-deep); color: #FFFFFF; }
+  .btn-plain { background: transparent; color: var(--mark); text-decoration: none; }
+  .btn-plain:hover { background: var(--sunken); }
+
+  section { border-top: 1px solid var(--rule); padding: 3.5rem 0; }
+  .marker {
+    font-family: var(--mono);
+    font-size: 0.875rem;
+    color: var(--ink-quiet);
+    margin: 0 0 0.5rem;
+  }
+  h2 { font-size: 1.5rem; font-weight: 600; margin: 0 0 1rem; }
+  h3 { font-size: 1.0625rem; font-weight: 600; margin: 0 0 0.25rem; }
+
+  .sheet {
+    background: var(--sheet);
+    border: 1px solid var(--rule-strong);
+    padding: 1.75rem;
+    margin-top: 1.75rem;
+    max-width: 44rem;
+  }
+  .sheet-head { display: flex; flex-wrap: wrap; gap: 1rem 2.5rem; align-items: baseline; }
+  .sheet-head .ref { font-family: var(--mono); font-size: 0.9375rem; }
+  table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; font-size: 0.9375rem; }
+  caption { text-align: left; color: var(--ink-quiet); font-size: 0.9375rem; padding-bottom: 0.5rem; }
+  th, td { text-align: left; padding: 0.625rem 0.5rem; border-bottom: 1px solid var(--rule); }
+  thead th { background: var(--sunken); font-weight: 600; }
+  td.num, th.num { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  tfoot td { font-weight: 600; border-bottom: none; }
+
+  .status { font-family: var(--mono); font-size: 0.9375rem; font-weight: 600; }
+  .status-paid { color: var(--paid); }
+  .status-late { color: var(--late); }
+
+  .claims { margin: 1.75rem 0 0; padding: 0; list-style: none; max-width: 42rem; }
+  .claims li { padding: 1rem 0; border-top: 1px solid var(--rule); }
+  .claims p { margin: 0; color: var(--ink-quiet); }
+
+  .qa { margin-top: 1.75rem; max-width: 40rem; }
+  .qa li { padding: 1rem 0; border-top: 1px solid var(--rule); }
+  .qa p { margin: 0.25rem 0 0; color: var(--ink-quiet); }
+
+  .todo {
+    font-family: var(--mono);
+    font-size: 0.9375rem;
+    color: var(--ink-quiet);
+  }
+
+  .aside { margin-top: 1rem; }
+  .qa-list { list-style: none; padding: 0; margin-left: 0; }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: 2rem 0 3rem;
+    color: var(--ink-quiet);
+    font-size: 0.9375rem;
+  }
+
+  @media (min-width: 48rem) {
+    h1 { font-size: 2.75rem; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="page">
+    <span class="wordmark">InvoiceFlow</span>
+    <nav>
+      <a href="#the-invoice">The invoice</a>
+      <a href="#built-for">What it is built for</a>
+      <a href="#what-it-costs">What it costs</a>
+      <a href="#questions">Questions</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<div class="lede page">
+  <h1>Send an invoice. See when it is paid.</h1>
+  <p class="prose">InvoiceFlow is billing software for small teams. You
+  make the invoice, and you send it.</p>
+  <p class="prose note">Version 2.0 is out, with new AI-assisted
+  features.</p>
+  <div class="actions">
+    <button type="button" class="btn btn-solid">Make your first invoice</button>
+    <a class="btn btn-plain" href="#the-invoice">Look at a sample invoice</a>
+  </div>
+</div>
+
+<section id="the-invoice">
+  <div class="page">
+    <p class="marker">01</p>
+    <h2>This is what you send</h2>
+    <p class="prose">One sheet per job. Every line adds up in front of
+    you, and the total sits at the bottom where you expect it.</p>
+
+    <div class="sheet">
+      <div class="sheet-head">
+        <div>
+          <h3>Riverbend Joinery</h3>
+          <p class="ref">Invoice 0114 &middot; due 4 March</p>
+        </div>
+        <p class="status status-paid">Paid on 2 March</p>
+      </div>
+
+      <table>
+        <caption>Sample data. This is not a real client.</caption>
+        <thead>
+          <tr>
+            <th scope="col">Work</th>
+            <th scope="col" class="num">Hours</th>
+            <th scope="col" class="num">Rate</th>
+            <th scope="col" class="num">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Site survey</td><td class="num">3.0</td><td class="num">65.00</td><td class="num">195.00</td></tr>
+          <tr><td>Shop drawings</td><td class="num">8.5</td><td class="num">65.00</td><td class="num">552.50</td></tr>
+          <tr><td>Install, day one</td><td class="num">7.0</td><td class="num">80.00</td><td class="num">560.00</td></tr>
+          <tr><td>Install, day two</td><td class="num">4.5</td><td class="num">80.00</td><td class="num">360.00</td></tr>
+        </tbody>
+        <tfoot>
+          <tr><td colspan="3">Total due</td><td class="num">1,667.50</td></tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <p class="note aside">A late invoice reads
+    <span class="status status-late">Late by 9 days</span> in the same
+    place, in words as well as colour.</p>
+  </div>
+</section>
+
+<section id="built-for">
+  <div class="page">
+    <p class="marker">02</p>
+    <h2>What it is built for</h2>
+    <ul class="claims">
+      <li>
+        <h3>Speed</h3>
+        <p>The app is built to stay quick as your list of invoices grows.</p>
+      </li>
+      <li>
+        <h3>Growing teams</h3>
+        <p>It works the same way for one person and for a whole company.</p>
+      </li>
+      <li>
+        <h3>Security</h3>
+        <p>Security is built to the standard larger companies ask for.</p>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section id="what-it-costs">
+  <div class="page">
+    <p class="marker">03</p>
+    <h2>What it costs</h2>
+    <p class="prose">The price list is not written yet. It belongs here,
+    where people look for it.</p>
+    <p class="todo">To write: plans and prices.</p>
+  </div>
+</section>
+
+<section id="questions">
+  <div class="page">
+    <p class="marker">04</p>
+    <h2>Questions people ask</h2>
+    <ul class="qa qa-list">
+      <li>
+        <h3>Is InvoiceFlow right for me?</h3>
+        <p class="todo">Answer to write.</p>
+      </li>
+      <li>
+        <h3>Can I cancel any time?</h3>
+        <p class="todo">Answer to write.</p>
+      </li>
+      <li>
+        <h3>Is my data safe?</h3>
+        <p class="todo">Answer to write.</p>
+      </li>
+    </ul>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="page">&copy; 2026 InvoiceFlow. All rights reserved.</div>
+</footer>
+
+</body>
+</html>

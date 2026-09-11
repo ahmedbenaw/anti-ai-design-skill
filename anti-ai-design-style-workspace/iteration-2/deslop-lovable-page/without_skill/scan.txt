@@ -1,0 +1,43 @@
+
+=== AI-look scan (register 2026.10, fingerprint b7cd873aa4831ab9) ===
+Files scanned: 1
+
+AI-look score: 18/100  ->  distinct - no meaningful AI-look signals
+
+AI-look tells found (6):
+  [IC5] Placeholder people  (+4)
+      found: John Doe, Jane Smith, Sarah Chen
+      why it matters: Fake people and fake avatars. On a real site this is the single most damaging tell.
+      do this: Real testimonials with permission, or none. Never invent people.
+  [CP3] Fake-looking proof  (+4)
+      found: Trusted by 10,000+, 99.9%, 10,000+
+      why it matters: Round unverifiable numbers read as invented and destroy trust.
+      do this: Use a real number you can back up, or drop the claim.
+  [LA1] The SaaS section skeleton  (+3)
+      found: href="#features, href="#testimonials, href="#pricing
+      why it matters: features + pricing + testimonials + faq, always in the same order. Structure is where AI output converges hardest.
+      do this: Cut every section that doesn't serve YOUR product. Reorder around what your visitor actually asks first.
+  [CP1] Buzzword copy  (+3)
+      found: effortless, game-changer, seamless
+      why it matters: Words like these fit 500 other products, which is exactly the problem - and they are the words AI reaches for first.
+      do this: Replace each with the specific thing your product does ('saves you re-typing invoices' beats 'streamlines workflows').
+  [LA6] Round fake stats  (+2)
+      found: Trusted by 10,000+, 10,000+
+      why it matters: Round unverifiable numbers ('10K+ users', '99.9% uptime'). On a new product they read as invented.
+      do this: Real number or no number. 'Show more, claim less.'
+  [CP2] AI writing cadence  (+2)
+      found: it's not just, whether you're a
+      why it matters: Two or more classic AI phrasings together ('it's not just X...', 'in today's fast-paced world').
+      do this: Read it aloud. Rewrite in the words you'd say to a customer.
+
+Craft flags (2) - not AI proof, just problems worth fixing:
+  [CR2] Animations without a reduced-motion path
+      why it matters: The site animates but never checks the user's 'reduce motion' setting (WCAG 2.3.3 technique C39). Motion can cause dizziness and nausea.
+      do this: Wrap non-essential animation in @media (prefers-reduced-motion: no-preference) { ... }
+  [CR6] Uppercase running text
+      why it matters: Uppercase removes the word shapes dyslexic readers rely on (BDA guide). Fine for tiny labels, not for sentences.
+      do this: Use sentence case for anything longer than a word or two.
+
+Verdict: PASS (threshold: AI score under 20 and no near-proof findings)
+Next step: present it, with the proof line: "AI-look score 18/100 (distinct - no meaningful AI-look signals), register 2026.10, fingerprint b7cd873aa4831ab9."
+  (Full proof line, all guards: python3 scripts/verify_all.py <files>)

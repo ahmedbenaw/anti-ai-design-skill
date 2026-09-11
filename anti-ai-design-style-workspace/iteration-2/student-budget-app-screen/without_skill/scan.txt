@@ -1,0 +1,19 @@
+
+=== AI-look scan (register 2026.10, fingerprint b7cd873aa4831ab9) ===
+Files scanned: 1
+
+AI-look score: 0/100  ->  distinct - no meaningful AI-look signals
+
+No AI-look tells found.
+
+Craft flags (2) - not AI proof, just problems worth fixing:
+  [CR2] Animations without a reduced-motion path
+      why it matters: The site animates but never checks the user's 'reduce motion' setting (WCAG 2.3.3 technique C39). Motion can cause dizziness and nausea.
+      do this: Wrap non-essential animation in @media (prefers-reduced-motion: no-preference) { ... }
+  [CR5] Tiny body text
+      why it matters: Lots of very small text. Body copy should be at least 16px (BDA guide).
+      do this: Reserve text-xs for true fine print; body at text-base (16px) or larger.
+
+Verdict: PASS (threshold: AI score under 20 and no near-proof findings)
+Next step: present it, with the proof line: "AI-look score 0/100 (distinct - no meaningful AI-look signals), register 2026.10, fingerprint b7cd873aa4831ab9."
+  (Full proof line, all guards: python3 scripts/verify_all.py <files>)

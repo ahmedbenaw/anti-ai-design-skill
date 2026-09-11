@@ -1,0 +1,19 @@
+[
+  {
+    "file": "anti-ai-design-style-workspace/iteration-2/deslop-lovable-page/with_skill/outputs/fixed.html",
+    "exists": true,
+    "ai_score": 0,
+    "ai_verdict": "PASS",
+    "fingerprint": "b7cd873aa4831ab9",
+    "near_proof": 0,
+    "craft_ids": [],
+    "library_misuse": 0,
+    "library_ids": [],
+    "copy_grade": 2.2,
+    "copy_findings": 0,
+    "copy_finding_text": [],
+    "copy_pass": true,
+    "brand": "COMPLIANT",
+    "brand_violations": 0
+  }
+]

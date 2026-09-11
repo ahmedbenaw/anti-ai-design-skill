@@ -1,0 +1,19 @@
+anti-ai-design-style-workspace/iteration-2/clinic-landing-page/without_skill/outputs/clinic.html  (16 colours, 6 font families)
+  FAIL #171310  lines 35,48,319,322  (4 uses)  via rgba(23,19,16)
+       fails as neutral (C1 2.53 Delta-E from brand value #141413, effectively identical) and as accent (C1 2.53 Delta-E from brand value #141413, needs >= 12)
+  FAIL #C97F66  lines 142  (1 uses)
+       fails as neutral (C1 4.40 Delta-E from brand value #D97757, needs >= 12) and as accent (C1 4.40 Delta-E from brand value #D97757, needs >= 12)
+  FAIL #CFC5B2  lines 39  (1 uses)
+       fails as neutral (C1 7.98 Delta-E from brand value #B0AEA5, needs >= 12) and as accent (C1 7.98 Delta-E from brand value #B0AEA5, needs >= 12)
+  FAIL #D98E74  lines 219,230  (2 uses)
+       fails as neutral (C1 6.50 Delta-E from brand value #D97757, needs >= 12) and as accent (C1 6.50 Delta-E from brand value #D97757, needs >= 12)
+  FAIL #E9E2D4  lines 34  (1 uses)
+       fails as neutral (C1 2.65 Delta-E from brand value #E8E6DC, effectively identical) and as accent (C1 2.65 Delta-E from brand value #E8E6DC, needs >= 12)
+  FAIL #F2EDE3  lines 33,76  (2 uses)  via rgba(242,237,227)
+       fails as neutral (C1 2.22 Delta-E from brand value #E8E6DC, effectively identical) and as accent (C1 2.22 Delta-E from brand value #E8E6DC, needs >= 12)
+  FAIL #FCFAF5  lines 91  (1 uses)
+       fails as neutral (C1 0.64 Delta-E from brand value #FAF9F5, effectively identical) and as accent (C1 0.64 Delta-E from brand value #FAF9F5, needs >= 12)
+  FAIL font "georgia"  lines 56,69,82,162,165,186,212  T1 excluded typeface
+
+mode exclude | standard v2.0 | brand Anthropic | fingerprint 5697117fa1b27195 | 16 colours, 6 fonts checked
+VERDICT: NON-COMPLIANT (8 violations)

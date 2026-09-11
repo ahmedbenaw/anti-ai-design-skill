@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Masrouf — home</title>
+<style>
+/* Kashkool palette. Generated with generate_palette.py --hue 248 --temp cool
+   --chroma medium. It printed VERDICT: COMPLIANT. Nothing here was hand-picked. */
+:root {
+  --paper: #F4FAFF;
+  --card: #FFFFFF;
+  --sunken: #E9F0F6;
+  --rule: #888F94;
+  --rule-strong: #6C7378;
+  --ink: #2B3136;
+  --ink-soft: #60666C;
+  --ink-deep: #003E56;
+  --ink-deep-pressed: #00293B;
+  --pen: #00639A;
+  --over: #78001B;
+  --margin-rule: #78001B;
+
+  /* One sans, one mono. The phone is a mid-range Android on a paid data
+     bundle, so no font is downloaded. Money lines up in the mono. */
+  --face-text: system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --face-num: ui-monospace, "SF Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background-color: var(--paper);
+  /* 6mm squares, like the kashkool everyone already keeps the count in. */
+  background-image:
+    linear-gradient(to right, rgba(0, 99, 154, 0.10) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 99, 154, 0.10) 1px, transparent 1px);
+  background-size: 24px 24px;
+  color: var(--ink);
+  font-family: var(--face-text);
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+.screen {
+  max-width: 390px;
+  margin: 0 auto;
+  padding: 20px 16px 40px;
+}
+
+/* Header: whose money, which month, and what day it is. */
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--rule-strong);
+}
+.head h1 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+.head .ar {
+  display: block;
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--ink-soft);
+}
+.today {
+  font-family: var(--face-num);
+  font-size: 15px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+.card {
+  background-color: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 16px;
+  margin-top: 18px;
+}
+
+/* Question 1: how much is left, and how long must it last. */
+.left-label {
+  margin: 0;
+  font-size: 16px;
+  color: var(--ink-soft);
+}
+.left-amount {
+  font-family: var(--face-num);
+  font-size: 44px;
+  font-weight: 700;
+  line-height: 1.1;
+  margin: 4px 0 0;
+  color: var(--ink);
+}
+.left-amount .unit {
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--ink-soft);
+}
+.runway {
+  margin: 10px 0 0;
+  font-size: 16px;
+}
+.runway b { font-family: var(--face-num); font-weight: 700; }
+
+/* The month bar: how much of the masrouf is gone. Plain, no ring chart. */
+.month-bar {
+  margin-top: 14px;
+  height: 14px;
+  background-color: var(--sunken);
+  border: 1px solid var(--rule-strong);
+}
+.month-bar .gone {
+  height: 100%;
+  background-color: var(--pen);
+}
+.month-note {
+  margin: 8px 0 0;
+  font-size: 15px;
+  color: var(--ink-soft);
+  font-family: var(--face-num);
+}
+
+/* Question 2: where the rest of it went. */
+h2 {
+  margin: 26px 0 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+h2 .sub {
+  display: block;
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--ink-soft);
+}
+
+.ledger { list-style: none; margin: 12px 0 0; padding: 0; }
+.ledger li {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.ledger li:first-child { border-top: 1px solid var(--rule); }
+
+.row-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+}
+.cat { font-size: 17px; font-weight: 700; }
+.cat .ar { font-weight: 400; color: var(--ink-soft); font-size: 16px; }
+.amount { font-family: var(--face-num); font-size: 17px; font-weight: 700; white-space: nowrap; }
+.detail { margin: 2px 0 0; font-size: 16px; color: var(--ink-soft); }
+
+.bar {
+  margin-top: 8px;
+  height: 8px;
+  background-color: var(--sunken);
+}
+.bar .fill { height: 100%; background-color: var(--pen); }
+
+.rest {
+  margin: 12px 0 0;
+  font-size: 16px;
+  color: var(--ink-soft);
+}
+
+/* Question 3: I just spent something. Where do I write it down? */
+.log {
+  display: block;
+  width: 100%;
+  min-height: 56px;
+  margin-top: 24px;
+  padding: 14px 16px;
+  background-color: var(--ink-deep);
+  color: #FFFFFF;
+  border: 1px solid var(--ink-deep);
+  border-radius: 2px;
+  font-family: var(--face-text);
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.log:hover { background-color: var(--ink-deep-pressed); border-color: var(--ink-deep-pressed); }
+.log:focus-visible { outline: 3px solid var(--over); outline-offset: 3px; }
+
+.all-entries {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: 6px;
+  font-size: 16px;
+  color: var(--ink-deep);
+}
+.all-entries:focus-visible { outline: 3px solid var(--over); outline-offset: 2px; }
+
+/* Said out loud, not hidden in a footer: this is example data. */
+.sample {
+  margin: 22px 0 0;
+  padding-left: 12px;
+  border-left: 3px solid var(--margin-rule);
+  font-size: 16px;
+  color: var(--ink-soft);
+}
+</style>
+</head>
+<body>
+<main class="screen">
+
+  <header class="head">
+    <h1>Masrouf
+      <span class="ar" lang="ar" dir="rtl">مصروف</span>
+    </h1>
+    <p class="today">Thu 11 Sep</p>
+  </header>
+
+  <section class="card" aria-labelledby="left-label">
+    <p class="left-label" id="left-label">Left from September's masrouf</p>
+    <p class="left-amount">1,585 <span class="unit">EGP</span></p>
+    <p class="runway">It has to last <b>24</b> days. The next masrouf comes on
+      the 5th. Spread evenly that is <b>66 EGP</b> a day.</p>
+
+    <div class="month-bar" role="img"
+         aria-label="815 pounds of 2,400 spent so far this month">
+      <div class="gone" style="width: 34%;"></div>
+    </div>
+    <p class="month-note">815 spent of 2,400</p>
+  </section>
+
+  <h2>Where it went
+    <span class="sub">Your three biggest this month, 1–11 September</span>
+  </h2>
+
+  <ol class="ledger">
+    <li>
+      <div class="row-top">
+        <span class="cat">Fares <span class="ar" lang="ar" dir="rtl">مواصلات</span></span>
+        <span class="amount">285 EGP</span>
+      </div>
+      <p class="detail">23 microbus rides and 7 metro trips.</p>
+      <div class="bar" role="img" aria-label="285 pounds, the largest of the three">
+        <div class="fill" style="width: 100%;"></div>
+      </div>
+    </li>
+    <li>
+      <div class="row-top">
+        <span class="cat">Handouts <span class="ar" lang="ar" dir="rtl">ملازم</span></span>
+        <span class="amount">240 EGP</span>
+      </div>
+      <p class="detail">240 pages at the photocopy kiosk by gate 3, 1 EGP a page.</p>
+      <div class="bar" role="img" aria-label="240 pounds, second of the three">
+        <div class="fill" style="width: 84%;"></div>
+      </div>
+    </li>
+    <li>
+      <div class="row-top">
+        <span class="cat">Food on campus <span class="ar" lang="ar" dir="rtl">أكل بره</span></span>
+        <span class="amount">165 EGP</span>
+      </div>
+      <p class="detail">11 days you ate out between lectures.</p>
+      <div class="bar" role="img" aria-label="165 pounds, third of the three">
+        <div class="fill" style="width: 58%;"></div>
+      </div>
+    </li>
+  </ol>
+
+  <p class="rest">The other 125 EGP went on a phone bundle and small odds
+    and ends.</p>
+
+  <button class="log" type="button">Write down what I just spent</button>
+  <a class="all-entries" href="#">Or open the full list of 47 entries</a>
+
+  <p class="sample">This is an example month, so you can see the shape of the
+    screen. None of it is your own spending yet.</p>
+
+</main>
+</body>
+</html>

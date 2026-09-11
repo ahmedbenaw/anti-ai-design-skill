@@ -1,0 +1,55 @@
+{
+  "eval": "deslop-lovable-page",
+  "config": "with_skill",
+  "expectations": [
+    {
+      "id": "a1",
+      "text": "AI-look score below 20 (input scores 52)",
+      "passed": true,
+      "evidence": "ai_score=0 (input=52)"
+    },
+    {
+      "id": "a2",
+      "text": "No placeholder people remain",
+      "passed": true,
+      "evidence": "no pravatar/John Doe/Jane Smith/Sarah Chen in the HTML"
+    },
+    {
+      "id": "a3",
+      "text": "No fake stats remain",
+      "passed": true,
+      "evidence": "no 10K+/99.9% uptime/Trusted by N+ in the HTML"
+    },
+    {
+      "id": "a4",
+      "text": "Product and real information preserved",
+      "passed": true,
+      "evidence": "invoicing product and its real sections preserved"
+    },
+    {
+      "id": "a5",
+      "text": "Plain-language summary of changes",
+      "passed": true,
+      "evidence": "response.md carries a plain-language change summary"
+    },
+    {
+      "id": "a6",
+      "text": "Pre-existing findings reported, not silently fixed",
+      "passed": true,
+      "evidence": "4 mentions of placeholder/fake/assumption findings reported to the user"
+    },
+    {
+      "id": "a7",
+      "text": "audit_file.py reports COMPLIANT (brand gate)",
+      "passed": true,
+      "evidence": "COMPLIANT, 0 violations"
+    },
+    {
+      "id": "a8",
+      "text": "library_misuse == 0 or justified",
+      "passed": true,
+      "evidence": "library_misuse=0"
+    }
+  ],
+  "response_chars": 4394
+}

@@ -120,11 +120,14 @@
 
   /* ---- daily allowance note ---- */
   .daily{
-    margin:26px 20px 0;display:flex;align-items:center;gap:10px;
-    font-size:13px;color:var(--ink-soft);
+    margin:28px 20px 0;
+    font-size:13.5px;line-height:1.5;color:var(--ink-soft);
   }
-  .daily b{color:var(--ink);font-size:15px}
-  .daily .dot{width:7px;height:7px;border-radius:50%;background:var(--hibiscus)}
+  .daily b{color:var(--ink);font-size:14.5px}
+  .daily .dot{
+    display:inline-block;width:7px;height:7px;border-radius:50%;
+    background:var(--hibiscus);margin-right:7px;vertical-align:middle;
+  }
 
   /* ---- top 3 categories ---- */
   .sechead{
@@ -165,7 +168,11 @@
 
   .cmeta{flex:1;min-width:0}
   .cname{font-weight:700;font-size:15px;margin:0;line-height:1.2}
-  .cname span{font-family:"IBM Plex Sans Arabic",sans-serif;font-weight:500;color:var(--ink-soft);font-size:13.5px}
+  .cwhen .ar{
+    font-family:"IBM Plex Sans Arabic",sans-serif;font-weight:500;font-size:13px;
+    color:var(--ink);margin-right:7px;
+    direction:rtl;unicode-bidi:isolate;  /* keep Arabic from swallowing the numbers */
+  }
   .cwhen{margin:2px 0 0;font-size:12.5px;color:var(--ink-soft)}
   .camt{text-align:right;flex:0 0 auto}
   .camt b{display:block;font-size:16px;font-weight:700;letter-spacing:-.02em}
@@ -174,9 +181,10 @@
   /* tiny share meter under each */
   .mini{height:5px;background:#EFE4CE;border-radius:3px;margin-top:6px;overflow:hidden}
   .mini i{display:block;height:100%}
-  .c1 .mini i{width:74%;background:var(--hibiscus)}
-  .c2 .mini i{width:52%;background:var(--sticker-blue)}
-  .c3 .mini i{width:35%;background:var(--mint)}
+  /* width = share of the 1,759.50 spent so far */
+  .c1 .mini i{width:40%;background:var(--hibiscus)}
+  .c2 .mini i{width:28%;background:var(--sticker-blue)}
+  .c3 .mini i{width:18%;background:var(--mint)}
 
   /* ---- footer note ---- */
   .nudge{
@@ -254,8 +262,8 @@
       <span class="rank">1</span>
       <span class="emo">🍚</span>
       <div class="cmeta">
-        <p class="cname">Food &amp; kushari <span>· أكل</span></p>
-        <p class="cwhen">14 times · last: Abou Tarek, Tuesday</p>
+        <p class="cname">Food &amp; koshary</p>
+        <p class="cwhen"><span class="ar">أكل</span> last one: Abou Tarek, Tuesday</p>
         <div class="mini"><i></i></div>
       </div>
       <div class="camt"><b>710</b><em>EGP</em></div>
@@ -265,8 +273,8 @@
       <span class="rank">2</span>
       <span class="emo">🚌</span>
       <div class="cmeta">
-        <p class="cname">Getting to campus <span>· مواصلات</span></p>
-        <p class="cwhen">Microbus, metro, 2 late-night Ubers</p>
+        <p class="cname">Getting to campus</p>
+        <p class="cwhen"><span class="ar">مواصلات</span> Microbus, metro, 2 late-night Ubers</p>
         <div class="mini"><i></i></div>
       </div>
       <div class="camt"><b>495</b><em>EGP</em></div>
@@ -276,15 +284,15 @@
       <span class="rank">3</span>
       <span class="emo">🖨️</span>
       <div class="cmeta">
-        <p class="cname">Printing &amp; mulakhasat <span>· تصوير</span></p>
-        <p class="cwhen">Thermo midterm notes hurt, we know</p>
+        <p class="cname">Printing &amp; mulakhasat</p>
+        <p class="cwhen"><span class="ar">تصوير</span> Thermo notes. We know.</p>
         <div class="mini"><i></i></div>
       </div>
       <div class="camt"><b>320</b><em>EGP</em></div>
     </li>
   </ul>
 
-  <p class="nudge">…and 180 EGP of "I don't remember" 🙃</p>
+  <p class="nudge">…and 234.50 EGP of "I don't remember" 🙃</p>
 
   <!-- Log expense -->
   <div class="cta-wrap">

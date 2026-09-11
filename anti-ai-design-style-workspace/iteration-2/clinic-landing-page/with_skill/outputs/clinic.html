@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>[ CLINIC NAME ] physiotherapy, Alexandria</title>
+<meta name="description" content="Physiotherapy in Alexandria. Session prices in Egyptian pounds, opening hours, and booking by WhatsApp.">
+
+<!--
+  BEFORE YOU UPLOAD THIS FILE, EDIT THE THINGS BELOW.
+  Everything you need to change is written in CAPITALS or inside square brackets.
+
+  1. WHATSAPP NUMBER. Search this file for wa.me and replace
+     XXXXXXXXXXXX with your number, country code first, no plus sign
+     and no spaces. An Egyptian mobile 010 1234 5678 becomes 201012345678.
+  2. PHONE NUMBER. Search for tel: and do the same.
+  3. CLINIC NAME. Search for CLINIC NAME.
+  4. ADDRESS and the landmark line. Search for ADDRESS.
+  5. THE THREE THERAPISTS. Search for THERAPIST. Replace the bracketed
+     name, the speciality and the working days.
+  6. PRICES. The numbers are examples only. Search for EGP and put in
+     your real prices.
+  7. OPENING HOURS and the Ramadan line. Search for HOURS.
+  8. GOOGLE MAPS LINK. Search for maps link.
+  9. PROMISES. Search for InstaPay, cancel, lift, same day, and
+     woman therapist. Each of those sentences is my guess about how
+     you work. Change or delete any one that is not true for you.
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;800&family=IBM+Plex+Sans+Arabic:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --paper:   #F4FAFF;
+    --card:    #FFFFFF;
+    --ink:     #2B3136;
+    --quiet:   #60666C;
+    --rule:    #888F94;
+    --rule-strong: #6C7378;
+    --tape:    #700055;
+    --tape-dark: #4E003A;
+    --measure: 34rem;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "IBM Plex Sans Arabic", "Segoe UI", system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+  }
+
+  h1, h2, h3, .num {
+    font-family: Cairo, "IBM Plex Sans Arabic", system-ui, sans-serif;
+  }
+
+  .num { font-variant-numeric: tabular-nums; }
+
+  .wrap {
+    max-width: 40rem;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+  }
+
+  p, li { max-width: var(--measure); }
+
+  a { color: var(--tape); }
+
+  a:focus-visible, button:focus-visible {
+    outline: 3px solid var(--tape);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* ---------- the head of the page ---------- */
+
+  .top {
+    background: var(--card);
+    border-bottom: 4px solid var(--tape);
+    padding: 2.25rem 0 1.75rem;
+  }
+
+  h1 {
+    margin: 0 0 0.35rem;
+    font-size: clamp(1.9rem, 6vw, 2.75rem);
+    font-weight: 800;
+    line-height: 1.15;
+  }
+
+  .ar {
+    font-size: 1.05rem;
+    color: var(--quiet);
+    font-weight: 600;
+  }
+
+  .standfirst {
+    margin: 0.9rem 0 1.4rem;
+    font-size: 1.125rem;
+  }
+
+  .book {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    min-height: 56px;
+    justify-content: center;
+    padding: 0.65rem 1.5rem;
+    background: var(--tape);
+    color: #FFFFFF;
+    border: 2px solid var(--tape);
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.0625rem;
+  }
+
+  .book .ar { color: #FFD7EF; font-size: 0.95rem; }
+
+  .book:hover { background: var(--tape-dark); border-color: var(--tape-dark); }
+
+  .under-button {
+    margin: 0.75rem 0 0;
+    color: var(--quiet);
+    font-size: 1rem;
+  }
+
+  /* ---------- sections ---------- */
+
+  section { padding: 2.5rem 0 0.5rem; }
+
+  h2 {
+    margin: 0 0 0.25rem;
+    font-size: 1.45rem;
+    font-weight: 800;
+    line-height: 1.25;
+  }
+
+  h2 + .ar { display: block; margin-bottom: 1.1rem; }
+
+  h3 {
+    margin: 1.6rem 0 0.3rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  /* ---------- what is wrong with me ---------- */
+
+  .complaints { margin: 0; padding: 0; list-style: none; }
+
+  .complaints li {
+    padding: 0.85rem 0;
+    border-top: 1px solid var(--rule);
+    max-width: var(--measure);
+  }
+
+  .complaints li:last-child { border-bottom: 1px solid var(--rule); }
+
+  .said { display: block; }
+
+  .sends {
+    display: block;
+    color: var(--quiet);
+    font-size: 1rem;
+  }
+
+  /* ---------- the price card ---------- */
+
+  .prices { margin: 0; padding: 0; list-style: none; }
+
+  .prices li { max-width: var(--measure); }
+
+  .row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    padding: 0.8rem 0 0.2rem;
+  }
+
+  .what { font-weight: 600; }
+
+  .leader {
+    flex: 1 1 auto;
+    min-width: 1.5rem;
+    border-bottom: 1px dotted var(--rule-strong);
+    transform: translateY(-0.25rem);
+  }
+
+  .cost {
+    font-weight: 800;
+    color: var(--tape);
+    white-space: nowrap;
+  }
+
+  .detail {
+    margin: 0 0 0.9rem;
+    color: var(--quiet);
+    font-size: 1rem;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 0.9rem;
+  }
+
+  .note { color: var(--quiet); font-size: 1rem; }
+
+  /* ---------- hours ---------- */
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: var(--measure);
+  }
+
+  caption { text-align: left; padding-bottom: 0.5rem; color: var(--quiet); }
+
+  th, td {
+    text-align: left;
+    padding: 0.7rem 0.6rem 0.7rem 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  th { font-weight: 600; }
+
+  tbody th { font-weight: 400; }
+
+  .shut { color: var(--quiet); }
+
+  /* ---------- therapists ---------- */
+
+  .who { margin: 0 0 1.6rem; padding-top: 0.2rem; }
+
+  .who h3 { margin-top: 0; }
+
+  .who p { margin: 0.2rem 0; }
+
+  /* ---------- getting here ---------- */
+
+  ol { padding-left: 1.25rem; }
+
+  ol li { margin-bottom: 0.6rem; }
+
+  /* ---------- foot ---------- */
+
+  footer {
+    margin-top: 3rem;
+    background: var(--card);
+    border-top: 4px solid var(--tape);
+    padding: 2rem 0 2.5rem;
+  }
+
+  footer p { margin: 0.4rem 0; }
+
+  footer a { min-height: 44px; display: inline-flex; align-items: center; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html { scroll-behavior: smooth; }
+    .book { transition: background-color 120ms linear; }
+  }
+</style>
+</head>
+
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <!-- CLINIC NAME goes on the next line, and in the title tag above. -->
+    <h1>[ CLINIC NAME ] physiotherapy<br><span class="ar" lang="ar" dir="rtl">عيادة العلاج الطبيعي</span></h1>
+    <p class="standfirst">
+      Three physiotherapists in Alexandria. Back, neck, knee and shoulder
+      pain, and rehab after an operation. Tell us what hurts on WhatsApp and
+      we will send you the times we have free.
+    </p>
+
+    <!-- Replace XXXXXXXXXXXX with your WhatsApp number. Country code first. -->
+    <a class="book" href="https://wa.me/XXXXXXXXXXXX?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%D8%8C%20%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%AD%D8%AC%D8%B2%20%D9%85%D9%88%D8%B9%D8%AF%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%B9%D9%8A%D8%A7%D8%AF%D8%A9.%20%D8%A7%D9%84%D8%B4%D9%83%D9%88%D9%89%3A%20">
+      Book on WhatsApp
+      <span class="ar" lang="ar" dir="rtl">احجز موعد على واتساب</span>
+    </a>
+
+    <p class="under-button">
+      The message opens already written. Just add what hurts and send it.
+    </p>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section id="what-hurts">
+    <h2>Where does it hurt?</h2>
+    <span class="ar" lang="ar" dir="rtl">أين يؤلمك؟</span>
+
+    <ul class="complaints">
+      <li>
+        <span class="said">"My lower back hurts when I get up from a chair."</span>
+        <span class="sends">Start with a first visit. We look, we test, we treat you the same hour.</span>
+      </li>
+      <li>
+        <span class="said">"My neck and shoulder ache after a day at the desk."</span>
+        <span class="sends">A first visit, then short follow-up sessions and exercises for home.</span>
+      </li>
+      <li>
+        <span class="said">"I had a knee or shoulder operation and the doctor said physiotherapy."</span>
+        <span class="sends">Bring the report. Rehab runs as a block of eight sessions.</span>
+      </li>
+      <li>
+        <span class="said">"My father cannot manage the stairs to come here."</span>
+        <span class="sends">We come to the house, anywhere inside Alexandria.</span>
+      </li>
+      <li>
+        <span class="said">"Pain during pregnancy, or since the birth."</span>
+        <span class="sends">Sessions with a woman therapist, in a closed room.</span>
+      </li>
+    </ul>
+  </section>
+
+  <section id="prices">
+    <h2>What it costs</h2>
+    <span class="ar" lang="ar" dir="rtl">الأسعار بالجنيه المصري</span>
+
+    <!-- PRICES. These numbers are examples. Put your real ones in. -->
+    <ul class="prices">
+      <li>
+        <div class="row">
+          <span class="what">First visit</span>
+          <span class="leader" aria-hidden="true"></span>
+          <span class="cost num">450 EGP</span>
+        </div>
+        <p class="detail">60 minutes. Assessment and your first treatment together.</p>
+      </li>
+
+      <li>
+        <div class="row">
+          <span class="what">Follow-up session</span>
+          <span class="leader" aria-hidden="true"></span>
+          <span class="cost num">300 EGP</span>
+        </div>
+        <p class="detail">45 minutes. Hands-on treatment and the exercises for that week.</p>
+      </li>
+
+      <li>
+        <div class="row">
+          <span class="what">Rehab block after surgery</span>
+          <span class="leader" aria-hidden="true"></span>
+          <span class="cost num">2,200 EGP</span>
+        </div>
+        <p class="detail">Eight sessions, paid together. That is 275 a session instead of 300.</p>
+      </li>
+
+      <li>
+        <div class="row">
+          <span class="what">Home visit in Alexandria</span>
+          <span class="leader" aria-hidden="true"></span>
+          <span class="cost num">700 EGP</span>
+        </div>
+        <p class="detail">60 minutes at your address. Same price anywhere in the city.</p>
+      </li>
+
+      <li>
+        <div class="row">
+          <span class="what">Pregnancy and after birth</span>
+          <span class="leader" aria-hidden="true"></span>
+          <span class="cost num">350 EGP</span>
+        </div>
+        <p class="detail">45 minutes with a woman therapist.</p>
+      </li>
+    </ul>
+
+    <p class="note">
+      Cash or InstaPay at the desk. Ask us for a receipt if your work pays
+      you back. We do not bill insurance companies directly.
+    </p>
+  </section>
+
+  <section id="hours">
+    <h2>When we are open</h2>
+    <span class="ar" lang="ar" dir="rtl">مواعيد العمل</span>
+
+    <!-- HOURS. Change the days and times to match your clinic. -->
+    <table>
+      <caption>The last session of the day starts one hour before we close.</caption>
+      <thead>
+        <tr><th scope="col">Day</th><th scope="col">Open</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">Saturday to Wednesday</th><td class="num">10:00 to 20:00</td></tr>
+        <tr><th scope="row">Thursday</th><td class="num">10:00 to 16:00</td></tr>
+        <tr><th scope="row">Friday</th><td class="shut">Closed</td></tr>
+      </tbody>
+    </table>
+
+    <p class="note">
+      In Ramadan we open 11:00 to 16:00, then again 21:00 to 01:00.
+    </p>
+  </section>
+
+  <section id="therapists">
+    <h2>Who will treat you</h2>
+    <span class="ar" lang="ar" dir="rtl">فريق العيادة</span>
+
+    <!--
+      THERAPIST. Three slots. Replace the name in brackets, the line under
+      it, and the days. Keep the days honest, because people book around them.
+    -->
+    <div class="who">
+      <h3>[ Therapist name ]</h3>
+      <p>Backs, necks and desk pain. Runs the first visits.</p>
+      <p class="note">Saturday, Monday, Wednesday</p>
+    </div>
+
+    <div class="who">
+      <h3>[ Therapist name ]</h3>
+      <p>Knees, shoulders and rehab after an operation. Sports injuries.</p>
+      <p class="note">Saturday, Sunday, Tuesday, Thursday</p>
+    </div>
+
+    <div class="who">
+      <h3>[ Therapist name ]</h3>
+      <p>Pregnancy, after birth, and home visits.</p>
+      <p class="note">Sunday, Tuesday, Wednesday</p>
+    </div>
+  </section>
+
+  <section id="getting-here">
+    <h2>Getting here, and what to bring</h2>
+    <span class="ar" lang="ar" dir="rtl">مكان العيادة</span>
+
+    <!-- ADDRESS. Put the street, the floor, and a landmark people know. -->
+    <p>
+      [ Street and building ], Alexandria. Second floor, and there is a lift.
+      The nearest landmark people know is [ landmark ].
+    </p>
+
+    <p>
+      <!-- maps link: paste your own Google Maps link between the quotes. -->
+      <a href="https://maps.google.com/">Open the map</a>
+    </p>
+
+    <h3>How a booking works</h3>
+    <ol>
+      <li>Send us a WhatsApp message saying what hurts and when you are free.</li>
+      <li>We reply with the times we have, usually the same day.</li>
+      <li>Come ten minutes early. Bring any X-ray, MRI report or operation
+        note you have, and wear clothes you can move in.</li>
+    </ol>
+
+    <p class="note">
+      If you need to cancel, a message the day before is enough. No charge.
+    </p>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <!-- Replace XXXXXXXXXXXX here too, in both links. -->
+    <a class="book" href="https://wa.me/XXXXXXXXXXXX?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%D8%8C%20%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%AD%D8%AC%D8%B2%20%D9%85%D9%88%D8%B9%D8%AF%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%B9%D9%8A%D8%A7%D8%AF%D8%A9.%20%D8%A7%D9%84%D8%B4%D9%83%D9%88%D9%89%3A%20">
+      Book on WhatsApp
+      <span class="ar" lang="ar" dir="rtl">احجز موعد على واتساب</span>
+    </a>
+
+    <p>Or call us: <a class="num" href="tel:+20XXXXXXXXXX">+20 XX XXX XXXX</a></p>
+    <p class="note">[ CLINIC NAME ] physiotherapy, [ street ], Alexandria.</p>
+  </div>
+</footer>
+
+</body>
+</html>

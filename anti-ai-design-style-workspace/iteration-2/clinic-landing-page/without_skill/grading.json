@@ -1,0 +1,55 @@
+{
+  "eval": "clinic-landing-page",
+  "config": "without_skill",
+  "expectations": [
+    {
+      "id": "a1",
+      "text": "AI-look score below 20",
+      "passed": true,
+      "evidence": "ai_score=0"
+    },
+    {
+      "id": "a2",
+      "text": "No near-proof findings",
+      "passed": true,
+      "evidence": "near_proof=0"
+    },
+    {
+      "id": "a3",
+      "text": "No CR1/CR2 craft flags",
+      "passed": true,
+      "evidence": "craft=['CR5', 'CR6']"
+    },
+    {
+      "id": "a4",
+      "text": "copy_check passes (grade <= 9, no findings)",
+      "passed": false,
+      "evidence": "grade=4.9, findings=1"
+    },
+    {
+      "id": "a5",
+      "text": "Three elements specific to this clinic",
+      "passed": true,
+      "evidence": "EGP x12, WhatsApp/wa.me x15, Alexandria x11, hours x7, therapists x23"
+    },
+    {
+      "id": "a6",
+      "text": "No invented testimonials/stats/logo bars",
+      "passed": true,
+      "evidence": "no placeholder-person or fake-stat pattern in the HTML"
+    },
+    {
+      "id": "a7",
+      "text": "audit_file.py reports COMPLIANT (brand gate)",
+      "passed": false,
+      "evidence": "NON-COMPLIANT, 8 violations"
+    },
+    {
+      "id": "a8",
+      "text": "library_misuse == 0 or justified",
+      "passed": true,
+      "evidence": "library_misuse=0"
+    }
+  ],
+  "response_chars": 3336
+}

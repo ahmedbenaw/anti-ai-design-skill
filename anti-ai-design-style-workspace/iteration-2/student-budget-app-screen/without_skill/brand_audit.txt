@@ -1,0 +1,18 @@
+anti-ai-design-style-workspace/iteration-2/student-budget-app-screen/without_skill/outputs/budget-home.html  (17 colours, 5 font families)
+  FAIL #CFC6B4  lines 27  (1 uses)
+       fails as neutral (C1 7.87 Delta-E from brand value #B0AEA5, needs >= 12) and as accent (C1 7.87 Delta-E from brand value #B0AEA5, needs >= 12)
+  FAIL #D9F2E0  lines 167  (1 uses)
+       fails as neutral (C1 11.09 Delta-E from brand value #E8E6DC, needs >= 12) and as accent (C1 11.09 Delta-E from brand value #E8E6DC, needs >= 12)
+  FAIL #E3D5B8  lines 16  (1 uses)
+       fails as neutral (C1 8.47 Delta-E from brand value #E8E6DC, needs >= 12) and as accent (C1 8.47 Delta-E from brand value #E8E6DC, needs >= 12)
+  FAIL #EADFC6  lines 103  (1 uses)
+       fails as neutral (C1 6.29 Delta-E from brand value #E8E6DC, needs >= 12) and as accent (C1 6.29 Delta-E from brand value #E8E6DC, needs >= 12)
+  FAIL #EFE4CE  lines 182  (1 uses)
+       fails as neutral (C1 5.37 Delta-E from brand value #E8E6DC, needs >= 12) and as accent (C1 5.37 Delta-E from brand value #E8E6DC, needs >= 12)
+  FAIL #F1E7D2  lines 103  (1 uses)
+       fails as neutral (C1 4.91 Delta-E from brand value #E8E6DC, needs >= 12) and as accent (C1 4.91 Delta-E from brand value #E8E6DC, needs >= 12)
+  FAIL #FFEFD2  lines 13  (1 uses)
+       fails as neutral (C1 8.20 Delta-E from brand value #E8E6DC, needs >= 12) and as accent (C1 8.20 Delta-E from brand value #E8E6DC, needs >= 12)
+
+mode exclude | standard v2.0 | brand Anthropic | fingerprint 5697117fa1b27195 | 17 colours, 5 fonts checked
+VERDICT: NON-COMPLIANT (7 violations)
