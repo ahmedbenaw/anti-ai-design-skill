@@ -2,9 +2,9 @@
   {
     "file": "anti-ai-design-style-workspace/iteration-2/deslop-lovable-page/without_skill/outputs/fixed.html",
     "exists": true,
-    "ai_score": 18,
-    "ai_verdict": "PASS",
-    "fingerprint": "b7cd873aa4831ab9",
+    "ai_score": 20,
+    "ai_verdict": "FAIL",
+    "fingerprint": "6b7abae241e662e5",
     "near_proof": 0,
     "craft_ids": [
       "CR2",

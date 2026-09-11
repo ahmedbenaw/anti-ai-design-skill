@@ -444,7 +444,7 @@ New since the handover was written:
 - Never present a page without all three scanners and the proof line:
   `PASS: AI-look 0/100 (distinct), craft flags 0, library misuse 0, copy
   grade 4.6, brand distance COMPLIANT, rendered PASS | register 2026.10,
-  rules b7cd873aa4831ab9, brand rules 5697117fa1b27195`
+  rules 6b7abae241e662e5, brand rules 5697117fa1b27195 (installed)`
   Quote what `verify_all.py` printed. Never compose the line by hand.
 - Never claim "proven human-made". The scanner measures the AI look.
 - Never edit the installed `anti-antropik-design` copy. Propose instead.

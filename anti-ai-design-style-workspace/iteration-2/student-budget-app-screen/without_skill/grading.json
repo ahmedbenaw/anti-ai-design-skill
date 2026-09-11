@@ -6,7 +6,7 @@
       "id": "a1",
       "text": "AI-look score below 20",
       "passed": true,
-      "evidence": "ai_score=0"
+      "evidence": "ai_score=4"
     },
     {
       "id": "a2",

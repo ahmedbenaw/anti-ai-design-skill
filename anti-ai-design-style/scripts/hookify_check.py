@@ -27,7 +27,9 @@ import tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SKILL_DIR = os.path.dirname(HERE)
-HOOKIFY = os.path.expanduser(
+# The marketplace cache path varies by install; HOOKIFY_PATH overrides it the
+# way ANTI_ANTROPIK_PATH overrides the brand guard location.
+HOOKIFY = os.environ.get("HOOKIFY_PATH") or os.path.expanduser(
     "~/.claude/plugins/marketplaces/claude-plugins-official/plugins/hookify")
 
 # A trigger per rule, plus the file it would be written to. Each trigger is a

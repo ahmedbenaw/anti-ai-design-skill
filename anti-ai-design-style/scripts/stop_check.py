@@ -170,6 +170,9 @@ def selftest():
     t.close()
     env = dict(os.environ, HOME=tempfile.mkdtemp())
     env.pop("ANTI_ANTROPIK_PATH", None)
+    # This test needs the fail-closed path. The vendored copy would otherwise
+    # be found and turn NOT RUN into a PASS, which is the fallback working.
+    env["ANTI_ANTROPIK_NO_VENDORED"] = "1"
     out = subprocess.run(
         [sys.executable, os.path.abspath(__file__)],
         input=json.dumps({"hook_event_name": "Stop", "transcript_path": t.name}),

@@ -3,7 +3,7 @@
     "skill_name": "anti-ai-design-style",
     "skill_path": "/Users/ben/Downloads/Repos/Anti-AI-design skill/anti-ai-design-style",
     "executor_model": "claude-opus-5",
-    "timestamp": "2026-09-11T02:17:39.533655+00:00",
+    "timestamp": "2026-09-11T03:11:59.321803+00:00",
     "evals_run": [
       0,
       1,
@@ -76,7 +76,7 @@
         "copy grade 4.0",
         "brand COMPLIANT (0)",
         "library misuse 0",
-        "fingerprint b7cd873aa4831ab9"
+        "fingerprint 6b7abae241e662e5"
       ]
     },
     {
@@ -98,7 +98,7 @@
         {
           "text": "a1: AI-look score below 20",
           "passed": true,
-          "evidence": "ai_score=0"
+          "evidence": "ai_score=2"
         },
         {
           "text": "a2: No near-proof findings",
@@ -137,12 +137,12 @@
         }
       ],
       "notes": [
-        "AI-look 0/100",
+        "AI-look 2/100",
         "craft ['CR5', 'CR6']",
         "copy grade 4.9",
         "brand NON-COMPLIANT (8)",
         "library misuse 0",
-        "fingerprint b7cd873aa4831ab9"
+        "fingerprint 6b7abae241e662e5"
       ]
     },
     {
@@ -208,7 +208,7 @@
         "copy grade 1.2",
         "brand COMPLIANT (0)",
         "library misuse 0",
-        "fingerprint b7cd873aa4831ab9"
+        "fingerprint 6b7abae241e662e5"
       ]
     },
     {
@@ -230,7 +230,7 @@
         {
           "text": "a1: AI-look score below 20",
           "passed": true,
-          "evidence": "ai_score=0"
+          "evidence": "ai_score=4"
         },
         {
           "text": "a2: No CR1/CR2 craft flags",
@@ -269,12 +269,12 @@
         }
       ],
       "notes": [
-        "AI-look 0/100",
+        "AI-look 4/100",
         "craft ['CR2', 'CR5']",
         "copy grade 2.1",
         "brand NON-COMPLIANT (7)",
         "library misuse 0",
-        "fingerprint b7cd873aa4831ab9"
+        "fingerprint 6b7abae241e662e5"
       ]
     },
     {
@@ -340,7 +340,7 @@
         "copy grade 2.2",
         "brand COMPLIANT (0)",
         "library misuse 0",
-        "fingerprint b7cd873aa4831ab9"
+        "fingerprint 6b7abae241e662e5"
       ]
     },
     {
@@ -349,9 +349,9 @@
       "configuration": "without_skill",
       "run_number": 1,
       "result": {
-        "pass_rate": 0.625,
-        "passed": 5,
-        "failed": 3,
+        "pass_rate": 0.5,
+        "passed": 4,
+        "failed": 4,
         "total": 8,
         "time_seconds": 318.0,
         "tokens": 118564,
@@ -361,8 +361,8 @@
       "expectations": [
         {
           "text": "a1: AI-look score below 20 (input scores 52)",
-          "passed": true,
-          "evidence": "ai_score=18 (input=52)"
+          "passed": false,
+          "evidence": "ai_score=20 (input=52)"
         },
         {
           "text": "a2: No placeholder people remain",
@@ -401,12 +401,12 @@
         }
       ],
       "notes": [
-        "AI-look 18/100",
+        "AI-look 20/100",
         "craft ['CR2', 'CR6']",
         "copy grade 5.7",
         "brand NON-COMPLIANT (4)",
         "library misuse 0",
-        "fingerprint b7cd873aa4831ab9"
+        "fingerprint 6b7abae241e662e5"
       ]
     }
   ],
@@ -433,9 +433,9 @@
     },
     "without_skill": {
       "pass_rate": {
-        "mean": 0.7083,
-        "stddev": 0.0722,
-        "min": 0.625,
+        "mean": 0.6667,
+        "stddev": 0.1443,
+        "min": 0.5,
         "max": 0.75
       },
       "time_seconds": {

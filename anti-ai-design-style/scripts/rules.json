@@ -120,7 +120,8 @@
       "id": "CO3",
       "name": "Many two-hue gradient washes",
       "patterns": [
-        "\\bfrom-[a-z]+-\\d00\\s+(?:via-[a-z]+-\\d00\\s+)?to-[a-z]+-\\d00\\b"
+        "\\bfrom-[a-z]+-\\d00\\s+(?:via-[a-z]+-\\d00\\s+)?to-[a-z]+-\\d00\\b",
+        "linear-gradient\\([^)]*#[0-9a-fA-F]{3,6}\\b[^)]*#[0-9a-fA-F]{3,6}\\b[^)]*\\)"
       ],
       "points": 4,
       "min_distinct": 5,
@@ -131,10 +132,10 @@
       "id": "CO4",
       "name": "Dark hero glass combo",
       "combo": [
-        "\\bbg-(gray-900|slate-900|slate-950|zinc-950|black)\\b",
-        "\\bbg-white/(5|10|20)\\b",
-        "\\bborder-white/(10|20|30)\\b",
-        "\\bbackdrop-blur"
+        "\\bbg-(gray-900|slate-900|slate-950|zinc-950|black)\\b|background(?:-color)?:\\s*#(?:0f172a|111827|18181b|09090b|020617|000000|000)\\b",
+        "\\bbg-white/(5|10|20)\\b|background(?:-color)?:\\s*rgba\\(255,\\s*255,\\s*255,\\s*0?\\.(?:0[5-9]|1\\d?|2)\\)",
+        "\\bborder-white/(10|20|30)\\b|border[^;{}]*rgba\\(255,\\s*255,\\s*255,\\s*0?\\.(?:1|2|3)\\d?\\)",
+        "\\bbackdrop-blur|backdrop-filter:\\s*blur"
       ],
       "combo_min": 3,
       "points": 4,
@@ -195,7 +196,9 @@
       "name": "ALL-CAPS tracked eyebrow labels",
       "patterns": [
         "uppercase[^\"']*tracking-(wide|widest)",
-        "tracking-(wide|widest)[^\"']*uppercase"
+        "tracking-(wide|widest)[^\"']*uppercase",
+        "text-transform:\\s*uppercase[^}]*letter-spacing:\\s*0?\\.(?:0[8-9]|[1-9])\\d*em",
+        "letter-spacing:\\s*0?\\.(?:0[8-9]|[1-9])\\d*em[^}]*text-transform:\\s*uppercase"
       ],
       "points": 2,
       "explain": "Tiny ALL-CAPS labels above every heading. Also harder to read for dyslexic users.",
@@ -205,9 +208,9 @@
       "id": "TY4",
       "name": "Hero type sandwich",
       "combo": [
-        "text-[45]xl[^\"']*(sm|md|lg):text-[567]xl",
-        "font-bold",
-        "tracking-tight"
+        "text-[45]xl[^\"']*(sm|md|lg):text-[567]xl|font-size:\\s*(?:clamp\\([^)]*[3-9](?:\\.\\d+)?rem|[3-9](?:\\.\\d+)?rem|[4-9]\\dpx)",
+        "font-bold|font-weight:\\s*(?:700|800|900|bold)\\b",
+        "tracking-tight|letter-spacing:\\s*-0?\\.0(?:2[5-9]|[3-9])\\d*em"
       ],
       "combo_min": 3,
       "points": 2,
@@ -231,7 +234,8 @@
       "id": "LA3",
       "name": "Icon tile above card heading",
       "patterns": [
-        "\\bw-1[02] h-1[02][^\"']*rounded-(lg|xl)[^\"']*bg-[a-z]+-(100|500/10)|bg-primary/10[^\"']*rounded"
+        "\\bw-1[02] h-1[02][^\"']*rounded-(lg|xl)[^\"']*bg-[a-z]+-(100|500/10)|bg-primary/10[^\"']*rounded",
+        "width:\\s*(?:40|48)px;\\s*height:\\s*(?:40|48)px;[^}]*border-radius:\\s*(?:8|10|12|16)px[^}]*background(?:-color)?:\\s*#[0-9a-fA-F]{6}"
       ],
       "points": 3,
       "explain": "The little rounded square holding an icon above every card title - 'the universal AI feature-card template'.",
@@ -267,18 +271,23 @@
       "name": "Side-stripe accent borders",
       "patterns": [
         "border-l-4 border-[a-z]+-[45]00",
-        "border-l-\\[3px\\]"
+        "border-l-\\[3px\\]",
+        "border-l-4 border-l-(?:[a-z]+-[45]00|primary|accent|destructive)\\b",
+        "border-left:\\s*[3-8]px\\s+solid[^}]*border-radius|border-radius[^}]*border-left:\\s*[3-8]px\\s+solid"
       ],
-      "points": 3,
+      "points": 1,
       "explain": "Coloured left stripes on cards - 'almost as reliable a sign of AI design as em-dashes' - unless they encode real status.",
-      "fix": "Keep only where the colour MEANS something (error, warning). Delete decorative ones."
+      "fix": "Keep only where the colour MEANS something (error, warning). Delete decorative ones.",
+      "era": "2024-25"
     },
     {
       "id": "LA9",
       "name": "Ghost card (border + big shadow)",
       "patterns": [
         "border[^\"']*border-(gray|slate|zinc)-200[^\"']*shadow-(lg|xl|2xl)",
-        "shadow-(lg|xl|2xl)[^\"']*border-(gray|slate|zinc)-200"
+        "shadow-(lg|xl|2xl)[^\"']*border-(gray|slate|zinc)-200",
+        "border:\\s*1px\\s+solid\\s*#(?:e5e7eb|e2e8f0|e4e4e7|d1d5db)\\b[^}]*box-shadow:[^;]*\\d{2}px",
+        "box-shadow:[^;]*\\d{2}px[^}]*border:\\s*1px\\s+solid\\s*#(?:e5e7eb|e2e8f0|e4e4e7|d1d5db)\\b"
       ],
       "points": 2,
       "explain": "A hairline border AND a big soft shadow on the same card - two competing depth systems at once.",
@@ -364,7 +373,8 @@
       "patterns": [
         "opacity-0[^\"']*translate-y",
         "data-aos=",
-        "\\bIntersectionObserver\\b"
+        "\\bIntersectionObserver\\b",
+        "opacity:\\s*0;[^}]*transform:\\s*translateY\\("
       ],
       "points": 2,
       "min_count": 3,
@@ -375,7 +385,8 @@
       "id": "MO2",
       "name": "hover:scale on everything",
       "patterns": [
-        "hover:scale-10[5-9]|hover:scale-1[12]\\d"
+        "hover:scale-10[5-9]|hover:scale-1[12]\\d",
+        ":hover\\s*\\{[^}]*transform:\\s*scale\\(1\\.(?:0[5-9]|1\\d?)\\)"
       ],
       "points": 1,
       "min_count": 3,
@@ -386,7 +397,8 @@
       "id": "MO3",
       "name": "Pulse on static things",
       "patterns": [
-        "animate-pulse"
+        "animate-pulse",
+        "animation:[^;]*\\bpulse\\b|@keyframes\\s+pulse\\b"
       ],
       "points": 2,
       "exclude_context": "[Ss]keleton|[Ll]oading",

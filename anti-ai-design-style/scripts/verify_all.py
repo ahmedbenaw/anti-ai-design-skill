@@ -24,7 +24,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from ai_tell_scan import fingerprint, load_rules  # noqa: E402
-from find_brand_guard import locate  # noqa: E402
+from find_brand_guard import locate, source_of  # noqa: E402
 
 NOT_RUN = "NOT RUN"
 
@@ -110,6 +110,7 @@ def gather(paths, brand_dir, max_grade=9.0, render=False):
                            "--json"] + list(paths))
     return {"scan": scan, "copy": copy, "brand": brand,
             "brand_found": brand_dir is not None,
+            "brand_source": source_of(brand_dir) if brand_dir else None,
             "render": render_result(paths, render)}
 
 
@@ -152,7 +153,8 @@ def summarise(results, rules):
     else:
         b = {"ok": brand["verdict"] == "COMPLIANT",
              "verdict": brand["verdict"],
-             "fingerprint": brand.get("exclusion_fingerprint")}
+             "fingerprint": brand.get("exclusion_fingerprint"),
+             "source": results.get("brand_source")}
 
     # A skipped render check does not fail the run: it is optional, and
     # unlike the brand guard it measures craft the other scanners already
@@ -180,11 +182,12 @@ def proof_line(summary):
     r = summary.get("render") or {"state": "SKIPPED"}
     return ("{verdict}: AI-look {score} ({band}), craft flags {craft}, "
             "library misuse {lib}, copy grade {grade}, brand distance {brand}, "
-            "rendered {render} | register {reg}, rules {rf}, brand rules {bf}"
+            "rendered {render} | register {reg}, rules {rf}, brand rules {bf}{src}"
             ).format(
         verdict="PASS" if summary["passed"] else "FAIL",
         score=score, band=s["band"], craft=craft, lib=lib, grade=grade,
         brand=b["verdict"], render=r["state"], reg=s["register"],
+        src=(" ({})".format(b["source"]) if b.get("source") and b.get("fingerprint") else ""),
         rf=s["fingerprint"], bf=b["fingerprint"] or "-")
 
 

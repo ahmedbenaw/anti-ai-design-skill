@@ -522,6 +522,69 @@ export default function AppTabs() {
 }
 """
 
+# The same ten tells, written in plain CSS instead of Tailwind classes. The
+# audit found that ten of thirty code rules only recognised the Tailwind
+# spelling, so a hand-coded page or a Framer/Webflow export carrying the exact
+# same tell scored 0. Every rule named in CSS_FORM_EXPECT must fire on this
+# page, and every one of them must still stay silent on CLEAN_FIXTURE.
+CSS_FORM_FIXTURE = """
+<!doctype html><html><head><style>
+.hero{background:linear-gradient(135deg,#8b5cf6 0%,#ec4899 100%)}
+.band{background:linear-gradient(90deg,#3b82f6,#a855f7)}
+.strip{background:linear-gradient(to right,#f97316,#ef4444)}
+.wash{background:linear-gradient(120deg,#22d3ee,#6366f1)}
+.foot{background:linear-gradient(45deg,#f43f5e,#fb923c)}
+.dark{background:#0f172a}
+.glass{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);backdrop-filter:blur(12px)}
+.eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase}
+.kicker{text-transform:uppercase;letter-spacing:.12em}
+h1{font-size:clamp(2.5rem,6vw,4.5rem);font-weight:800;letter-spacing:-.03em}
+.tile{width:48px;height:48px;border-radius:12px;background:#ede9fe}
+.card{border:1px solid #e5e7eb;box-shadow:0 20px 25px -5px rgba(0,0,0,.1)}
+.note{border-left:4px solid #8b5cf6;border-radius:8px}
+.reveal{opacity:0;transform:translateY(24px);transition:all .6s}
+.reveal.in{opacity:1;transform:none}
+.fade{opacity:0;transform:translateY(16px)}
+.cta:hover{transform:scale(1.05)}
+.card:hover{transform:scale(1.08)}
+.img:hover{transform:scale(1.1)}
+.dot{animation:pulse 2s infinite}
+@keyframes pulse{50%{opacity:.5}}
+</style></head><body>
+<div class="hero"><span class="eyebrow">Introducing</span><h1>Build faster</h1></div>
+<div class="band"></div><div class="strip"></div><div class="wash"></div><div class="foot fade"></div>
+<div class="dark"><div class="glass">glass</div></div>
+<div class="tile"></div><div class="card reveal">c</div><div class="note">n</div>
+<button class="cta">Go</button><img class="img" src="x.png" alt=""><span class="dot"></span>
+<script>new IntersectionObserver(()=>{});</script>
+</body></html>
+"""
+CSS_FORM_EXPECT = {"CO3", "CO4", "TY5", "TY4", "LA3", "LA8", "LA9", "MO1", "MO2", "MO3"}
+
+
+# A well-made plain-CSS page. Every property the ten twins look for appears
+# here in its honest, below-threshold form: one gradient, a blockquote rule
+# with no radius, a 2px shadow, a subtle hover lift, .02em uppercase on a
+# button. If any of the ten rules fires on this, its twin has been loosened.
+CSS_CLEAN_FIXTURE = """
+<!doctype html><html><head><style>
+body{font-family:Georgia,serif;color:#1b2a20;background:#f4f1e8}
+h1{font-size:2rem;font-weight:600;letter-spacing:0}
+.btn{text-transform:uppercase;letter-spacing:.02em;background:#b4531f;color:#fff;padding:12px 20px}
+.btn:hover{transform:translateY(-1px)}
+.header{background:linear-gradient(180deg,#f4f1e8,#e8e2d4)}
+blockquote{border-left:3px solid #b4531f;padding-left:16px;margin:0}
+.card{border:1px solid #e5e7eb;box-shadow:0 1px 2px rgba(0,0,0,.06);padding:20px}
+.avatar{width:48px;height:48px;border-radius:50%;background:#ddd}
+.dark{background:#1b2a20;color:#fff}
+</style></head><body>
+<div class="header"><h1>Fadl's Ledger</h1><button class="btn">Try it</button></div>
+<blockquote>We type a customer once.</blockquote>
+<div class="card"><span class="avatar"></span>Bab al-Louq, Cairo</div>
+<div class="dark">Week total 935 EGP</div>
+</body></html>
+"""
+
 def selftest():
     rules = load_rules()
     prov1, tells1, craft1, lib1 = scan_texts({"slop.html": SLOP_FIXTURE}, rules)
@@ -546,7 +609,18 @@ def selftest():
                   "LB9", "LB10", "LB11", "LB12"}
     missing_lib = expect_lib - lib_ids
 
+    _, tells7, _, _ = scan_texts({"page.html": CSS_FORM_FIXTURE}, rules)
+    css_missing = CSS_FORM_EXPECT - {f.rule_id for f in tells7}
+    _, tells8, _, _ = scan_texts({"page.html": CSS_CLEAN_FIXTURE}, rules)
+    css_false = {f.rule_id for f in tells8} & CSS_FORM_EXPECT
+
     problems = []
+    if css_missing:
+        problems.append("plain-CSS form of these tells scored 0, only the Tailwind "
+                        f"spelling is recognised: {sorted(css_missing)}")
+    if css_false:
+        problems.append("a well-made plain-CSS page tripped these rules, so a CSS twin "
+                        f"has been loosened: {sorted(css_false)}")
     for ext in (".dart", ".kt"):
         if ext not in SCAN_EXTENSIONS:
             problems.append(f"{ext} files are not scanned, so no mobile rule can ever fire")

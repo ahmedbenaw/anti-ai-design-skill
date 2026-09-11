@@ -136,14 +136,8 @@ tap-target size, focus and reduced motion. That needs Playwright. Without it
 the line says `rendered SKIPPED` and nothing fails, because most of this skill
 works without a browser.
 
-It prints one line, and that line is what you quote when you present. It ends
-in two fingerprints, so anyone can tell which rules produced the verdict:
-
-```
-PASS: AI-look 0/100 (distinct), craft flags 0, library misuse 0, copy grade
-4.6, brand distance COMPLIANT, rendered PASS | register 2026.10,
-rules b7cd873aa4831ab9, brand rules 5697117fa1b27195
-```
+It prints one line; Step 4 shows it. Its two fingerprints say which rules
+produced the verdict.
 
 Exit code 0 means every guard ran and passed. If the brand guard is missing,
 the line says `brand distance NOT RUN` and the verdict is FAIL. A check that
@@ -157,26 +151,20 @@ python3 "$SKILL"/scripts/copy_check.py <pages and docs with prose>
 ```
 
 **The second guard is not optional.** This skill measures distance from
-generic AI output. It does NOT measure distance from a specific company's
-brand, and fixing one can cause the other. Warm cream plus a bookish serif plus
-a terracotta accent used to pass this scanner while landing squarely on Claude's
-own design language. Rule CO6 now scores that combination, so this scanner
-catches it too. The point still stands: passing one guard is not the same as
-arriving somewhere. That is what happened to the first version of
-`examples/fixed-example.html`, which scored 0 here and NON-COMPLIANT there.
-`verify_all.py` runs it for you, and fails when it cannot find it.
+generic AI output, not from a company's brand. Fixing one can cause the
+other. The first `fixed-example.html` scored 0 here and
+NON-COMPLIANT there. Rule CO6 now scores the cream-serif-terracotta
+combination, but the point stands. `verify_all.py` runs both guards.
 
-If the line says `brand distance NOT RUN`, say that first, in plain words. The
-second checker is not installed. So the FAIL is about a missing tool, not about
-their design. The fix: install `anti-antropik-design`, or set
-`ANTI_ANTROPIK_PATH` to point at it. Run it
-directly to see the replacement hex values it suggests:
+If the line says `brand distance NOT RUN`, say so first, in plain words. The
+second checker was not found, so the FAIL is about a missing tool. A copy
+ships in `vendor/anti-antropik-design` and is used when nothing else exists;
+the line then says `(vendored)`. To use your own, install
+`anti-antropik-design` or set `ANTI_ANTROPIK_PATH`. For its hex suggestions:
 
 ```
 python3 "$(python3 "$SKILL"/scripts/find_brand_guard.py)"/scripts/audit_file.py <files> --suggest
 ```
-
-If that path is unknown, `python3 "$SKILL"/scripts/find_brand_guard.py` prints it.
 
 Do not choose colours by hand. Generate them:
 `generate_palette.py` in the brand guard prints a verified 16-role system:
@@ -185,8 +173,7 @@ Do not choose colours by hand. Generate them:
 python3 "$(python3 "$SKILL"/scripts/find_brand_guard.py)"/scripts/generate_palette.py \
   --hue N --temp warm|neutral|cool --chroma low|medium|high
 ```
- Read `reference/brand-distance.md` for the
-whole story, including which type structures are excluded.
+Read `reference/brand-distance.md` for which type structures are excluded.
 
 Exit code 0 = pass. Exit code 1 = apply each finding's "do this" line
 (details in `reference/fixes.md`) and rescan. Up to three rounds. If
@@ -194,18 +181,9 @@ something still fails after that, present honestly with what remains and
 why. Never weaken rules.json, never scan a stub instead of the real files,
 never present unscanned visual output.
 
-**What the grade-9 readability gate covers.** It applies to what a user
-reads. That means `SKILL.md`, `setup-guide.md`, `fixes.md`,
-`accessibility.md`, `brand-distance.md`, `sources.md`, the tells register, the
-templates and the examples README. It also covers any page or doc you produce
-for the user.
-
-It does NOT apply to `reference/research/`, `reference/libraries/*.md`, or
-`reference/sources-compendium.md`. Those are evidence archives and API
-references. They quote sources word for word and use each library's own terms.
-Flattening that would damage them. The compendium grades about 11 for exactly
-that reason. This is a stated exemption, not an unnoticed failure. If you edit
-them, keep the quotes.
+**The grade-9 gate** covers everything a user reads, including what you
+produce. `reference/research/`, `libraries/*.md` and the compendium are
+exempt: they quote sources verbatim.
 
 Scanner limits, stated so you never over-claim. It reads code and copy,
 not rendered pixels. A PASS means "no known AI-look patterns". It does not
@@ -222,7 +200,7 @@ fingerprints are not decoration. They say which rules gave this verdict.
 ```
 PASS: AI-look 0/100 (distinct), craft flags 0, library misuse 0, copy grade
 4.6, brand distance COMPLIANT, rendered PASS | register 2026.10, rules
-b7cd873aa4831ab9, brand rules 5697117fa1b27195
+6b7abae241e662e5, brand rules 5697117fa1b27195 (installed)
 ```
 
 Paste the real one. Do not retype it, shorten it, or start it with a word the
@@ -295,31 +273,20 @@ the end. Never add one from an article alone.
 
 ## What the last version of this skill got wrong
 
-Worth knowing, because the mistakes were not obvious ones and the same
-traps are still open.
+The full account, including what testing found after v3 shipped, is in
+`reference/lessons.md`. The five that change how you should work:
 
-- **It measured one distance and called it "distinct."** v2 scored how far
-  a design sat from *generic AI output*. It never asked how close the design
-  sat to *a specific house style*. So its own four pages went through the
-  brand guard too. **Four out of four passed one guard and failed the
-  other.** Escaping the average is not the same as arriving somewhere. The
-  proof line now carries a brand-distance field, and a missing brand guard
-  is a FAIL, not a shrug.
-- **It trusted its own word lists past their expiry.** The cadence rules
-  encoded 2023-24 vocabulary and nothing since. AI vocabulary turns over
-  about every 18 months, so a rule with no era tag is a rule that quietly
-  stops working. Every rule now carries one.
-- **It graded a phone frame instead of a button.** One eval passed
-  "button is at least 44px" against a `min-height: 844px` that was the
-  simulated phone, not the control. A check measuring the wrong element
-  passes forever and tells you nothing.
-- **Its citations pointed at two different things with the same spelling.**
-  `P13` meant a research finding in one file and a source in another.
-  Nothing crashed; the evidence chain just stopped meaning what it said.
-  `scripts/check_citations.py` now fails if a citation stops resolving.
-- **It never ran its own hooks.** Four of the five fired on a field that
-  the event does not provide. They were correct-looking and inert. Reading
-  a rule is not running it.
+- **It measured one distance and called it "distinct".** Four of four pages
+  passed the AI-look guard and failed the brand guard. Both guards now run,
+  and a missing brand guard is a FAIL.
+- **It trusted its own word lists past their expiry.** Rules now carry era
+  tags and the register is dated.
+- **Its rules knew only the Tailwind spelling.** Ten of thirty scored 0 on
+  the same tell written in plain CSS. Fixed, with a CSS page in the selftest.
+- **The popular escape from the AI look is a warm cream** that sits inside
+  the brand guard's violation zone. Generate the palette; do not pick it.
+- **A passing check is not a working check.** A citation that resolves can
+  still lie, and a fixture can pass while its rule matches nothing real.
 
 ## What this skill refuses
 

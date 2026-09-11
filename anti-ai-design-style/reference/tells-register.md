@@ -104,8 +104,8 @@ These are generator plumbing. Humans don't write them. Measured in K on real rep
 |---|---|---|---|---|---|---|
 | CO1 | Legacy AI purple/indigo accents | `bg-indigo-(500\|600)`, `violet-500`, hexes `#6366f1 #4f46e5 #4338ca #3730a3 #8b5cf6 #7c3aed #a855f7` (nexu-io banlist, R6) | 1 | 2023-chat | medium — humans used these for a decade (P-T8) | Verified as *legacy*: 16 practitioner sources name it (P) but **0/12 modern repos** (K). Low weight is deliberate. |
 | CO2 | Gradient-clipped headline text | `bg-clip-text` + `text-transparent` (usually with `bg-gradient-to-r`) | 4 | 2024+ | low — rare in hand-written code | Verified (K: 4/12; P-T16, C-T8, V-T2; impeccable bans it outright R3) |
-| CO3 | Many two-hue gradient washes | ≥5 distinct `from-*-N to-*-N` pairs in one project — hue-agnostic; the hues follow the topic | 4 | 2024+ | low at that count | Verified (K: 133 occurrences in one Bolt repo; folk "always purple" corrected) |
-| CO4 | Dark hero + glass combo | dark bg (`bg-(gray-900\|slate-950\|zinc-950\|black)`) + `bg-white/10` + `border-white/20` + `backdrop-blur` in one element | 4 | 2024+ | low as 3-way co-occurrence | Verified (K: Claude-cluster, 27 occ; P-T24, V-T3) |
+| CO3 | Many two-hue gradient washes | ≥5 distinct `from-*-N to-*-N` pairs in one project — hue-agnostic; the hues follow the topic | 4 | 2024+ | low at that count | Verified (K: 133 occurrences in one Bolt repo; folk "always purple" corrected) CSS form added 2026-09-11 (`research/17-tailwind-vs-css.md`). |
+| CO4 | Dark hero + glass combo | dark bg (`bg-(gray-900\|slate-950\|zinc-950\|black)`) + `bg-white/10` + `border-white/20` + `backdrop-blur` in one element | 4 | 2024+ | low as 3-way co-occurrence | Verified (K: Claude-cluster, 27 occ; P-T24, V-T3) CSS form added 2026-09-11 (`research/17-tailwind-vs-css.md`). |
 | CO5 | Glow blobs | absolutely-positioned `rounded-full` + `blur-3xl` (or `filter: blur(40px+)`) decorative divs | 3 | 2024+ | near-zero | Verified (K: 3/12 but ~0 FP; P-T4, V-T3) |
 | CO6 | "Tasteful cream" escape look | warm cream ground `#faf8f4`/`#f4f1ea` band + serif display + terracotta/coral accent, as a *combination* | 2 | 2025+escape | medium — real editorial design uses warm neutrals | Verified (R4 names it an AI default cluster; C-T2, C-T3, P-T8-cream; weight kept low, judgment confirms) |
 | CO7 | Neon multi-hue at full saturation | 3+ saturated accent hues competing as coequals | 2 | evergreen | medium | Verified (P-T7, P-T9; also an accessibility harm, X: "Don't use bright contrasting colours") |
@@ -118,8 +118,8 @@ These are generator plumbing. Humans don't write them. Measured in K on real rep
 | TY1 | Unchosen default sans | Inter (or Geist/Roboto) as the only face, from Google Fonts or framework default, no pairing | 2 | evergreen | high — Inter is a fine human choice | Verified as *default-ness* signal (9 practitioner sources P; C-T4/C-T7). Scores only when it is the sole face AND other tells co-occur. |
 | TY2 | The 2025 "slop pairing" | Inter + Space Grotesk, or Inter + Instrument Serif (Google Fonts imports together); Bricolage Grotesque in the mix | 2 | 2025+escape | medium | Verified (K: measured in Claude cluster; P-T11-fonts) |
 | TY3 | Italic-serif accent word in a sans hero | `<span class="font-serif italic">` inside the H1 | 2 | 2025+escape | medium — was a human editorial trend first | Verified (P-T12, P-T16) |
-| TY4 | Oversized hero ramp sandwich | `text-(4\|5)xl` + responsive `md:text-(5\|6\|7)xl` + `font-bold` + `tracking-tight` — scored only with twin CTAs (CP1) | 3 (as sandwich) | 2024+ | medium alone, low as full sandwich | Verified (K: 6/12; C-T8) |
-| TY5 | ALL-CAPS tracked eyebrow above headings | `uppercase tracking-wide(st)` micro-label over every H1/H2 | 2 | 2024+ | medium — real editorial device | Verified (P-T13, C-T11, V-T23). Also an accessibility harm for dyslexic readers (X: BDA bans uppercase running text). |
+| TY4 | Oversized hero ramp sandwich | `text-(4\|5)xl` + responsive `md:text-(5\|6\|7)xl` + `font-bold` + `tracking-tight` — scored only with twin CTAs (CP1) | 3 (as sandwich) | 2024+ | medium alone, low as full sandwich | Verified (K: 6/12; C-T8) CSS form added 2026-09-11 (`research/17-tailwind-vs-css.md`). |
+| TY5 | ALL-CAPS tracked eyebrow above headings | `uppercase tracking-wide(st)` micro-label over every H1/H2 | 2 | 2024+ | medium — real editorial device | Verified (P-T13, C-T11, V-T23). Also an accessibility harm for dyslexic readers (X: BDA bans uppercase running text). CSS form added 2026-09-11 (`research/17-tailwind-vs-css.md`). |
 | TY6 | Monospace as marketing chrome | mono eyebrows/labels on non-code marketing pages | 1 | 2025+escape | medium | Weak-to-verified (C-T10, C-T2 only) |
 
 ### 2c. Layout and components
@@ -128,13 +128,13 @@ These are generator plumbing. Humans don't write them. Measured in K on real rep
 |---|---|---|---|---|---|---|
 | LA1 | The full SaaS skeleton | section ids/order hero → logos → features → how-it-works → testimonials → stats → pricing → FAQ → CTA; ≥3 of `id="(features\|pricing\|testimonials\|faq)"` | 3 | evergreen | medium — human playbook too | Verified (P-T18, C-T12, M-A2; structure converges hardest, A1) |
 | LA2 | Identical-card feature grid | `grid-cols-3` (or 3×2) of same-shaped cards, each icon-tile + title + two lines | 2 | evergreen | high alone — Bootstrap-era human pattern (C-T12/C-T15) | Verified in combination (10 practitioner sources P; K: 8/12) |
-| LA3 | Icon tile above heading | `w-10 h-10 rounded-lg bg-<hue>-100` (or `bg-primary/10`) wrapping a Lucide icon, centered above card titles | 3 | 2024+ | low-medium | Verified ("the universal AI feature-card template", P-T17/V-T15; C-T6) |
+| LA3 | Icon tile above heading | `w-10 h-10 rounded-lg bg-<hue>-100` (or `bg-primary/10`) wrapping a Lucide icon, centered above card titles | 3 | 2024+ | low-medium | Verified ("the universal AI feature-card template", P-T17/V-T15; C-T6) CSS form added 2026-09-11 (`research/17-tailwind-vs-css.md`). |
 | LA4 | Pill badge above the hero H1 | rounded-full bordered chip ("New ✨ v2.0 →") directly over the headline; badge spam per section | 2 | 2024+ | medium — Linear/Vercel human convention | Verified (P-T14, C-T11, R3 bans eyebrow-per-section) |
 | LA5 | Twin hero CTAs | "Get Started" + "Learn More" as sibling buttons | 2 | evergreen | medium | Verified (K: both-in-hero 2/12; M-B7/M-B8 on why the labels are bad anyway) |
 | LA6 | Hero metric row of round stats | 3-4 stat tiles: big number, small label ("10K+ users · 99.9% uptime") | 2 | evergreen | low when numbers are round and unsourced | Verified (P-T20, V-T24, C-T39-copy; K corrected the regex: "Trusted by N+" formula is the real string) |
 | LA7 | Cards inside cards / everything a card | card-styled containers nested >1 deep; every block bordered+rounded+shadowed | 2 | evergreen | medium | Verified (P-T21, V-T22) |
-| LA8 | Side-stripe accent borders | `border-l-4 border-<accent>` on cards/callouts without semantic meaning | 3 | 2024+ | low without status semantics | Verified ("almost as reliable as em-dashes", P-T22; R3, R6 call it the canonical AI dashboard tile) |
-| LA9 | Hairline border + big soft shadow together | `border border-gray-200` + `shadow-(lg\|xl)` on the same element ("ghost card") | 2 | 2024+ | medium | Verified (P-T25, C-T4-glow variant, R3) |
+| LA8 | Side-stripe accent borders | `border-l-4 border-<accent>` on cards/callouts without semantic meaning; also `border-l-<token>` and `border-left: 3-8px solid` with a radius | **1** | 2024-25 | low without status semantics | **Contested, down-weighted 3 -> 1 on 2026-09-11.** Sources called it near-certain (P-T22; R3, R6). Measured at **2 of 12** verified-generated repos, 9 of 12 instances in one repo (`research/16-side-tab-tailwind.md`). Kept as a legacy signal. CSS form added. |
+| LA9 | Hairline border + big soft shadow together | `border border-gray-200` + `shadow-(lg\|xl)` on the same element ("ghost card") | 2 | 2024+ | medium | Verified (P-T25, C-T4-glow variant, R3) CSS form added 2026-09-11 (`research/17-tailwind-vs-css.md`). |
 | LA10 | Uniform radius/padding monotony | near-zero variance of radius and padding across all components; same `py-16`/`gap-4` at every level | judgment + 1 | evergreen | medium — design systems standardize legitimately | Verified (P-T40, V-T21, C-T18); scanner counts distinct values, judgment decides |
 | LA11 | min-h-screen on every section | `min-h-screen` count > 3 | 2 | 2024+ | low at that count | Verified (K: 16-36 occ in AI repos vs once in human code) |
 | LA12 | Tailwind-UI container fossil | exact `max-w-7xl mx-auto px-4 sm:px-6 lg:px-8` | 1 | 2023-chat | medium | Verified as *legacy* (K: 1/12 now — folk wisdom outdated) |
@@ -157,9 +157,9 @@ These are generator plumbing. Humans don't write them. Measured in K on real rep
 
 | ID | Tell | Signature | Weight | Era | FP risk | Status |
 |---|---|---|---|---|---|---|
-| MO1 | Fade-up-on-scroll everywhere | reveal wiring (`opacity-0 translate-y-*` + observer, AOS) on most top-level sections; page blank without JS | 3 | 2024+ | medium — human marketing sites do it too | Verified (P-T33, V-T16; NN/g: delays and frustrates task-focused users V-T19) |
-| MO2 | hover:scale everywhere | `hover:scale-105` + `transition` on cards/images sitewide | 1 | 2024+ | high | Verified (K: 6/12) but heavy human use; density signal only |
-| MO3 | Pulse on static things | `animate-pulse` outside skeleton/loading components; fake "live" dots | 2 | 2024+ | low once skeletons excluded | Verified (P-T29, K: 7/12, V-T18) |
+| MO1 | Fade-up-on-scroll everywhere | reveal wiring (`opacity-0 translate-y-*` + observer, AOS) on most top-level sections; page blank without JS | 3 | 2024+ | medium — human marketing sites do it too | Verified (P-T33, V-T16; NN/g: delays and frustrates task-focused users V-T19) CSS form added 2026-09-11 (`research/17-tailwind-vs-css.md`). |
+| MO2 | hover:scale everywhere | `hover:scale-105` + `transition` on cards/images sitewide | 1 | 2024+ | high | Verified (K: 6/12) but heavy human use; density signal only CSS form added 2026-09-11 (`research/17-tailwind-vs-css.md`). |
+| MO3 | Pulse on static things | `animate-pulse` outside skeleton/loading components; fake "live" dots | 2 | 2024+ | low once skeletons excluded | Verified (P-T29, K: 7/12, V-T18) CSS form added 2026-09-11 (`research/17-tailwind-vs-css.md`). |
 | MO4 | Marquees, typing effects, particles, animated gradients | infinite logo marquee; typewriter hero; canvas particles; hue-shifting bg | 2 (marquee/animated-gradient) / judgment (typing, particles) | 2024+ | medium | Marquee + animated gradient verified (P-T33, V-T19-quote, V-T3); typing/particles are **inference only** (V gap) — judgment |
 | MO5 | No reduced-motion path | keyframe/transition animations present, zero `prefers-reduced-motion` query | craft score | evergreen | n/a — it's just a defect | Verified requirement (X SC 2.3.3/C39, V-T20-authorities). Craft score, not AI score. |
 | MO6 | Bounce/elastic easing on UI | spring overshoot on interface elements (not physical objects) | 1 | 2024+ | medium — celebrated in Apple-style physics | Verified but contested boundary (P-T32, V-T18 vs human spring praise) |
@@ -300,6 +300,11 @@ When you update it:
 8. Re-check every row carrying `[STALE-RISK]`. Scaffold tells expire when the
    scaffold is rewritten, and nothing warns you: the rule keeps passing its
    fixture while matching nothing real.
+9. Every tell needs both spellings. The corpus is mostly Tailwind, so a rule
+   written from it tends to know only the class name. A hand-coded page or a
+   Framer export carries the same tell as a CSS property and scores 0. The
+   selftest now holds a plain-CSS page that every such rule must fire on, and
+   a well-made plain-CSS page that none may fire on.
 
 ### Provenance of the 2026-09 sweep
 

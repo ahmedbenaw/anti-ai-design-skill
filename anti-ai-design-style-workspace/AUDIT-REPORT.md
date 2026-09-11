@@ -72,7 +72,7 @@ governance" by machine.
 
 | # | Finding | Severity | Why | Fix |
 |---|---|---|---|---|
-| 5 | Installing as a plugin does not ship the skill itself. `SKILL.md` sits at the root, not under `skills/`. The README admits a second manual step. | should-fix | Layout predates the plugin tier | Move it under `skills/anti-ai-design-style/` and repoint paths. Or add a `skills` entry to the manifest. |
+| 5 | ~~Installing as a plugin does not ship the skill itself~~ **Withdrawn.** The sub-validator said `SKILL.md` must sit under `skills/`. The official docs say a single-skill plugin may place it at the root, and `claude plugin validate` prints `Validation passed`. No change. | withdrawn | The sub-validator applied a rule the docs do not have | None |
 | 6 | `hookify_check.py` hardcodes one marketplace path | should-fix | Written on this machine | Honour a `HOOKIFY_PATH` variable, the way the brand guard honours `ANTI_ANTROPIK_PATH` |
 | 7 | Scripts carry `#!/usr/bin/env python3` but are not executable | nit | Never invoked directly | `chmod +x` |
 | 8 | `.serena/` (a tool's own files) is tracked in git | tidy | Committed by accident | Untrack and ignore |

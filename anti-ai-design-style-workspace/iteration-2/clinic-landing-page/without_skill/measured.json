@@ -2,9 +2,9 @@
   {
     "file": "anti-ai-design-style-workspace/iteration-2/clinic-landing-page/without_skill/outputs/clinic.html",
     "exists": true,
-    "ai_score": 0,
+    "ai_score": 2,
     "ai_verdict": "PASS",
-    "fingerprint": "b7cd873aa4831ab9",
+    "fingerprint": "6b7abae241e662e5",
     "near_proof": 0,
     "craft_ids": [
       "CR5",

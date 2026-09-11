@@ -1,10 +1,10 @@
 
-=== AI-look scan (register 2026.10, fingerprint b7cd873aa4831ab9) ===
+=== AI-look scan (register 2026.10, fingerprint 6b7abae241e662e5) ===
 Files scanned: 1
 
-AI-look score: 18/100  ->  distinct - no meaningful AI-look signals
+AI-look score: 20/100  ->  leaning generic - fix the strongest findings
 
-AI-look tells found (6):
+AI-look tells found (7):
   [IC5] Placeholder people  (+4)
       found: John Doe, Jane Smith, Sarah Chen
       why it matters: Fake people and fake avatars. On a real site this is the single most damaging tell.
@@ -21,6 +21,13 @@ AI-look tells found (6):
       found: effortless, game-changer, seamless
       why it matters: Words like these fit 500 other products, which is exactly the problem - and they are the words AI reaches for first.
       do this: Replace each with the specific thing your product does ('saves you re-typing invoices' beats 'streamlines workflows').
+  [TY5] ALL-CAPS tracked eyebrow labels  (+2)
+      found: letter-spacing: 0.14em;
+    text-transform: uppercase, letter-spacing: 0.08em;
+    text-transform: uppercase, letter-spacing: 0.14em;
+    text-transform: uppercase
+      why it matters: Tiny ALL-CAPS labels above every heading. Also harder to read for dyslexic users.
+      do this: Delete eyebrows that say nothing. Keep at most one, only if it carries real information.
   [LA6] Round fake stats  (+2)
       found: Trusted by 10,000+, 10,000+
       why it matters: Round unverifiable numbers ('10K+ users', '99.9% uptime'). On a new product they read as invented.
@@ -38,6 +45,5 @@ Craft flags (2) - not AI proof, just problems worth fixing:
       why it matters: Uppercase removes the word shapes dyslexic readers rely on (BDA guide). Fine for tiny labels, not for sentences.
       do this: Use sentence case for anything longer than a word or two.
 
-Verdict: PASS (threshold: AI score under 20 and no near-proof findings)
-Next step: present it, with the proof line: "AI-look score 18/100 (distinct - no meaningful AI-look signals), register 2026.10, fingerprint b7cd873aa4831ab9."
-  (Full proof line, all guards: python3 scripts/verify_all.py <files>)
+Verdict: FAIL (threshold: AI score under 20 and no near-proof findings)
+Next step: apply the 'do this' lines above, then run the scan again.

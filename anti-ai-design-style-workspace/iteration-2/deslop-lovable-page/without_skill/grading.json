@@ -5,8 +5,8 @@
     {
       "id": "a1",
       "text": "AI-look score below 20 (input scores 52)",
-      "passed": true,
-      "evidence": "ai_score=18 (input=52)"
+      "passed": false,
+      "evidence": "ai_score=20 (input=52)"
     },
     {
       "id": "a2",

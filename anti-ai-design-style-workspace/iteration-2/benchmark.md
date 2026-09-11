@@ -1,6 +1,6 @@
 # Benchmark — anti-ai-design-style, iteration 2
 
-Register 2026.10 · rules `b7cd873aa4831ab9` · 3 evals x 2 configurations · graded 2026-09-11
+Register 2026.10 · rules `6b7abae241e662e5` · 3 evals x 2 configurations · graded 2026-09-11. Regraded the same day after the CSS twins landed.
 
 **n = 1 per cell.** Each number below is one run. No repeat runs were done, so
 no variance claim is made. Treat every delta as directional.
@@ -10,7 +10,7 @@ no variance claim is made. Treat every delta as directional.
 | Configuration | Assertions passed | Pass rate |
 |---|---|---|
 | with_skill | 24 / 24 | **100%** |
-| without_skill (baseline) | 17 / 24 | 71% |
+| without_skill (baseline) | 16 / 24 | 67% |
 
 Iteration 1 used 18 assertions and with_skill scored 18/18. That was a
 ceiling: the set could not tell a good run from a better one. This iteration
@@ -21,12 +21,17 @@ taking the set to 24. `a7` is the one that moved.
 
 | Eval | with_skill | baseline | AI-look (with / base) | Craft flags (with / base) | Brand (with / base) |
 |---|---|---|---|---|---|
-| clinic-landing-page | 8/8 | 6/8 | 0 / 0 | none / CR5, CR6 | COMPLIANT / **NON-COMPLIANT (8)** |
-| student-budget-app-screen | 8/8 | 6/8 | 0 / 0 | none / CR2, CR5 | COMPLIANT / **NON-COMPLIANT (7)** |
-| deslop-lovable-page | 8/8 | 5/8 | 0 / 18 | none / CR2, CR6 | COMPLIANT / **NON-COMPLIANT (4)** |
+| clinic-landing-page | 8/8 | 6/8 | 0 / 2 | none / CR5, CR6 | COMPLIANT / **NON-COMPLIANT (8)** |
+| student-budget-app-screen | 8/8 | 6/8 | 0 / 4 | none / CR2, CR5 | COMPLIANT / **NON-COMPLIANT (7)** |
+| deslop-lovable-page | 8/8 | 4/8 | 0 / 20 | none / CR2, CR6 | COMPLIANT / **NON-COMPLIANT (4)** |
 
 The deslop input scored 52 with craft flags CR1, CR2, CR5 and brand
 NON-COMPLIANT before either run touched it.
+
+**Regraded once.** After the audit, ten rules gained a plain-CSS form
+(`research/17-tailwind-vs-css.md`). Three baseline pages moved. Clinic went 0 to 2, budget 0 to 4, deslop 18 to
+20. The deslop baseline now fails `a1`. No
+with_skill page moved. The grader and benchmark were re-run, not edited.
 
 ## The finding: the two guards are close to orthogonal
 
@@ -63,6 +68,7 @@ by eye.
 | clinic-landing-page | a7 brand | 8 violations, all colours inside Delta-E 12 of brand neutrals |
 | student-budget-app-screen | a2 craft | CR2 present: no `prefers-reduced-motion` handling |
 | student-budget-app-screen | a7 brand | 7 violations, same warm-cream cause |
+| deslop-lovable-page | a1 AI-look under 20 | 20 after the CSS twins (was 18): TY5 now sees its plain-CSS eyebrows |
 | deslop-lovable-page | a2 placeholder people | `John Doe` and `Jane Smith` still in `fixed.html` |
 | deslop-lovable-page | a3 fake stats | `Trusted by 10,000+` and `99.9%` still in `fixed.html` |
 | deslop-lovable-page | a7 brand | 4 violations |

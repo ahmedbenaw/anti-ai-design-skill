@@ -6,7 +6,8 @@ allowed-tools: Bash(python3:*), Read, Edit, Write, Glob
 
 The user wants the AI-look findings fixed, not just listed.
 
-1. If no scan ran this session, run `/design-check` logic first.
+1. Scan first. Run the `/design-check` logic on `"$ARGUMENTS"` if given,
+   otherwise on the UI files changed this session.
 2. Before changing anything, check for a `DESIGN.md` (or design brief) in the
    project. If none exists, ask the user the 3 fastest brief questions from
    `"${CLAUDE_PLUGIN_ROOT}"/templates/design-brief.md`. They are: who is it for; three
