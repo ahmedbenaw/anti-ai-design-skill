@@ -5,7 +5,7 @@
   "assertions": [
     {
       "id": "a1",
-      "text": "ai_tell_scan.py reports AI-look score below 20 on fixed.html (input scores 52)",
+      "text": "ai_tell_scan.py reports AI-look score below 20 on fixed.html (input scores 50)",
       "check": "scanner"
     },
     {

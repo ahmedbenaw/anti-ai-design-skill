@@ -140,18 +140,17 @@ Then scan everything you made or edited. One command runs every guard:
 python3 "$SKILL"/scripts/verify_all.py <files or folder>
 ```
 
-Add `--render` to load the page in a real browser and measure contrast,
-targets, focus and reduced motion. It needs Playwright; without it the line
-says `rendered SKIPPED` and nothing fails. Add `--allow-network` only for a
-live site (`reference/live-audit.md`).
+Add `--render` to measure contrast, targets, focus and reduced motion in a
+real browser. It needs Playwright (`RENDER_PYTHON` or a `.venv-render` beside
+the skill). `rendered SKIPPED` means the browser check did not happen. Add
+`--allow-network` only for a live site (`reference/live-audit.md`); the line
+then reads `rendered PASS (network)`.
 
-It prints one line; Step 4 shows it. Its two fingerprints say which rules
-produced the verdict.
+It prints one line; Step 4 shows it, with the two rule fingerprints.
 
 Exit code 0 means every guard ran and passed. If the brand guard is missing,
 the line says `brand distance NOT RUN` and the verdict is FAIL. A check that
 did not happen never counts as a check that passed.
-
 
 **The second guard is not optional.** This skill measures distance from
 generic AI output, not from a company's brand. Fixing one can cause the

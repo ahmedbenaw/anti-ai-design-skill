@@ -60,6 +60,14 @@ install it from python.org and choose "Add to PATH" when asked).
    *You'll see:* your AI-look score, each finding with a "do this" line,
    and a PASS or FAIL verdict.
 
+5. **Optional: the browser check.** `verify_all.py --render` opens the page
+   in a real browser and measures contrast and tap targets. It needs
+   Playwright. If the line says `rendered SKIPPED`, the browser check did
+   not run. Install it once with `python3 -m venv .venv-render`, then
+   `.venv-render/bin/pip install playwright` and
+   `.venv-render/bin/playwright install chromium`, in the skill folder.
+   The script finds that folder by itself.
+
 ## Part 3 — Warning rules for Claude Code (optional, 3 minutes)
 
 Needs: Claude Code with the **hookify** plugin installed.

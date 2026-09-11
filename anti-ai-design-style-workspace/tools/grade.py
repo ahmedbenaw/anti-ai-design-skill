@@ -110,7 +110,7 @@ def grade(ev, cfg):
             "no purple-gradient or backdrop-filter pattern")
         judgment("a6", "Two design choices explained by student context")
     elif ev == "deslop-lovable-page":
-        add("a1", "AI-look score below 20 (input scores 52)", ai_ok, f"ai_score={m['ai_score']} (input=52)")
+        add("a1", "AI-look score below 20 (input scores 50)", ai_ok, f"ai_score={m['ai_score']} (input=50)")
         add("a2", "No placeholder people remain", not PLACEHOLDER_PEOPLE.search(html),
             "no pravatar/John Doe/Jane Smith/Sarah Chen in the HTML")
         add("a3", "No fake stats remain", not FAKE_STATS.search(html),

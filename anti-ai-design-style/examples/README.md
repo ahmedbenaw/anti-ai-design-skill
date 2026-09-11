@@ -19,7 +19,7 @@ bakeries in Cairo.
 
 | File | AI-look score | Verdict | What the scanner found |
 |---|---|---|---|
-| `slop-example.html` | 52/100, "reads as AI-generated" | FAIL | 20 tells + 3 craft flags: gradient headline text, glow blobs, dark-glass combo, twin "Get Started"/"Learn More" buttons, fake stats, emoji icons, placeholder people, the full features/testimonials/pricing/FAQ skeleton, buzzword copy, and more |
+| `slop-example.html` | 50/100, "reads as AI-generated" | FAIL | 20 tells + 3 craft flags: gradient headline text, glow blobs, dark-glass combo, twin "Get Started"/"Learn More" buttons, fake stats, emoji icons, placeholder people, the full features/testimonials/pricing/FAQ skeleton, buzzword copy, and more |
 | `fixed-example.html` (v2) | 0/100, "distinct" | PASS | nothing. Also COMPLIANT on brand distance |
 
 Re-check any time. Both guards:

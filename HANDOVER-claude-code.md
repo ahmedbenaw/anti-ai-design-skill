@@ -84,7 +84,7 @@ reference/libraries/scroll-canvas-ui.md   Lenis, PixiJS, uiverse galaxy
 reference/libraries/maps-forms.md     Leaflet + plugins, SurveyJS
 templates/design-brief.md             Step 1 brief; palette generated then named
 templates/prompt-packs.md             Lovable / Bolt / v0 / Cursor blocks
-examples/slop-example.html            scores 52, FAIL (fixture)
+examples/slop-example.html            scores 50, FAIL (fixture; was 52 before LA8 went 3 -> 1)
 examples/fixed-example.html           v2, Kiln palette, scores 0, COMPLIANT (fixture)
 examples/README.md                    v1 to v2 story
 commands/design-brief.md, design-check.md, design-fix.md
@@ -98,7 +98,7 @@ Current measured state (re-verify in Task 0, do not trust this table):
 |---|---|
 | `ai_tell_scan.py --selftest` | PASS: slop 51, 19 tells, 2 craft; clean 0; library fixture 9 rules |
 | `copy_check.py --selftest` | PASS |
-| `examples/slop-example.html` | 52/100 FAIL (correct) |
+| `examples/slop-example.html` | 50/100 FAIL (correct; 52 before the LA8 down-weight) |
 | `examples/fixed-example.html` | 0/100 PASS, brand COMPLIANT |
 | quick_validate | valid |
 | evals with_skill / baseline | 18/18 vs 15/18, **pre-gate**, brand 0/3 |

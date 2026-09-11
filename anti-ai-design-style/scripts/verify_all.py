@@ -54,6 +54,35 @@ def _json_cmd(cmd):
         return None
 
 
+def render_python(env=None):
+    """The interpreter that has Playwright, or None.
+
+    Playwright usually lives in a venv beside the skill, not in the Python
+    that runs this script. An eval run once printed `rendered SKIPPED` for a
+    page that failed the browser check under that venv: same page, two
+    lines. So look in RENDER_PYTHON, then `.venv-render` next to the skill
+    and next to its parent, then this interpreter, and use the first one
+    that can import playwright.
+    """
+    env = os.environ if env is None else env
+    skill = os.path.dirname(HERE)
+    cands = [env.get("RENDER_PYTHON"),
+             os.path.join(skill, ".venv-render", "bin", "python3"),
+             os.path.join(os.path.dirname(skill), ".venv-render", "bin", "python3"),
+             sys.executable]
+    for c in cands:
+        if not c or not os.path.isfile(c):
+            continue
+        try:
+            ok = subprocess.run([c, "-c", "import playwright"], capture_output=True,
+                                timeout=30).returncode == 0
+        except (OSError, subprocess.SubprocessError):
+            ok = False
+        if ok:
+            return c
+    return None
+
+
 def render_result(paths, enabled, allow_network=False):
     """Run the rendered check if it can run at all.
 
@@ -67,15 +96,14 @@ def render_result(paths, enabled, allow_network=False):
     html = [p for p in paths if p.lower().endswith((".html", ".htm"))]
     if not html:
         return {"state": "SKIPPED", "detail": "no HTML files given"}
-    try:
-        import playwright  # noqa: F401
-    except ImportError:
+    py = render_python()
+    if not py:
         return {"state": "SKIPPED", "detail": "playwright not installed"}
     worst = "PASS"
     fails = 0
     net = {"network": True} if allow_network else {}
     for f in html:
-        cmd = [sys.executable, os.path.join(HERE, "render_check.py"), "--json", f]
+        cmd = [py, os.path.join(HERE, "render_check.py"), "--json", f]
         if allow_network:
             cmd.append("--allow-network")
         data = _json_cmd(cmd)
@@ -255,6 +283,9 @@ def selftest():
     r_net = dict(good, render={"state": "PASS", "detail": "0 WCAG AA failures", "network": True})
     checks.append(("a render check that loaded the network says so in the line",
                    "rendered PASS (network)" in proof_line(summarise(r_net, rules))))
+
+    checks.append(("RENDER_PYTHON that cannot import playwright is not chosen over a working one",
+                   render_python(env={"RENDER_PYTHON": "/nonexistent/python3"}) != "/nonexistent/python3"))
 
     dead = {"scan": None, "copy": None, "brand": None}
     checks.append(("every guard missing fails the gate",

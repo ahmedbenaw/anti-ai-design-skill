@@ -20,7 +20,11 @@ is honest: the check could not see the real styles.
 
 For a live site, add `--allow-network`. The fonts and CDNs load, the numbers
 are real, and the result is **not** repeatable, because the site can change.
-Write the date next to any number you quote from it.
+Write the date next to any number you quote from it. The proof line marks
+this run as `rendered PASS (network)` or `rendered FAIL (network)`, so a
+live-site line can never be confused with the repeatable one. The flag does
+nothing on its own: without `--render` no browser check runs and the script
+says so.
 
 ```
 python3 "$SKILL"/scripts/verify_all.py --render --allow-network saved-page.html

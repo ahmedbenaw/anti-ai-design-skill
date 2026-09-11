@@ -18,3 +18,21 @@ Date: 2026-09-11.
 | C1 | sonnet | docstring still says "fails closed" though the vendored copy makes NOT RUN unreachable in normal use | yes (wording) | `find_brand_guard.py:10-12` |
 | C2 | sonnet | placeholder regex flags `[NOTE]` etc. | yes | see B4 |
 | C3 | sonnet | CO4 rgba arm misses `0.20` / `.25` | yes | `0.20` no match, `0.2` match |
+
+
+## Where the points went (old rules `ee9ee6320a9a639b` vs new `b591c533d917bdd4`)
+
+Checked before writing the report, because thirteen regexes changed at once
+and "never weaken to pass" has to be shown, not assumed.
+
+| Page | Old score | New score | Tells that changed |
+|---|---|---|---|
+| examples/slop-example.html | 50 | 50 | none |
+| examples/fixed-example.html | 0 | 0 | none |
+| iteration-2, six pages (`scan.txt` diffed at `1805e4c` vs re-capture) | as before | same | none; only the fingerprint header line differs |
+| iteration-3, two pages | 2 / 0 | 2 / 0 | none |
+
+The docs had quoted 52 for the slop example and the deslop input. Both score
+50, and did before this review: LA8 went from 3 points to 1 in T10 after the
+side-tab measurement (2 of 12). The stale number was in `examples/README.md`,
+the handover and the grader label, all corrected 2026-09-11.
