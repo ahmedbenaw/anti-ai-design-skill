@@ -29,7 +29,30 @@ disagree on a judgment call. We are simply silent where another tool is loud.
   hits, it is another straight-down-shadow.
 - **Status:** candidate. No rule, no weight, nothing changed.
 
-## 2. `overused-font` overlaps our typography rules but names different faces
+## 2. `flat-type-hierarchy` — belongs in the rendered layer, not in a regex
+
+Flagged on the with_skill output of `student-budget-app-screen`: dominant
+heading and body roles separated by less than 1.25x at every step.
+
+Our nearest rule is TY4, "Hero type sandwich", and it is not the same thing.
+TY4 looks at the hero. This is a whole-page property: the ratio between type
+roles wherever they appear.
+
+The important part is where it would have to live. `side-tab` could plausibly
+be a regex, because a thick one-sided coloured border is visible in the CSS
+text. A flat type scale is not. It needs the computed font size of each role
+after the cascade, which means a browser. That puts it in `render_check.py`
+with the contrast and target-size checks, on the **craft axis**, not in
+`rules.json` on the AI-look axis.
+
+That distinction matters more than the rule itself. Two tells can look
+alike in a report and still need completely different machinery. Filing this
+one as a regex candidate would have wasted the next sweep's time.
+
+- **Source so far:** Impeccable's detector registry. One source.
+- **Status:** candidate for the rendered layer. Nothing changed.
+
+## 3. `overused-font` overlaps our typography rules but names different faces
 
 Impeccable names Inter, Roboto, Fraunces, Geist, Plus Jakarta Sans and Space
 Grotesk. Worth diffing against our own font lists when the next sweep runs.
