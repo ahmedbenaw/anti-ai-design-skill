@@ -88,3 +88,19 @@ and the two disagreeing is itself a failure.
 
 The general lesson: a dependency you cannot ship is a dependency you do not
 have. Port it or drop it, and prove the port against the thing it replaces.
+
+## The stop hook failed on its own evidence
+
+The first time the hook ran for real in an unrelated session, it blocked with
+a FAIL. Two of the files it named were an eval baseline and the eval viewer.
+The baseline is *meant* to fail. That failure is the measurement.
+
+Clearing the hook by editing it would have falsified a recorded result, which
+is the one thing this skill must never do. So the hook now skips files under
+any `*-workspace/` folder and says which ones it skipped. A skip nobody is
+told about is indistinguishable from a check that quietly stopped running.
+
+The first version of the rule also skipped `examples/slop-example.html`,
+because that fixture fails on purpose too. That broke the selftest which uses
+that very file to prove the hook still speaks up. A rule that removes its own
+proof is not a rule worth having, so the rule was narrowed.

@@ -39,6 +39,32 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 MAX_FILES = 12
 
 
+# Recorded evidence is not work in progress. An eval baseline is *supposed* to
+# fail: that failure is the measurement. Editing it to clear this hook would
+# falsify the record, which is the one thing this skill must never do. So these
+# paths are skipped, and the hook says which ones, because a silent skip is how
+# a guard quietly stops guarding.
+EVIDENCE_DIR = re.compile(r"(?:^|/)[\w.-]*-workspace/")
+
+
+def skipped_note(evidence):
+    if not evidence:
+        return ""
+    return ("\nSkipped as recorded evidence (measurements, not work): "
+            + ", ".join(os.path.basename(e) for e in evidence[:6]))
+
+
+def is_recorded_evidence(path):
+    """True for measurements that exist to be looked at, not fixed.
+
+    Only eval workspaces. It was tempting to add the skill's own
+    slop-example.html, which fails on purpose. That would have silenced the
+    hook on the one file the selftest uses to prove the hook still speaks up.
+    A rule that removes its own proof is not a rule worth having.
+    """
+    return bool(EVIDENCE_DIR.search(path.replace(os.sep, "/")))
+
+
 def ui_files_from(transcript_path):
     """Every existing UI file path the transcript mentions, newest first.
 
@@ -80,6 +106,8 @@ def main():
     if not transcript:
         return 0
     files = ui_files_from(transcript)
+    evidence = [f for f in files if is_recorded_evidence(f)]
+    files = [f for f in files if not is_recorded_evidence(f)]
     if not files:
         return 0                      # no UI work this session; stay quiet
 
@@ -131,7 +159,7 @@ def main():
         "This session changed UI files, and they do not pass the design "
         "guards yet.\n\n"
         "  " + line + "\n\n"
-        "Files checked: " + checked + "\n\n" +
+        "Files checked: " + checked + skipped_note(evidence) + "\n\n" +
         ("The brand check did not return a verdict. Run "
          "scripts/brand_distance.py by hand\non the same files to see its "
          "error; no edit to the page can fix it.\n\n"
@@ -142,8 +170,28 @@ def main():
     return 2
 
 
+EVIDENCE_CASES = [
+    # (path, should_be_skipped, why)
+    ("proj/anti-ai-design-style-workspace/iteration-2/x/with_skill/outputs/page.html", True,
+     "an eval output is a recorded measurement"),
+    ("proj/my-skill-workspace/iteration-1/review.html", True,
+     "the eval viewer is generated, not authored"),
+    ("proj/src/pages/index.html", False, "ordinary work is not evidence"),
+    ("proj/workspace-notes/index.html", False,
+     "a folder merely containing the word workspace is not an evidence archive"),
+    ("proj/anti-ai-design-style/examples/slop-example.html", False,
+     "the slop fixture stays checked: the selftest needs it to fail loudly"),
+]
+
+
 def selftest():
     """Both directions, driven through real transcript files."""
+    for path, want_skip, why in EVIDENCE_CASES:
+        got = is_recorded_evidence(path)
+        print("  {} {}: {}".format("ok  " if got == want_skip else "FAIL", why, path))
+        ok_ev = got == want_skip
+        if not ok_ev:
+            globals()["_EVIDENCE_FAILED"] = True
     import tempfile
     here = os.path.dirname(HERE)
     slop = os.path.join(here, "examples", "slop-example.html")
