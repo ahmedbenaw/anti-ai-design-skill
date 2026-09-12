@@ -134,6 +134,21 @@ example and a `FAIL:` line scoring 50 for the slop example.
   regex cannot judge colour distance.
 - `install.ps1` is unexecuted on Windows at the time of writing.
 
+## Refresh the register by March 2028
+
+The tells register is stamped `2026.10`. It describes how AI-made design
+looked when it was written, so it ages. Two kinds of row age fastest. Rows marked
+`[STALE-RISK]` name a literal from some tool's starter project, and they die
+the day that project is rewritten. Era-tagged rows are tied to one generation
+of models. A stale rule is quiet, not loud: it keeps passing its own fixture
+while matching nothing real.
+
+March 2028 is about eighteen months out, which is roughly how long the
+previous register held up. Nothing breaks on that date. It is the point to
+re-read the rows rather than trust them. The steps are at the end of
+`anti-ai-design-style/reference/tells-register.md`, under "Keeping this
+register alive".
+
 ## Licence
 
 No licence file has been chosen yet, which means all rights reserved by
