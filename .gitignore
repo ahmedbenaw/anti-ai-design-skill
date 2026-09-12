@@ -8,3 +8,6 @@ __pycache__/
 
 # Client audits stay out of the public repo
 anti-ai-design-style-workspace/live-audit/
+
+# Per-project install output (absolute local paths); run install.py to recreate
+.claude/

@@ -1,7 +1,7 @@
 {
   "metadata": {
     "skill_name": "anti-ai-design-style",
-    "skill_path": "/Users/ben/Downloads/Repos/Anti-AI-design skill/anti-ai-design-style",
+    "skill_path": "<repo>/anti-ai-design-style",
     "executor_model": "claude-opus-5",
     "timestamp": "2026-09-11T14:54:34.583584+00:00",
     "evals_run": [

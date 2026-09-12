@@ -141,7 +141,7 @@ Every row of the Verification table below prints its expected result, the
 - [ ] Fingerprint changed, printed, and recorded in the register
 - [ ] Every new rule has a fixture, a register row, and a compendium ID
 - [ ] Nothing weakened to pass; counter-evidence recorded, not deleted
-- [ ] Commit on `main` (never to `/Users/ben/.git`)
+- [ ] Commit on `main` (never to `~/.git`)
 
 ## Key dates
 
@@ -179,9 +179,9 @@ Ordering deviates from the handover on purpose: research and hook/command reform
 
 | What | Path |
 |---|---|
-| Repo root | `/Users/ben/Downloads/Repos/Anti-AI-design skill/` |
+| Repo root | `<repo>/` |
 | Bundle (source of the skill) | `anti-ai-design-review-bundle.zip` → members `anti-ai-design-style/`, `anti-ai-design-style-workspace/`, `anti-ai-design-style.skill` |
-| Sibling skill (read-only) | `/Users/ben/Library/Application Support/Claude/local-agent-mode-sessions/skills-plugin/84e2f85e-.../5167a152-.../skills/anti-antropik-design/` — a **per-session cache path; must be located dynamically** |
+| Sibling skill (read-only) | `~/Library/Application Support/Claude/local-agent-mode-sessions/skills-plugin/84e2f85e-.../5167a152-.../skills/anti-antropik-design/` — a **per-session cache path; must be located dynamically** |
 | skill-creator scripts | `~/.claude/plugins/marketplaces/claude-plugins-official/plugins/skill-creator/skills/skill-creator/{scripts,eval-viewer,agents,references}` |
 | hookify plugin (format truth) | `~/.claude/plugins/marketplaces/claude-plugins-official/plugins/hookify/` (`core/config_loader.py`, `core/rule_engine.py`, `skills/writing-rules/SKILL.md`) |
 | plugin-dev references | `~/.claude/plugins/marketplaces/claude-plugins-official/plugins/plugin-dev/skills/{command-development,hook-development,plugin-structure}` |

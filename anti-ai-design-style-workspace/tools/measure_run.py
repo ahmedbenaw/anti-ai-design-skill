@@ -7,8 +7,10 @@ fine" - which is the same bar the skill under test holds itself to.
 """
 import json, os, subprocess, sys
 
-SKILL = "/Users/ben/Downloads/Repos/Anti-AI-design skill/anti-ai-design-style"
-VENV  = "/Users/ben/Downloads/Repos/Anti-AI-design skill/.venv-render/bin/python3"
+# Repo root from this file's own location: <root>/anti-ai-design-style-workspace/tools/
+ROOT  = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+SKILL = os.path.join(ROOT, "anti-ai-design-style")
+VENV  = os.path.join(ROOT, ".venv-render", "bin", "python3")
 PY    = VENV if os.path.exists(VENV) else sys.executable
 
 

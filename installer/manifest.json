@@ -1,6 +1,6 @@
 {
   "name": "anti-ai-design-style",
-  "version": "1.0.0",
+  "version": "3.1.0",
   "description": "Shared install contract. Every installer layer (install.sh, install.ps1) reads THIS and produces identical results. The GitHub owner is substituted at publish time.",
   "repo": "https://github.com/ahmedbenaw/anti-ai-design-skill",
   "tarball": "https://github.com/ahmedbenaw/anti-ai-design-skill/archive/refs/heads/main.tar.gz",

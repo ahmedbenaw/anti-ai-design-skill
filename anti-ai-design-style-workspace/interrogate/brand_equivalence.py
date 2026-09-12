@@ -2,7 +2,7 @@
 anti-antropik-design audit_file.py, on every HTML page we have. Any difference
 is printed. Exit 1 on any difference."""
 import glob, json, os, subprocess, sys
-ROOT = "/Users/ben/Downloads/Repos/Anti-AI-design skill"
+ROOT = "<repo>"
 OURS = os.path.join(ROOT, "anti-ai-design-style/scripts/brand_distance.py")
 BG = subprocess.run([sys.executable, os.path.join(ROOT, "anti-ai-design-style/scripts/find_brand_guard.py")],
                     capture_output=True, text=True).stdout.strip()
