@@ -1,0 +1,123 @@
+{
+  "name": "anti-ai-design-style",
+  "version": "1.0.0",
+  "description": "Shared install contract. Every installer layer (install.sh, install.ps1) reads THIS and produces identical results. The GitHub owner is substituted at publish time.",
+  "repo": "https://github.com/ahmedbenaw/anti-ai-design-skill",
+  "tarball": "https://github.com/ahmedbenaw/anti-ai-design-skill/archive/refs/heads/main.tar.gz",
+  "raw": "https://raw.githubusercontent.com/ahmedbenaw/anti-ai-design-skill/main",
+  "skill_dir": "anti-ai-design-style",
+  "runtime": {
+    "interpreter": "python3",
+    "python_min_minor": 8,
+    "note": "Every scanner is plain Python with no third-party imports, so the hooks run on the python3 that ships with macOS and Linux. Playwright is optional and only adds the browser check; without it the proof line says 'rendered SKIPPED' and nothing fails."
+  },
+  "artifacts": {
+    "skill": "anti-ai-design-style",
+    "commands": "anti-ai-design-style/commands",
+    "hookify": "anti-ai-design-style/hookify",
+    "scripts": "anti-ai-design-style/scripts",
+    "hooks_json": "anti-ai-design-style/hooks/hooks.json",
+    "plugin_manifest": "anti-ai-design-style/.claude-plugin/plugin.json"
+  },
+  "hooks": [
+    {
+      "event": "PostToolUse",
+      "matcher": "Write|Edit|MultiEdit",
+      "script": "hook_scan.py",
+      "timeout": 30,
+      "why": "Scans each UI file right after it is written and reports what reads as AI-made. Silent on every other file type."
+    },
+    {
+      "event": "Stop",
+      "matcher": "*",
+      "script": "stop_check.py",
+      "timeout": 60,
+      "why": "Before the session ends, re-checks the UI files it touched so unscanned visual output is never presented as finished."
+    }
+  ],
+  "project_only": {
+    "hookify_rules": 5,
+    "note": "The five hookify warning rules load only from the folder you are working in. They cannot be installed globally. Run 'python3 <skill>/scripts/install.py .' inside a project to add them there.",
+    "installer": "anti-ai-design-style/scripts/install.py"
+  },
+  "surfaces": [
+    {
+      "id": "claude-code",
+      "label": "Claude Code",
+      "tier": "first-class",
+      "method": "claude-home",
+      "detect": { "dirs": ["~/.claude"], "always_try": true },
+      "install": {
+        "skill_to": "~/.claude/skills/anti-ai-design-style",
+        "commands_to": "~/.claude/commands",
+        "hooks_to": "~/.claude/settings.json",
+        "hook_scripts_at": "~/.claude/skills/anti-ai-design-style/scripts"
+      },
+      "verify": [
+        "~/.claude/skills/anti-ai-design-style/SKILL.md",
+        "~/.claude/commands/design-check.md"
+      ]
+    },
+    {
+      "id": "claude-cowork",
+      "label": "Claude Cowork (desktop app)",
+      "tier": "first-class",
+      "method": "claude-home",
+      "same_as": "claude-code",
+      "detect": {
+        "dirs": [
+          "~/Library/Application Support/Claude",
+          "$APPDATA/Claude",
+          "$HOME/.config/Claude"
+        ]
+      }
+    },
+    {
+      "id": "codex",
+      "label": "Codex",
+      "tier": "first-class",
+      "method": "codex-home",
+      "detect": { "dirs": ["~/.codex"] },
+      "install": {
+        "skill_to": "~/.codex/plugins/anti-ai-design-style",
+        "hooks_to": "~/.codex/hooks.json",
+        "hook_scripts_at": "~/.codex/plugins/anti-ai-design-style/scripts"
+      },
+      "verify": ["~/.codex/plugins/anti-ai-design-style/SKILL.md"],
+      "note": "Codex has no slash commands. For the per-project layout Codex reads (.agents/skills/<name>/), use 'python3 <skill>/scripts/install.py --codex <project>'."
+    },
+    { "id": "cursor", "label": "Cursor", "tier": "first-class", "method": "npx-skills",
+      "detect": { "apps": ["Cursor"], "bins": ["cursor"] }, "agent": "cursor" },
+    { "id": "vscode", "label": "VS Code + Copilot", "tier": "first-class", "method": "npx-skills",
+      "detect": { "apps": ["Visual Studio Code", "VSCodium"], "bins": ["code", "codium"] }, "agent": "github-copilot" },
+    { "id": "windsurf", "label": "Windsurf", "method": "npx-skills",
+      "detect": { "apps": ["Windsurf"], "bins": ["windsurf"] }, "agent": "windsurf" },
+    { "id": "zed", "label": "Zed", "method": "npx-skills",
+      "detect": { "apps": ["Zed"], "bins": ["zed"] }, "agent": "zed" },
+    { "id": "cline", "label": "Cline", "method": "npx-skills",
+      "detect": { "vscode_ext": ["saoudrizwan.claude-dev"] }, "agent": "cline" },
+    { "id": "roo", "label": "Roo Code", "method": "npx-skills",
+      "detect": { "vscode_ext": ["rooveterinaryinc.roo-cline"] }, "agent": "roo" },
+    { "id": "continue", "label": "Continue", "method": "npx-skills",
+      "detect": { "dirs": ["~/.continue"] }, "agent": "continue" },
+    { "id": "gemini-cli", "label": "Gemini CLI", "method": "npx-skills",
+      "detect": { "bins": ["gemini"], "dirs": ["~/.gemini"] }, "agent": "gemini-cli" },
+    { "id": "aider", "label": "Aider", "method": "npx-skills",
+      "detect": { "bins": ["aider"] }, "agent": "aider-desk" },
+    { "id": "opencode", "label": "opencode", "method": "npx-skills",
+      "detect": { "bins": ["opencode"] }, "agent": "opencode" },
+    { "id": "amp", "label": "Amp", "method": "npx-skills",
+      "detect": { "bins": ["amp"] }, "agent": "amp" }
+  ],
+  "package_managers": {
+    "macos": ["brew"],
+    "linux": ["apt-get", "dnf", "pacman", "zypper", "apk", "brew"],
+    "windows": ["winget", "choco", "scoop"]
+  },
+  "npx_skills_broad": "npx -y skills@latest add ahmedbenaw/anti-ai-design-skill --global --agent <agent> --skill '*' -y --copy --full-depth",
+  "notes": [
+    "The commands ship with a ${CLAUDE_PLUGIN_ROOT} placeholder. Outside a plugin that variable is unset, so every installer must replace it with the absolute path of the installed skill or the commands will call nothing.",
+    "A hook command containing a space breaks tool use in Claude Code. Every layer refuses to write a hook whose script path contains a space, and says so loudly rather than writing a broken one.",
+    "Uninstall removes only entries whose command contains 'anti-ai-design-style/scripts/', so hooks belonging to other tools are never touched."
+  ]
+}

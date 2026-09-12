@@ -4,6 +4,26 @@
 files at this top level are older review drafts. If two files disagree, the
 one inside the skill folder wins.
 
+## Install in one line
+
+Mac or Linux:
+
+```
+curl -fsSL https://raw.githubusercontent.com/ahmedbenaw/anti-ai-design-skill/main/install.sh | sh
+```
+
+Windows, in PowerShell:
+
+```
+irm https://raw.githubusercontent.com/ahmedbenaw/anti-ai-design-skill/main/install.ps1 -OutFile install.ps1; .\install.ps1
+```
+
+Both detect Claude Code, Claude Cowork, Codex and common editors, and install
+to each. Each run ends by checking the skill's own example with the skill's
+own scanner. A printed `PASS:` line is the proof; copied files are not. `--dry-run` shows the plan and
+touches nothing; `--uninstall` removes it all. The shared algorithm both
+scripts follow is in `installer/INSTALL-SPEC.md`.
+
 ## What is where
 
 | Path | What it is | Trust it? |

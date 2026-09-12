@@ -1,7 +1,7 @@
 {
   "name": "anti-ai-design-style",
-  "version": "3.0.0",
-  "description": "Scans every web or mobile UI file Claude writes and reports how AI-generated it reads, and checks the whole session before it ends. Adds /design-check, /design-fix and /design-brief. Brand distance needs the anti-antropik-design skill installed; without it the verdict reports 'brand distance NOT RUN' and fails, which is deliberate.",
+  "version": "3.1.0",
+  "description": "Scans every web or mobile UI file Claude writes and reports how AI-generated it reads, then checks the whole session before it ends. Adds /design-check, /design-fix and /design-brief. Brand distance is measured by the bundled scripts/brand_distance.py; an installed anti-antropik-design is used as an optional cross-check and a disagreement fails the verdict.",
   "author": {
     "name": "Ben"
   }

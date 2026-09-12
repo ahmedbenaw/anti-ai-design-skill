@@ -14,6 +14,28 @@ No coding knowledge is needed for the basic setup.
 
 ---
 
+## The one-line install (1 minute, Mac or Linux)
+
+Open a terminal and paste this:
+
+```
+curl -fsSL https://raw.githubusercontent.com/ahmedbenaw/anti-ai-design-skill/main/install.sh | sh
+```
+
+*You'll see:* a short list of what it found on your computer, such as Claude
+Code, Codex and editors. Then a "Proceed?" question. Then a tick per thing
+installed, and a line saying the skill printed PASS on its own example. That
+last line is the proof it works, not just that files were copied.
+
+Windows: download `install.ps1` from the same address and run it in
+PowerShell. Same questions, same ticks.
+
+To see the plan without changing anything, add `--dry-run` (`-DryRun` on
+Windows). To remove everything it installed, re-run with `--uninstall`.
+
+It cannot install the five warning rules from Part 3; those only load from
+the folder you work in. It tells you the one command for that at the end.
+
 ## Part 1 — Use the skill in Claude (2 minutes, everyone)
 
 1. **Save the skill.**
