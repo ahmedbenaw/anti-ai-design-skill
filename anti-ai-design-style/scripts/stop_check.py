@@ -45,6 +45,7 @@ MAX_FILES = 12
 # paths are skipped, and the hook says which ones, because a silent skip is how
 # a guard quietly stops guarding.
 EVIDENCE_DIR = re.compile(r"(?:^|/)[\w.-]*-workspace/")
+EVIDENCE_FIXTURE = re.compile(r"(?:^|/)anti-ai-design-style/examples/")
 
 
 def skipped_note(evidence):
@@ -55,14 +56,20 @@ def skipped_note(evidence):
 
 
 def is_recorded_evidence(path):
-    """True for measurements that exist to be looked at, not fixed.
+    """True for measurements and fixtures that exist to be looked at, not fixed.
 
-    Only eval workspaces. It was tempting to add the skill's own
-    slop-example.html, which fails on purpose. That would have silenced the
-    hook on the one file the selftest uses to prove the hook still speaks up.
-    A rule that removes its own proof is not a rule worth having.
+    Two shapes. Eval workspaces hold recorded measurements; a baseline that
+    fails is the result, and editing it would falsify the record. The skill's
+    own examples/ folder holds fixtures; slop-example.html fails on purpose.
+    The match is on the skill's own folder name, so a user's file that merely
+    shares the name examples/slop-example.html is still checked.
+
+    The first version kept the slop fixture checked because the selftest used
+    it to prove the hook speaks up. The selftest now proves that on a copy at
+    a neutral path, so the rule and its proof both survive.
     """
-    return bool(EVIDENCE_DIR.search(path.replace(os.sep, "/")))
+    norm = path.replace(os.sep, "/")
+    return bool(EVIDENCE_DIR.search(norm) or EVIDENCE_FIXTURE.search(norm))
 
 
 def ui_files_from(transcript_path):
@@ -179,8 +186,12 @@ EVIDENCE_CASES = [
     ("proj/src/pages/index.html", False, "ordinary work is not evidence"),
     ("proj/workspace-notes/index.html", False,
      "a folder merely containing the word workspace is not an evidence archive"),
-    ("proj/anti-ai-design-style/examples/slop-example.html", False,
-     "the slop fixture stays checked: the selftest needs it to fail loudly"),
+    ("proj/anti-ai-design-style/examples/slop-example.html", True,
+     "the skill's own bad example exists to fail; the selftest proves the hook on a copy"),
+    ("proj/anti-ai-design-style/examples/fixed-example.html", True,
+     "the skill's own good example is a fixture too"),
+    ("proj/site/examples/slop-example.html", False,
+     "a user's own file with the same name is real work"),
 ]
 
 
@@ -193,9 +204,16 @@ def selftest():
         if not ok_ev:
             globals()["_EVIDENCE_FAILED"] = True
     import tempfile
+    import shutil
     here = os.path.dirname(HERE)
-    slop = os.path.join(here, "examples", "slop-example.html")
-    fixed = os.path.join(here, "examples", "fixed-example.html")
+    # The skill's own examples are skipped as fixtures, so the proof that the
+    # hook speaks up runs on copies at neutral paths. The rule and its proof
+    # both survive that way.
+    scratch = tempfile.mkdtemp(prefix="stop-check-")
+    slop = os.path.join(scratch, "bad-page.html")
+    fixed = os.path.join(scratch, "good-page.html")
+    shutil.copy(os.path.join(here, "examples", "slop-example.html"), slop)
+    shutil.copy(os.path.join(here, "examples", "fixed-example.html"), fixed)
     cases = [
         ("speaks up when a touched page fails", slop, 2),
         ("stays silent when the page passes", fixed, 0),
