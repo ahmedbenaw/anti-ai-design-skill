@@ -60,6 +60,7 @@ proof the skill avoids Claude's brand.** Task 1 below fixes that.
 | `/home/claude/PLAN-anti-ai-design-style.md` | build plan v2, tasks 0 to 12, skill-to-task map | current |
 | `/home/claude/REVIEW-MANIFEST.md` | every file with a SHIP or BIN verdict | current |
 | `/home/claude/anti-ai-design-review-bundle.zip` | all of the above | rebuilt with this handover |
+| https://github.com/ahmedbenaw/anti-ai-design-skill | the public repository, created 2026-09-12 | history rewritten before the first push so no third-party or client files were ever published |
 | `/root/work/anti-ai-design/research/01-08*.md` | raw research dossiers (also bundled under `reference/research/`) | evidence |
 | `/root/work/anti-ai-design/libs/01-03*.md` | raw library notes (ported into `reference/libraries/`) | evidence |
 | `<anti-antropik-design>` | sibling skill; scripts `audit_file.py`, `generate_palette.py`, `exclusion_check.py` | installed copy is a read-only cache |
