@@ -1,15 +1,17 @@
 <#
 .SYNOPSIS
-  anti-ai-design-style universal installer (PowerShell core) - Windows.
+  anti-ai-design-style installer (PowerShell) - Windows.
 
 .DESCRIPTION
-  Zero prerequisites: needs only Windows PowerShell 5.1+ (or PowerShell 7+) and
-  Invoke-WebRequest, both OS defaults. The hooks run on Python 3.8+; if it is
-  missing, the installer offers to fetch it with winget / choco / scoop.
-  Auto-detects Claude Code, Claude Cowork, Codex, and your editors, installs to
-  each, verifies with the skill's own proof line, and self-troubleshoots. Reads
-  installer/manifest.json semantics when run from a clone; otherwise downloads
-  the repository zip.
+  It installs this skill and nothing else. It does not fetch Node, npm
+  packages, or any other tool, and it does not shell out to a third-party
+  installer. Everything it writes is listed before it writes it, and every
+  path it touches belongs to this skill.
+
+  Needs only Windows PowerShell 5.1+ (or PowerShell 7+) and Invoke-WebRequest,
+  both OS defaults. The two hooks run on Python 3.8+; if it is missing the
+  installer says so and prints the one command to fix it, rather than
+  installing software you did not ask for.
 
   Run directly:
     irm https://raw.githubusercontent.com/ahmedbenaw/anti-ai-design-skill/main/install.ps1 | iex
@@ -18,6 +20,7 @@
     powershell -ExecutionPolicy Bypass -File .\install.ps1
 
   Flags: -Yes -DryRun -Only <ids> -Skip <ids> -Owner <name> -Details -Uninstall -Help
+         ids: claude-code, codex
 
 .PARAMETER Yes
   Non-interactive; assume "yes" to the proceed prompt.
@@ -56,7 +59,7 @@ $PSNativeCommandUseErrorActionPreference = $false
 
 $RepoName = 'anti-ai-design-skill'
 $Skill    = 'anti-ai-design-style'
-$Surfaces = @('claude-code', 'claude-cowork', 'codex', 'cursor', 'vscode', 'windsurf', 'zed', 'cline', 'roo', 'continue', 'gemini-cli', 'aider', 'opencode', 'amp')
+$Surfaces = @('claude-code', 'codex')
 
 if ($Help) {
   Write-Host @"
@@ -83,13 +86,21 @@ Surface ids: $($Surfaces -join ', ')
 # ---- pretty output (colour only on a real console) ----
 $script:UseColor = $false
 try { if ($Host.UI.RawUI -and -not [Console]::IsOutputRedirected) { $script:UseColor = $true } } catch { $script:UseColor = $false }
+# Non-ASCII lives in [char] codes, never in the file's bytes: PS 5.1 reads a
+# BOM-less UTF-8 script as ANSI and would mangle a literal em dash or tick.
+$Tick  = [char]0x2713   # checkmark
+$Dash  = [char]0x2013   # en dash (skip marker)
+$Cross = [char]0x2717   # ballot X
+$Em    = [char]0x2014   # em dash (in prose)
+$Dot   = [char]0x00B7   # middle dot (header separator)
+$Ell   = [char]0x2026   # ellipsis
 function Write-C([string]$Text, [string]$Color) {
   if ($script:UseColor -and $Color) { Write-Host $Text -ForegroundColor $Color } else { Write-Host $Text }
 }
 function Say   ([string]$m) { Write-Host $m }
-function Ok    ([string]$m) { Write-C ("  " + [char]0x2713 + " $m") 'Green' }   # ✓
-function Skip  ([string]$m) { Write-C ("  " + [char]0x2013 + " $m") 'Yellow' }  # –
-function Bad   ([string]$m) { Write-C ("  " + [char]0x2717 + " $m") 'Red' }     # ✗
+function Ok    ([string]$m) { Write-C ("  $Tick $m") 'Green' }
+function Skip  ([string]$m) { Write-C ("  $Dash $m") 'Yellow' }
+function Bad   ([string]$m) { Write-C ("  $Cross $m") 'Red' }
 function Head  ([string]$m) { Write-Host ""; Write-C $m 'Cyan' }
 function Dim   ([string]$m) { Write-C ("  $m") 'DarkGray' }
 function Detail([string]$m) { if ($Details) { Dim $m } }
@@ -129,6 +140,9 @@ function Write-Utf8NoBom([string]$Path, [string]$Text) {
   # PS 5.1's -Encoding UTF8 writes a BOM, which JSON readers reject. Avoid it on both versions.
   [System.IO.File]::WriteAllText($Path, $Text, (New-Object System.Text.UTF8Encoding($false)))
 }
+function Add-Utf8NoBom([string]$Path, [string]$Text) {
+  [System.IO.File]::AppendAllText($Path, $Text, (New-Object System.Text.UTF8Encoding($false)))
+}
 function To-Fwd([string]$p) { return ($p -replace '\\', '/') }
 function Join3([string]$a, [string]$b, [string]$c) { return (Join-Path (Join-Path $a $b) $c) }
 
@@ -137,9 +151,7 @@ $HomeDir = ''
 if ($env:USERPROFILE) { $HomeDir = $env:USERPROFILE }
 elseif ($env:HOME)    { $HomeDir = $env:HOME }
 else                  { $HomeDir = [Environment]::GetFolderPath('UserProfile') }
-$ClaudeHome = Join-Path $HomeDir '.claude'
-$CodexHome  = Join-Path $HomeDir '.codex'
-$Zipball    = "https://github.com/$Owner/$RepoName/archive/refs/heads/main.zip"
+$Zipball = "https://github.com/$Owner/$RepoName/archive/refs/heads/main.zip"
 
 # ===================================================================
 # 1. locate the source (local clone vs download zip)
@@ -161,7 +173,7 @@ function Invoke-Cleanup {
 }
 
 if (-not $Src) {
-  Head "Downloading $Skill..."
+  Head "Downloading $Skill$Ell"
   $Tmp = Join-Path ([System.IO.Path]::GetTempPath()) ("aads." + [guid]::NewGuid().ToString('N'))
   New-Item -ItemType Directory -Force -Path $Tmp | Out-Null
   $ZipFile = Join-Path $Tmp 'skill.zip'
@@ -181,21 +193,27 @@ if (-not $Src) {
   $found = Get-ChildItem -Path (Join-Path $Tmp 'x') -Recurse -Filter 'plugin.json' -File -ErrorAction SilentlyContinue |
     Where-Object { $_.DirectoryName -match ('[\\/]' + [regex]::Escape($Skill) + '[\\/]\.claude-plugin$') } |
     Select-Object -First 1
-  if (-not $found) { Bad "could not find the skill in the zip"; Invoke-Cleanup; exit 1 }
+  if (-not $found) { Bad "could not find the skill in the downloaded archive"; Invoke-Cleanup; exit 1 }
   # <root>/anti-ai-design-style/.claude-plugin/plugin.json -> <root>
   $Src = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $found.FullName))
   Ok "downloaded"
 }
 $SkillSrc = Join-Path $Src $Skill
+$Version = ''
+try {
+  $pj = Get-Content -Raw -Path (Join3 $SkillSrc '.claude-plugin' 'plugin.json') -ErrorAction SilentlyContinue
+  if ($pj) {
+    $m = [regex]::Match($pj, '"version"\s*:\s*"([^"]*)"')
+    if ($m.Success) { $Version = $m.Groups[1].Value }
+  }
+} catch { }
 Detail "source: $SkillSrc"
 
 # ===================================================================
-# 2. detect platform + runtime
+# 2. platform and runtime
 # ===================================================================
 $OsName = 'Windows'
 try { if (-not ($env:OS -eq 'Windows_NT')) { $OsName = [System.Environment]::OSVersion.Platform.ToString() } } catch { }
-$Pm = ''
-foreach ($c in @('winget', 'choco', 'scoop')) { if (Have $c) { $Pm = $c; break } }
 
 function Test-PythonExe([string]$exe) {
   if (-not $exe -or -not (Test-Path $exe)) { return $false }
@@ -228,144 +246,31 @@ function Find-Python {
   }
   return ''
 }
-$Py = Find-Python
-$PmLabel = 'none'; if ($Pm) { $PmLabel = $Pm }
-$PyLabel = 'missing'; if ($Py) { $PyLabel = $Py }
-Head "$Skill installer   .   $OsName   .   package manager: $PmLabel   .   python: $PyLabel"
+$script:Py = Find-Python
+$PyLabel = 'missing'; if ($script:Py) { $PyLabel = $script:Py }
+$VerLabel = ''; if ($Version) { $VerLabel = " $Version" }
+Head "$Skill$VerLabel installer  $Dot  $OsName  $Dot  python: $PyLabel"
 
-function Install-Python {
-  if ($script:Py) { return $true }
-  if (-not $Pm) {
-    Skip "Python 3.8+ is missing and no package manager was found. Get it from https://www.python.org/downloads/windows/ (tick 'Add python.exe to PATH'), then re-run."
-    return $false
-  }
-  Dim "python not found - bootstrapping via $Pm..."
-  try {
-    switch ($Pm) {
-      'winget' { Invoke-Native 'winget' @('install', '-e', '--id', 'Python.Python.3.12', '--accept-source-agreements', '--accept-package-agreements') | Out-Null }
-      'choco'  { Invoke-Native 'choco'  @('install', 'python3', '-y') | Out-Null }
-      'scoop'  { Invoke-Native 'scoop'  @('install', 'python') | Out-Null }
-    }
-  } catch { }
-  $script:Py = Find-Python
-  if ($script:Py) { Ok "python installed: $script:Py"; return $true }
-  Skip "couldn't bootstrap Python via $Pm. Get it from https://www.python.org/downloads/windows/ and re-run."
-  return $false
-}
-
-# ---- Node helpers (only the editor surfaces need npx) ----
-function Get-NodeBin {
-  $cand = @()
-  try { $g = Get-Command node -ErrorAction SilentlyContinue; if ($g) { $cand += $g.Source } } catch { }
-  $cand += (Join-Path $HomeDir '.local\node-current\node.exe')
-  $cand += (Join-Path $HomeDir '.local\node-current\bin\node.exe')
-  foreach ($c in $cand) { if ($c -and (Test-Path $c)) { return $c } }
-  return $null
-}
-function Get-NpxBin {
-  $nb = Get-NodeBin
-  if ($nb) {
-    $dir = Split-Path -Parent $nb
-    foreach ($n in @('npx.cmd', 'npx.exe', 'npx')) {
-      $p = Join-Path $dir $n
-      if (Test-Path $p) { return $p }
-    }
-  }
-  if (Have 'npx') { return (Get-Command npx).Source }
-  return $null
-}
-function Install-Node {
-  if (Get-NpxBin) { return $true }
-  if (-not $Pm) { return $false }
-  Dim "Node not found (only editors need it) - bootstrapping via $Pm..."
-  try {
-    switch ($Pm) {
-      'winget' { Invoke-Native 'winget' @('install', '-e', '--id', 'OpenJS.NodeJS.LTS', '--accept-source-agreements', '--accept-package-agreements') | Out-Null }
-      'choco'  { Invoke-Native 'choco'  @('install', 'nodejs-lts', '-y') | Out-Null }
-      'scoop'  { Invoke-Native 'scoop'  @('install', 'nodejs-lts') | Out-Null }
-    }
-  } catch { return $false }
-  return [bool](Get-NpxBin)
+function Show-PythonHint {
+  # No bootstrap: this installer does not install software you did not ask for.
+  Dim "Install it with:  winget install Python.Python.3.12"
+  Dim "Or get Python 3.8 or newer from https://python.org (tick 'Add python.exe to PATH')."
 }
 
 # ===================================================================
-# 3. detect surfaces
+# 3. surfaces
 # ===================================================================
-function Test-App([string[]]$names) {
-  # Installed apps: the uninstall registry keys, then per-user Programs folders.
-  $keys = @(
-    'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall',
-    'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall',
-    'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall'
-  )
-  foreach ($k in $keys) {
-    try {
-      if (-not (Test-Path $k)) { continue }
-      $items = Get-ItemProperty -Path (Join-Path $k '*') -ErrorAction SilentlyContinue
-      foreach ($it in @($items)) {
-        $dn = Get-Prop $it 'DisplayName'
-        if (-not $dn) { continue }
-        foreach ($n in $names) { if ("$dn" -like "$n*") { return $true } }
-      }
-    } catch { }
-  }
-  if ($env:LOCALAPPDATA) {
-    $programs = Join-Path $env:LOCALAPPDATA 'Programs'
-    $folders = @{ 'Visual Studio Code' = @('Microsoft VS Code'); 'Microsoft Visual Studio Code' = @('Microsoft VS Code'); 'VSCodium' = @('VSCodium'); 'Cursor' = @('cursor', 'Cursor'); 'Windsurf' = @('Windsurf'); 'Zed' = @('Zed') }
-    foreach ($n in $names) {
-      $cands = @($n)
-      if ($folders.ContainsKey($n)) { $cands += $folders[$n] }
-      foreach ($f in $cands) { try { if (Test-Path (Join-Path $programs $f)) { return $true } } catch { } }
-    }
-  }
-  return $false
-}
-function Test-VsExt([string]$id) {
-  foreach ($root in @('.vscode\extensions', '.vscode-oss\extensions')) {
-    $dir = Join-Path $HomeDir $root
-    try {
-      if ((Test-Path $dir) -and (Get-ChildItem -Path $dir -Directory -Filter "$id*" -ErrorAction SilentlyContinue | Select-Object -First 1)) { return $true }
-    } catch { }
-  }
-  return $false
-}
-function Test-Editor([string]$id) {
-  switch ($id) {
-    'cursor'     { return ((Test-App @('Cursor')) -or (Have 'cursor')) }
-    'vscode'     { return ((Test-App @('Microsoft Visual Studio Code', 'Visual Studio Code', 'VSCodium')) -or (Have 'code') -or (Have 'codium')) }
-    'windsurf'   { return ((Test-App @('Windsurf')) -or (Have 'windsurf')) }
-    'zed'        { return ((Test-App @('Zed')) -or (Have 'zed')) }
-    'cline'      { return (Test-VsExt 'saoudrizwan.claude-dev') }
-    'roo'        { return (Test-VsExt 'rooveterinaryinc.roo-cline') }
-    'continue'   { return (Test-Path (Join-Path $HomeDir '.continue')) }
-    'gemini-cli' { return ((Have 'gemini') -or (Test-Path (Join-Path $HomeDir '.gemini'))) }
-    'aider'      { return (Have 'aider') }
-    'opencode'   { return (Have 'opencode') }
-    'amp'        { return (Have 'amp') }
-    default      { return $false }
-  }
-}
-function Get-AgentFor([string]$id) {
-  switch ($id) {
-    'vscode' { return 'github-copilot' }
-    'aider'  { return 'aider-desk' }
-    default  { return $id }
-  }
-}
-$Editors = @('cursor', 'vscode', 'windsurf', 'zed', 'cline', 'roo', 'continue', 'gemini-cli', 'aider', 'opencode', 'amp')
+# Two, both of them this skill in a place that reads skills. No editor
+# plugins, no third-party CLI: an editor install is one command, printed at
+# the end, so you run it knowingly rather than having it happen to you.
+$ClaudeHome   = Join-Path $HomeDir '.claude'
+$CodexHome    = Join-Path $HomeDir '.codex'
+$AgentsSkills = Join-Path $HomeDir '.agents\skills'
 
 function Test-Wants([string]$id) {
   if ($Only -and -not (Test-InList $Only $id)) { return $false }
   if ($Skip -and (Test-InList $Skip $id)) { return $false }
   return $true
-}
-function Test-Cowork {
-  # Cowork shares ~/.claude with Claude Code; it is covered by claude-home, never installed twice.
-  $dirs = @()
-  if ($env:APPDATA) { $dirs += (Join-Path $env:APPDATA 'Claude') }
-  $dirs += (Join-Path $HomeDir '.config\Claude')
-  foreach ($d in $dirs) { try { if ($d -and (Test-Path $d)) { return $true } } catch { } }
-  return $false
 }
 
 # ===================================================================
@@ -373,35 +278,25 @@ function Test-Cowork {
 # ===================================================================
 $Act = 'install'; if ($Uninstall) { $Act = 'uninstall' }
 Head "Here's what I found (and will ${Act}):"
-$PlanClaude = $false; $PlanCodex = $false; $PlanEditors = @()
+$PlanClaude = $false; $PlanCodex = $false
 
 if (Test-Wants 'claude-code') {
   if ((Test-Path $ClaudeHome) -or (-not $Uninstall)) {
     $PlanClaude = $true
-    $coworkNote = ''; if (Test-Cowork) { $coworkNote = ' + Cowork detected' }
-    Ok "Claude Code / Cowork  (~/.claude)$coworkNote"
+    Ok "Claude Code / Cowork  $Em  the skill, 3 commands, 2 hooks  (~/.claude)"
   }
 }
-if ((Test-Wants 'codex') -and (Test-Path $CodexHome)) { $PlanCodex = $true; Ok "Codex  (~/.codex)" }
-foreach ($e in $Editors) {
-  if (-not (Test-Wants $e)) { continue }
-  if (Test-Editor $e) { $PlanEditors += $e; Ok "$e  (via skills CLI)" }
-  elseif ($Details) { Skip "$e (not found)" }
+if ((Test-Wants 'codex') -and (Test-Path $CodexHome)) {
+  $PlanCodex = $true
+  Ok "Codex  $Em  the skill only, no hooks  (~/.agents/skills)"
 }
-if (-not $PlanClaude -and -not $PlanCodex -and $PlanEditors.Count -eq 0) {
-  Skip "no supported surfaces detected"
-  Say ""
-  Say "Manual per-surface commands:"
-  Say "  Claude Code : re-run this script (installs to ~/.claude)"
-  Say "  Codex       : re-run once ~/.codex exists"
-  Say "  Editors     : npx -y skills@latest add $Owner/$RepoName --global --agent <agent> --copy --full-depth"
-}
-if (-not $Py -and -not $Uninstall) {
-  $via = 'a package manager'; if ($Pm) { $via = $Pm }
-  Skip "python 3.8+ is missing; the hooks need it. I will try to install it via $via."
+if (-not $PlanClaude -and -not $PlanCodex) { Skip "nothing to do (no matching surface found)" }
+if (-not $script:Py -and -not $Uninstall) {
+  Skip "python 3.8+ is missing. Files will still install; the two hooks need it."
+  Show-PythonHint
 }
 
-if ($DryRun) { Head "Dry run - nothing installed."; Invoke-Cleanup; exit 0 }
+if ($DryRun) { Head "Dry run $Em nothing installed."; Invoke-Cleanup; exit 0 }
 $Interactive = $true
 try { if ([Console]::IsInputRedirected) { $Interactive = $false } } catch { }
 if (-not $Yes -and $Interactive) {
@@ -450,6 +345,7 @@ function Register-Hooks([string]$JsonPath, [string]$ScriptsDir) {
   }
   foreach ($h in $HookDefs) {
     $ev = $h.event
+    # Only entries that are ours are removed, so other tools' hooks survive.
     $keep = @()
     foreach ($block in @(Get-Prop $hooksObj $ev)) {
       if ($null -eq $block) { continue }
@@ -490,8 +386,9 @@ function Copy-SkillFolder([string]$Dest) {
     ForEach-Object { Remove-Item -Recurse -Force $_.FullName -ErrorAction SilentlyContinue }
 }
 function Copy-Commands([string]$SrcDir, [string]$DestDir, [string]$InstalledSkill) {
-  # ${CLAUDE_PLUGIN_ROOT} is unset outside a plugin; the commands would call nothing.
-  # Forward slashes: the path sits inside python3 "..." and Python accepts either on Windows.
+  # ${CLAUDE_PLUGIN_ROOT} is unset outside a plugin; unsubstituted, the
+  # command would call nothing at all.
+  # Forward slashes: the path sits inside python "..." and Python accepts either on Windows.
   $fwd = To-Fwd $InstalledSkill
   New-Item -ItemType Directory -Force -Path $DestDir | Out-Null
   foreach ($c in (Get-ChildItem -Path $SrcDir -Filter '*.md' -File -ErrorAction SilentlyContinue)) {
@@ -501,38 +398,45 @@ function Copy-Commands([string]$SrcDir, [string]$DestDir, [string]$InstalledSkil
   }
 }
 function Test-ClaudeProof([string]$InstalledSkill) {
+  # A copied file is not a working install.
   if (-not $script:Py) { return $false }
   $r = Invoke-Native $script:Py @((Join3 $InstalledSkill 'scripts' 'verify_all.py'), (Join3 $InstalledSkill 'examples' 'fixed-example.html'))
   if ($r.Out.Count -eq 0) { return $false }
   return ("$($r.Out[-1])" -like 'PASS:*')
 }
 
-# ---- install: claude-home (Claude Code + Cowork share ~/.claude) ----
+# ---- Claude Code / Cowork (they share ~/.claude) ----
 function Install-Claude([string]$Dir) {
   $dest = Join3 $Dir 'skills' $Skill
-  New-Item -ItemType Directory -Force -Path (Join-Path $Dir 'commands') | Out-Null
   Copy-SkillFolder $dest
   Copy-Commands (Join-Path $SkillSrc 'commands') (Join-Path $Dir 'commands') $dest
   $scriptsDir = Join-Path $dest 'scripts'
   if ($scriptsDir -match '\s') {
-    Bad "hook path has a space ($scriptsDir) - skipping hook registration (a hook path with a space breaks tool use)"
+    Bad "hook path contains a space ($scriptsDir) $Em hooks not registered, because a hook command with a space breaks tool use"
+    Ok "Claude Code / Cowork $Em skill and 3 commands (no hooks)"
     return
   }
-  if (-not (Install-Python)) { Skip "Claude files installed; the hooks need python 3.8+ (install it, then re-run)"; return }
+  if (-not $script:Py) {
+    Ok "Claude Code / Cowork $Em skill and 3 commands"
+    Skip "hooks not registered: python 3.8+ is missing. Re-run this installer once it is there."
+    return
+  }
   $settingsPath = Join-Path $Dir 'settings.json'
   $backup = "$settingsPath.bak.aads"
   if (Test-Path $settingsPath) { try { Copy-Item -Force -Path $settingsPath -Destination $backup } catch { } }
   else { Write-Utf8NoBom $settingsPath '{}' }
   $registered = $false
   try { $registered = Register-Hooks $settingsPath $scriptsDir } catch {
-    Bad "hook registration failed: $($_.Exception.Message) - settings.json restored from backup (settings.json.bak.aads)"
     if (Test-Path $backup) { try { Copy-Item -Force -Path $backup -Destination $settingsPath } catch { } }
   }
-  if ($registered) { Ok "Claude Code / Cowork - skill, 3 commands, 2 hooks registered" }
-  else { Bad "hook registration failed; settings.json left as it was (backup: settings.json.bak.aads)" }
-  $py = $script:Py
-  if (Test-ClaudeProof $dest) { Ok "verified: the installed skill printed PASS on its own example" }
-  else { Bad "installed, but the skill's own proof line did not print PASS. Run: `"$py`" `"$(Join3 $dest 'scripts' 'verify_all.py')`" `"$(Join3 $dest 'examples' 'fixed-example.html')`"" }
+  if ($registered) { Ok "Claude Code / Cowork $Em skill, 3 commands, 2 hooks registered" }
+  else { Bad "hook registration failed; your settings.json is unchanged (backup: settings.json.bak.aads)" }
+  if (Test-ClaudeProof $dest) {
+    Ok "verified: the installed skill printed PASS on its own example"
+  } else {
+    Bad "installed, but its own check did not print PASS. Run by hand:"
+    Dim "`"$script:Py`" `"$(Join3 $dest 'scripts' 'verify_all.py')`" `"$(Join3 $dest 'examples' 'fixed-example.html')`""
+  }
 }
 function Uninstall-Claude([string]$Dir) {
   $dest = Join3 $Dir 'skills' $Skill
@@ -542,57 +446,44 @@ function Uninstall-Claude([string]$Dir) {
     if (Test-Path $p) { Remove-Item -Force $p -ErrorAction SilentlyContinue }
   }
   Remove-Hooks (Join-Path $Dir 'settings.json')
-  Ok "Claude Code / Cowork - removed (skill, commands, hooks)"
+  Ok "Claude Code / Cowork $Em removed (skill, commands, hooks)"
 }
 
-# ---- install: codex-home ----
+# ---- Codex ----
+# Codex reads skills from the .agents/skills convention, which is also what
+# this skill's own scripts/install.py --codex writes for a single project.
+# No hooks: Codex hook wiring is not something this installer can verify, so
+# it does not claim it.
 function Install-Codex {
-  $dest = Join3 $CodexHome 'plugins' $Skill
+  $dest = Join-Path $AgentsSkills $Skill
   Copy-SkillFolder $dest
-  $scriptsDir = Join-Path $dest 'scripts'
-  if ($scriptsDir -match '\s') { Bad "codex hook path has a space ($scriptsDir) - skipping hooks"; return }
-  if (-not (Install-Python)) { Skip "Codex plugin copied; hooks need python 3.8+"; return }
-  $hooksPath = Join-Path $CodexHome 'hooks.json'
-  $backup = "$hooksPath.bak.aads"
-  if (Test-Path $hooksPath) { try { Copy-Item -Force -Path $hooksPath -Destination $backup } catch { } }
-  else { Write-Utf8NoBom $hooksPath '{}' }
-  $registered = $false
-  try { $registered = Register-Hooks $hooksPath $scriptsDir } catch {
-    if (Test-Path $backup) { try { Copy-Item -Force -Path $backup -Destination $hooksPath } catch { } }
+  Ok "Codex $Em skill copied to ~/.agents/skills/$Skill"
+  $agentsMd = Join-Path $CodexHome 'AGENTS.md'
+  if (Test-Path $agentsMd) {
+    $existing = ''
+    try { $existing = Get-Content -Raw -Path $agentsMd -ErrorAction SilentlyContinue } catch { }
+    if ($null -eq $existing) { $existing = '' }
+    if (-not ($existing -like "*$Skill*")) {
+      $note = "`n## Design checks`n`nBefore presenting any web or mobile UI, load the ``$Skill`` skill from ``~/.agents/skills/`` and quote the line ``verify_all.py`` prints.`n"
+      Add-Utf8NoBom $agentsMd $note
+      Ok "Codex $Em noted the skill in ~/.codex/AGENTS.md"
+    }
   }
-  if ($registered) { Ok "Codex - plugin + 2 hooks" } else { Skip "Codex plugin copied; hook registration failed (hooks.json restored from backup)" }
-  Dim "For a project Codex reads directly (.agents/skills/): `"$script:Py`" `"$(Join3 $dest 'scripts' 'install.py')`" --codex <project>"
+  $pyName = 'python'; if ($script:Py) { $pyName = "`"$(To-Fwd $script:Py)`"" }
+  Dim "For one project instead: $pyName `"$(To-Fwd (Join3 $dest 'scripts' 'install.py'))`" --codex <project>"
 }
 function Uninstall-Codex {
-  $dest = Join3 $CodexHome 'plugins' $Skill
+  $dest = Join-Path $AgentsSkills $Skill
   if (Test-Path $dest) { Remove-Item -Recurse -Force $dest -ErrorAction SilentlyContinue }
-  Remove-Hooks (Join-Path $CodexHome 'hooks.json')
-  Ok "Codex - removed"
-}
-
-# ---- install: editors via skills CLI (npx) ----
-function Install-Editor([string]$e) {
-  $ag = Get-AgentFor $e
-  $manual = "npx -y skills@latest add $Owner/$RepoName --global --agent $ag --copy --full-depth"
-  if (-not (Install-Node)) { Skip "$e - needs Node/npx (couldn't bootstrap). Manual: $manual"; return }
-  $npx = Get-NpxBin
-  if (-not $npx) { Skip "$e - npx unavailable. Manual: $manual"; return }
-  $r = Invoke-Native $npx @('-y', 'skills@latest', 'add', "$Owner/$RepoName", '--global', '--agent', $ag, '--skill', '*', '-y', '--copy', '--full-depth')
-  if ($r.Code -eq 0) { Ok "$e - installed (agent: $ag)" } else { Skip "$e - skills CLI failed; manual: $manual" }
-}
-function Uninstall-Editor([string]$e) {
-  $ag = Get-AgentFor $e
-  $npx = Get-NpxBin
-  if ($npx) { Invoke-Native $npx @('-y', 'skills@latest', 'remove', $Skill, '--global', '--agent', $ag) | Out-Null }
-  Ok "$e - remove attempted"
+  Ok "Codex $Em removed (~/.agents/skills/$Skill; the AGENTS.md note, if any, is left for you to delete)"
 }
 
 # ===================================================================
-# 6-8. run, verify, summarise
+# 6. run and summarise
 # ===================================================================
 $HardFail = $false
 function Invoke-Surface([string]$label, [scriptblock]$body) {
-  # One surface failing never aborts the others.
+  # One surface failing never aborts the other.
   try { & $body } catch {
     $script:HardFail = $true
     Bad "$label failed: $($_.Exception.Message)"
@@ -604,24 +495,27 @@ try {
   if ($Uninstall) {
     if ($PlanClaude) { Invoke-Surface 'Claude Code' { Uninstall-Claude $ClaudeHome } }
     if ($PlanCodex)  { Invoke-Surface 'Codex' { Uninstall-Codex } }
-    foreach ($e in $PlanEditors) { Invoke-Surface $e { Uninstall-Editor $e } }
-    Head "Uninstalled. Restart your editor to clear loaded skills."
-    Dim "Backups kept: settings.json.bak.aads / hooks.json.bak.aads - copy one back over the original if you want the pre-install file."
+    Head "Uninstalled. Restart Claude Code to clear the loaded skill."
     if ($HardFail) { exit 1 } else { exit 0 }
   }
 
   if ($PlanClaude) { Invoke-Surface 'Claude Code' { Install-Claude $ClaudeHome } }
   if ($PlanCodex)  { Invoke-Surface 'Codex' { Install-Codex } }
-  foreach ($e in $PlanEditors) { Invoke-Surface $e { Install-Editor $e } }
 
   Head "Done."
   Say ""
   $installedSkill = To-Fwd (Join3 $ClaudeHome 'skills' $Skill)
-  $pyName = 'python'; if ($Py) { $pyName = "`"$(To-Fwd $Py)`"" }
-  Write-C "Next: open Claude Code and type /design-check <a page> - or just build a page; the hooks run by themselves." 'Cyan'
-  Write-C "One thing this installer cannot do: the five hookify warning rules only load from the folder you work in." 'Cyan'
-  Say "  Inside any project, run:  $pyName `"$installedSkill/scripts/install.py`" ."
-  Dim "Tips: /design-fix (repair what the scan found)  .  /design-brief (before building)  .  re-run with -Uninstall to remove."
+  $pyName = 'python'; if ($script:Py) { $pyName = "`"$(To-Fwd $script:Py)`"" }
+  Write-C "Next: open Claude Code and type /design-check <a page> $Em or just build a page; the hooks run on their own." 'Cyan'
+  Say ""
+  Write-C "Two things this installer deliberately leaves to you:" 'Cyan'
+  Say "  1. The five warning rules load only from the folder you work in. Inside a project:"
+  Say "     $pyName `"$installedSkill/scripts/install.py`" ."
+  Say "  2. For Cursor, VS Code and other editors, one command adds the skill."
+  Say "     It needs Node and downloads a third-party tool, so it is yours to run:"
+  Say "     npx -y skills@latest add $Owner/$RepoName --global --agent cursor --copy"
+  Say ""
+  Dim "Re-run with -Uninstall to remove everything above. -DryRun shows the plan and writes nothing."
   if ($HardFail) { exit 1 }
 }
 finally {

@@ -30,15 +30,24 @@ Windows, in PowerShell:
 irm https://raw.githubusercontent.com/ahmedbenaw/anti-ai-design-skill/main/install.ps1 -OutFile install.ps1; .\install.ps1
 ```
 
-Both detect Claude Code, Claude Cowork, Codex and common editors, and install
-to each. Each run ends by checking the skill's own example with the skill's
-own scanner. A printed `PASS:` line is the proof; copied files are not.
-`--dry-run` shows the plan and touches nothing; `--uninstall` removes it all.
-The shared algorithm is in `installer/INSTALL-SPEC.md`.
+Both find Claude Code, Claude Cowork and Codex, and install to each. Each run
+ends by checking the skill's own example with the skill's own scanner. A
+printed `PASS:` line is the proof; copied files are not. `--dry-run` shows
+the plan and touches nothing; `--uninstall` removes it all. When piping,
+flags go after `sh -s --`, for example `| sh -s -- --dry-run`.
 
-Nothing else is needed. The scanners are plain Python with no third-party
-imports. A browser check is optional and needs Playwright; without it the
-line says `rendered SKIPPED`, which means that check did not run.
+**It installs this skill and nothing else.** No Node, no npm packages, no
+system package-manager calls, no third-party installer. Every path it writes
+belongs to this skill and is listed before it is written. The scanners are
+plain Python with no third-party imports. Python is needed only by the two
+hooks. If it is missing, the installer says so and prints the one command
+that fixes it, rather than installing software you did not ask for.
+
+For Cursor, VS Code and other editors, the installer prints a one-line
+command instead of running it. That command needs Node and downloads a
+third-party tool, so it is yours to run knowingly. A browser check is
+optional and needs Playwright; without it the line says `rendered SKIPPED`,
+which means that check did not run.
 
 Status, stated plainly: `install.sh` was run end to end on macOS, from a
 clone and from the downloaded archive. `install.ps1` was written to the same

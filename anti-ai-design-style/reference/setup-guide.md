@@ -22,10 +22,14 @@ Open a terminal and paste this:
 curl -fsSL https://raw.githubusercontent.com/ahmedbenaw/anti-ai-design-skill/main/install.sh | sh
 ```
 
-*You'll see:* a short list of what it found on your computer, such as Claude
-Code, Codex and editors. Then a "Proceed?" question. Then a tick per thing
-installed, and a line saying the skill printed PASS on its own example. That
-last line is the proof it works, not just that files were copied.
+*You'll see:* a short list of what it found on your computer, Claude Code and
+Codex. Then a "Proceed?" question. Then a tick per thing installed, and a
+line saying the skill printed PASS on its own example. That last line is the
+proof it works, not just that files were copied.
+
+It installs this skill and nothing else. It will not fetch Node, npm packages
+or anything from a package manager. If Python is missing it tells you the one
+command to fix it instead of installing it for you.
 
 Windows: download `install.ps1` from the same address and run it in
 PowerShell. Same questions, same ticks.
@@ -33,8 +37,10 @@ PowerShell. Same questions, same ticks.
 To see the plan without changing anything, add `--dry-run` (`-DryRun` on
 Windows). To remove everything it installed, re-run with `--uninstall`.
 
-It cannot install the five warning rules from Part 3; those only load from
-the folder you work in. It tells you the one command for that at the end.
+Two things it leaves to you on purpose, and tells you at the end. The five
+warning rules from Part 3 only load from the folder you work in. And adding
+the skill to Cursor or VS Code needs a third-party tool, so it prints that
+command rather than running it.
 
 ## Part 1 — Use the skill in Claude (2 minutes, everyone)
 

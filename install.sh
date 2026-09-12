@@ -1,15 +1,20 @@
 #!/bin/sh
-# anti-ai-design-style universal installer (POSIX core) — macOS / Linux / Unix.
-# Zero prerequisites: needs only `sh` + one of curl/wget (OS defaults). The
-# hooks run on python3, which ships with macOS and most Linux.
-# Auto-detects Claude Code, Claude Cowork, Codex, and your editors, installs to
-# each, verifies with the skill's own proof line, and self-troubleshoots. Reads
-# installer/manifest.json semantics when run from a clone; otherwise downloads
-# the tarball.
+# anti-ai-design-style installer (POSIX) — macOS / Linux / Unix.
+#
+# It installs this skill and nothing else. It does not fetch Node, npm
+# packages, or any other tool, and it does not shell out to a third-party
+# installer. Everything it writes is listed before it writes it, and every
+# path it touches belongs to this skill.
+#
+# Needs only `sh` + one of curl/wget (OS defaults). The two hooks run on
+# python3, which ships with macOS and most Linux; if it is missing the
+# installer says so and prints the one command to fix it, rather than
+# installing software you did not ask for.
 #
 #   curl -fsSL https://raw.githubusercontent.com/ahmedbenaw/anti-ai-design-skill/main/install.sh | sh
 #
 # Flags: --yes --dry-run --only <ids> --skip <ids> --owner <name> --details --uninstall
+#        ids: claude-code, codex
 set -eu
 
 OWNER="ahmedbenaw"
@@ -26,7 +31,7 @@ while [ $# -gt 0 ]; do
     --only) ONLY="${2:-}"; shift ;;
     --skip) SKIP="${2:-}"; shift ;;
     --owner) OWNER="${2:-}"; shift ;;
-    -h|--help) sed -n '2,12p' "$0"; exit 0 ;;
+    -h|--help) sed -n '2,18p' "$0" 2>/dev/null || true; exit 0 ;;
     *) ;;
   esac
   shift
@@ -38,10 +43,10 @@ say()  { printf '%s\n' "$*"; }
 ok()   { printf '  %s✓%s %s\n' "$G" "$N" "$*"; }
 skip() { printf '  %s–%s %s\n' "$Y" "$N" "$*"; }
 bad()  { printf '  %s✗%s %s\n' "$R" "$N" "$*"; }
-# Named hdr, not head: a function called head would shadow the head(1) used
-# below to pick the first line out of find's output, and the tarball path
-# would then quietly install nothing.
-hdr() { printf '\n%s%s%s\n' "$B" "$*" "$N"; }
+# Named hdr, not head: a function called head shadows head(1), and the pipe
+# below that picks the first line of find's output would then get this
+# function's text instead. That is how a download quietly installs nothing.
+hdr()  { printf '\n%s%s%s\n' "$B" "$*" "$N"; }
 in_list() { case ",$1," in *",$2,"*) return 0 ;; *) return 1 ;; esac }
 
 have() { command -v "$1" >/dev/null 2>&1; }
@@ -62,81 +67,46 @@ if [ -z "$SRC" ]; then
   hdr "Downloading ${SKILL}…"
   TMP=$(mktemp -d 2>/dev/null || echo "/tmp/aads.$$"); mkdir -p "$TMP"
   TB="$TMP/skill.tgz"
-  URL=$(printf '%s' "$REPO_DEFAULT_TARBALL" | sed "s/ahmedbenaw/${OWNER}/g")
+  URL="${AADS_TARBALL_URL:-$(printf '%s' "$REPO_DEFAULT_TARBALL" | sed "s/ahmedbenaw/${OWNER}/g")}"
   if have curl; then curl -fsSL "$URL" -o "$TB" || { bad "download failed ($URL)"; exit 1; }
   elif have wget; then wget -qO "$TB" "$URL" || { bad "download failed ($URL)"; exit 1; }
   else bad "need curl or wget to download (both missing)"; exit 1; fi
   ( cd "$TMP" && tar -xzf "$TB" ) || { bad "extract failed"; exit 1; }
   # depth 4: <tmp>/<repo>-main/<skill>/.claude-plugin/plugin.json
-  SRC=$(find "$TMP" -maxdepth 4 -name plugin.json -path "*/$SKILL/.claude-plugin/*" -exec dirname {} \; | head -1 | sed "s#/$SKILL/.claude-plugin##")
-  [ -n "$SRC" ] || { bad "could not find the skill in the tarball"; exit 1; }
+  SRC=$(find "$TMP" -maxdepth 4 -name plugin.json -path "*/$SKILL/.claude-plugin/*" 2>/dev/null \
+        | sed -n "1s#/$SKILL/.claude-plugin/plugin.json##p")
+  [ -n "$SRC" ] || { bad "could not find the skill in the downloaded archive"; exit 1; }
   ok "downloaded"
 fi
 SKILL_SRC="$SRC/$SKILL"
+VERSION=$(awk -F'"' '/"version"[[:space:]]*:/{print $4; exit}' "$SKILL_SRC/.claude-plugin/plugin.json" 2>/dev/null || true)
 [ $DETAILS -eq 1 ] && say "${D}source: $SKILL_SRC${N}"
 
-# ---- 2. detect platform + runtime ----
+# ---- 2. platform and runtime ----
 OS=$(uname -s 2>/dev/null || echo unknown)
 case "$OS" in Darwin) OSN="macOS" ;; Linux) OSN="Linux" ;; *) OSN="$OS" ;; esac
-PM=""
-for c in brew apt-get dnf pacman zypper apk; do have "$c" && { PM="$c"; break; }; done
 PY=""
-for c in python3 python; do have "$c" && "$c" -c 'import sys; sys.exit(0 if sys.version_info >= (3, 8) else 1)' 2>/dev/null && { PY=$(command -v "$c"); break; }; done
-hdr "${SKILL} installer  ·  $OSN  ·  package manager: ${PM:-none}  ·  python: ${PY:-missing}"
+for c in python3 python; do
+  have "$c" && "$c" -c 'import sys; sys.exit(0 if sys.version_info >= (3, 8) else 1)' 2>/dev/null \
+    && { PY=$(command -v "$c"); break; }
+done
+hdr "${SKILL}${VERSION:+ $VERSION} installer  ·  $OSN  ·  python: ${PY:-missing}"
 
-ensure_python() {
-  [ -n "$PY" ] && return 0
-  [ -n "$PM" ] || return 1
-  say "  ${D}python3 not found — bootstrapping via $PM…${N}"
-  case "$PM" in
-    brew) brew install python >/dev/null 2>&1 || return 1 ;;
-    apt-get) sudo apt-get update >/dev/null 2>&1 && sudo apt-get install -y python3 >/dev/null 2>&1 || return 1 ;;
-    dnf) sudo dnf install -y python3 >/dev/null 2>&1 || return 1 ;;
-    pacman) sudo pacman -Sy --noconfirm python >/dev/null 2>&1 || return 1 ;;
-    zypper) sudo zypper install -y python3 >/dev/null 2>&1 || return 1 ;;
-    apk) sudo apk add python3 >/dev/null 2>&1 || return 1 ;;
+python_hint() {
+  case "$OSN" in
+    macOS) say "  ${D}Install it with:  brew install python${N}" ;;
+    Linux) say "  ${D}Install it with your package manager, e.g.  sudo apt install python3${N}" ;;
+    *)     say "  ${D}Install Python 3.8 or newer from https://python.org${N}" ;;
   esac
-  have python3 && PY=$(command -v python3)
-}
-node_bin() { for c in node "$HOME_DIR/.local/node-current/bin/node"; do command -v "$c" >/dev/null 2>&1 && { command -v "$c"; return 0; }; [ -x "$c" ] && { echo "$c"; return 0; }; done; return 1; }
-ensure_node() {
-  node_bin >/dev/null 2>&1 && return 0
-  [ -n "$PM" ] || return 1
-  say "  ${D}Node not found (only editors need it) — bootstrapping via $PM…${N}"
-  case "$PM" in
-    brew) brew install node >/dev/null 2>&1 || return 1 ;;
-    apt-get) sudo apt-get update >/dev/null 2>&1 && sudo apt-get install -y nodejs npm >/dev/null 2>&1 || return 1 ;;
-    dnf) sudo dnf install -y nodejs >/dev/null 2>&1 || return 1 ;;
-    pacman) sudo pacman -Sy --noconfirm nodejs npm >/dev/null 2>&1 || return 1 ;;
-    zypper) sudo zypper install -y nodejs >/dev/null 2>&1 || return 1 ;;
-    apk) sudo apk add nodejs npm >/dev/null 2>&1 || return 1 ;;
-  esac
-  node_bin >/dev/null 2>&1
 }
 
-# ---- 3. detect surfaces ----
+# ---- 3. surfaces ----
+# Two, both of them this skill in a place that reads skills. No editor
+# plugins, no third-party CLI: an editor install is one command, printed at
+# the end, so you run it knowingly rather than having it happen to you.
 CLAUDE_HOME="$HOME_DIR/.claude"
 CODEX_HOME="$HOME_DIR/.codex"
-has_app() { [ -d "/Applications/$1.app" ] || [ -d "$HOME_DIR/Applications/$1.app" ]; }
-has_vsext() { ls -d "$HOME_DIR/.vscode/extensions/$1"* >/dev/null 2>&1 || ls -d "$HOME_DIR/.vscode-oss/extensions/$1"* >/dev/null 2>&1; }
-detect_editor() {
-  case "$1" in
-    cursor)     has_app Cursor || have cursor ;;
-    vscode)     has_app "Visual Studio Code" || has_app VSCodium || have code || have codium ;;
-    windsurf)   has_app Windsurf || have windsurf ;;
-    zed)        has_app Zed || have zed ;;
-    cline)      has_vsext saoudrizwan.claude-dev ;;
-    roo)        has_vsext rooveterinaryinc.roo-cline ;;
-    continue)   [ -d "$HOME_DIR/.continue" ] ;;
-    gemini-cli) have gemini || [ -d "$HOME_DIR/.gemini" ] ;;
-    aider)      have aider ;;
-    opencode)   have opencode ;;
-    amp)        have amp ;;
-    *) return 1 ;;
-  esac
-}
-agent_for() { case "$1" in vscode) echo github-copilot ;; aider) echo aider-desk ;; *) echo "$1" ;; esac; }
-EDITORS="cursor vscode windsurf zed cline roo continue gemini-cli aider opencode amp"
+AGENTS_SKILLS="$HOME_DIR/.agents/skills"
 
 wants() {
   [ -n "$ONLY" ] && { in_list "$ONLY" "$1" || return 1; }
@@ -144,20 +114,24 @@ wants() {
   return 0
 }
 
-# ---- 4. plan ----
 if [ $UNINSTALL -eq 1 ]; then ACT="uninstall"; else ACT="install"; fi
 hdr "Here's what I found (and will ${ACT}):"
-PLAN_CLAUDE=0; PLAN_CODEX=0; PLAN_ED=""
+PLAN_CLAUDE=0; PLAN_CODEX=0
 if wants claude-code; then
-  if [ -d "$CLAUDE_HOME" ] || [ $UNINSTALL -eq 0 ]; then PLAN_CLAUDE=1; ok "Claude Code / Cowork  (~/.claude)"; fi
+  if [ -d "$CLAUDE_HOME" ] || [ $UNINSTALL -eq 0 ]; then
+    PLAN_CLAUDE=1
+    ok "Claude Code / Cowork  —  the skill, 3 commands, 2 hooks  (~/.claude)"
+  fi
 fi
-if wants codex && [ -d "$CODEX_HOME" ]; then PLAN_CODEX=1; ok "Codex  (~/.codex)"; fi
-for e in $EDITORS; do
-  wants "$e" || continue
-  if detect_editor "$e"; then PLAN_ED="$PLAN_ED $e"; ok "$e  (via skills CLI)"; else [ $DETAILS -eq 1 ] && skip "$e (not found)"; fi
-done
-[ -z "$PLAN_ED$PLAN_CLAUDE$PLAN_CODEX" ] && { skip "no supported surfaces detected"; }
-[ -z "$PY" ] && [ $UNINSTALL -eq 0 ] && skip "python3 is missing; the hooks need it. I will try to install it via ${PM:-a package manager}."
+if wants codex && [ -d "$CODEX_HOME" ]; then
+  PLAN_CODEX=1
+  ok "Codex  —  the skill only, no hooks  (~/.agents/skills)"
+fi
+[ $PLAN_CLAUDE -eq 0 ] && [ $PLAN_CODEX -eq 0 ] && skip "nothing to do (no matching surface found)"
+if [ -z "$PY" ] && [ $UNINSTALL -eq 0 ]; then
+  skip "python3 is missing. Files will still install; the two hooks need it."
+  python_hint
+fi
 
 if [ $DRYRUN -eq 1 ]; then hdr "Dry run — nothing installed."; exit 0; fi
 if [ $YES -eq 0 ] && [ -t 0 ]; then
@@ -165,8 +139,21 @@ if [ $YES -eq 0 ] && [ -t 0 ]; then
   case "$ans" in n*|N*) say "Cancelled."; exit 0 ;; esac
 fi
 
-# ---- 5. install: claude-home (Claude Code + Cowork share ~/.claude) ----
-register_hooks_py() { # $1 = settings/hooks json, $2 = scripts dir
+# ---- helpers ----
+copy_skill() { # $1 = destination
+  rm -rf "$1"; mkdir -p "$(dirname "$1")"; cp -R "$SKILL_SRC" "$1"
+  find "$1" -name __pycache__ -type d -prune -exec rm -rf {} + 2>/dev/null || true
+}
+fill_commands() { # $1 = source dir, $2 = dest dir, $3 = installed skill path
+  mkdir -p "$2"
+  for c in "$1"/*.md; do
+    [ -f "$c" ] || continue
+    # ${CLAUDE_PLUGIN_ROOT} is unset outside a plugin; unsubstituted, the
+    # command would call nothing at all.
+    sed "s#\${CLAUDE_PLUGIN_ROOT}#$3#g; s#<skill-path>#$3#g" "$c" > "$2/$(basename "$c")"
+  done
+}
+register_hooks() { # $1 = settings json, $2 = scripts dir
   [ -n "$PY" ] || return 1
   "$PY" - "$1" "$2" "$PY" <<'PYEOF'
 import json, sys
@@ -181,6 +168,7 @@ H = [("PostToolUse", "Write|Edit|MultiEdit", "hook_scan.py", 30),
      ("Stop", "*", "stop_check.py", 60)]
 hooks = s.setdefault("hooks", {})
 for ev, m, f, t in H:
+    # Only entries that are ours are removed, so other tools' hooks survive.
     keep = [b for b in hooks.get(ev, [])
             if not any("anti-ai-design-style/scripts/" in (h.get("command") or "")
                        for h in b.get("hooks", []))]
@@ -192,35 +180,8 @@ for ev, m, f, t in H:
 json.dump(s, open(p, "w"), indent=2)
 PYEOF
 }
-fill_commands() { # $1 = source commands dir, $2 = dest dir, $3 = installed skill path
-  for c in "$1"/*.md; do
-    [ -f "$c" ] || continue
-    # ${CLAUDE_PLUGIN_ROOT} is unset outside a plugin; the commands would call nothing
-    sed "s#\${CLAUDE_PLUGIN_ROOT}#$3#g; s#<skill-path>#$3#g" "$c" > "$2/$(basename "$c")"
-  done
-}
-verify_claude() { # $1 = installed skill path
-  [ -n "$PY" ] || return 1
-  "$PY" "$1/scripts/verify_all.py" "$1/examples/fixed-example.html" 2>/dev/null | tail -1 | grep -q '^PASS:'
-}
-install_claude() {
-  TGT="$1"; DEST="$TGT/skills/$SKILL"   # not $D: that is the dim colour code
-  mkdir -p "$TGT/skills" "$TGT/commands"
-  rm -rf "$DEST"; cp -R "$SKILL_SRC" "$DEST"
-  find "$DEST" -name __pycache__ -type d -prune -exec rm -rf {} + 2>/dev/null || true
-  fill_commands "$SKILL_SRC/commands" "$TGT/commands" "$DEST"
-  SCRIPTS_DIR="$DEST/scripts"
-  case "$SCRIPTS_DIR" in *" "*) bad "hook path has a space ($SCRIPTS_DIR) — skipping hook registration (a hook path with a space breaks tool use)"; return 0 ;; esac
-  ensure_python || { skip "Claude files installed; the hooks need python3 (install it, then re-run)"; return 0; }
-  [ -f "$TGT/settings.json" ] && cp "$TGT/settings.json" "$TGT/settings.json.bak.aads" 2>/dev/null || true
-  [ -f "$TGT/settings.json" ] || echo '{}' > "$TGT/settings.json"
-  if register_hooks_py "$TGT/settings.json" "$SCRIPTS_DIR"; then ok "Claude Code / Cowork — skill, 3 commands, 2 hooks registered"; else bad "hook registration failed; settings.json left as it was (backup: settings.json.bak.aads)"; fi
-  if verify_claude "$DEST"; then ok "verified: the installed skill printed PASS on its own example"; else bad "installed, but the skill's own proof line did not print PASS. Run: $PY \"$DEST/scripts/verify_all.py\" \"$DEST/examples/fixed-example.html\""; fi
-}
-uninstall_claude() {
-  TGT="$1"; rm -rf "$TGT/skills/$SKILL" 2>/dev/null || true
-  rm -f "$TGT/commands/design-check.md" "$TGT/commands/design-fix.md" "$TGT/commands/design-brief.md" 2>/dev/null || true
-  [ -n "$PY" ] && [ -f "$TGT/settings.json" ] && "$PY" - "$TGT/settings.json" <<'PYEOF' 2>/dev/null || true
+drop_hooks() { # $1 = settings json
+  [ -n "$PY" ] && [ -f "$1" ] && "$PY" - "$1" <<'PYEOF' 2>/dev/null || true
 import json, sys
 p = sys.argv[1]
 try:
@@ -233,48 +194,88 @@ try:
 except Exception:
     pass
 PYEOF
+}
+verify() { # $1 = installed skill path. A copied file is not a working install.
+  [ -n "$PY" ] || return 1
+  "$PY" "$1/scripts/verify_all.py" "$1/examples/fixed-example.html" 2>/dev/null | tail -1 | grep -q '^PASS:'
+}
+
+# ---- Claude Code / Cowork (they share ~/.claude) ----
+install_claude() {
+  DEST="$CLAUDE_HOME/skills/$SKILL"
+  copy_skill "$DEST"
+  fill_commands "$SKILL_SRC/commands" "$CLAUDE_HOME/commands" "$DEST"
+  case "$DEST/scripts" in
+    *" "*) bad "hook path contains a space ($DEST/scripts) — hooks not registered, because a hook command with a space breaks tool use"
+           ok "Claude Code / Cowork — skill and 3 commands (no hooks)"; return 0 ;;
+  esac
+  if [ -z "$PY" ]; then
+    ok "Claude Code / Cowork — skill and 3 commands"
+    skip "hooks not registered: python3 is missing. Re-run this installer once it is there."
+    return 0
+  fi
+  [ -f "$CLAUDE_HOME/settings.json" ] && cp "$CLAUDE_HOME/settings.json" "$CLAUDE_HOME/settings.json.bak.aads" 2>/dev/null || true
+  [ -f "$CLAUDE_HOME/settings.json" ] || echo '{}' > "$CLAUDE_HOME/settings.json"
+  if register_hooks "$CLAUDE_HOME/settings.json" "$DEST/scripts"; then
+    ok "Claude Code / Cowork — skill, 3 commands, 2 hooks registered"
+  else
+    bad "hook registration failed; your settings.json is unchanged (backup: settings.json.bak.aads)"
+  fi
+  if verify "$DEST"; then
+    ok "verified: the installed skill printed PASS on its own example"
+  else
+    bad "installed, but its own check did not print PASS. Run by hand:"
+    say "  ${D}$PY \"$DEST/scripts/verify_all.py\" \"$DEST/examples/fixed-example.html\"${N}"
+  fi
+}
+uninstall_claude() {
+  rm -rf "$CLAUDE_HOME/skills/$SKILL" 2>/dev/null || true
+  rm -f "$CLAUDE_HOME/commands/design-check.md" "$CLAUDE_HOME/commands/design-fix.md" \
+        "$CLAUDE_HOME/commands/design-brief.md" 2>/dev/null || true
+  drop_hooks "$CLAUDE_HOME/settings.json"
   ok "Claude Code / Cowork — removed (skill, commands, hooks)"
 }
 
-# ---- install: codex-home ----
+# ---- Codex ----
+# Codex reads skills from the .agents/skills convention, which is also what
+# this skill's own scripts/install.py --codex writes for a single project.
+# No hooks: Codex hook wiring is not something this installer can verify, so
+# it does not claim it.
 install_codex() {
-  DEST="$CODEX_HOME/plugins/$SKILL"
-  mkdir -p "$CODEX_HOME/plugins"; rm -rf "$DEST"; cp -R "$SKILL_SRC" "$DEST"
-  SD="$DEST/scripts"
-  case "$SD" in *" "*) bad "codex hook path has a space — skipping hooks"; return 0 ;; esac
-  ensure_python || { skip "Codex plugin copied; hooks need python3"; return 0; }
-  [ -f "$CODEX_HOME/hooks.json" ] && cp "$CODEX_HOME/hooks.json" "$CODEX_HOME/hooks.json.bak.aads" || true
-  [ -f "$CODEX_HOME/hooks.json" ] || echo '{}' > "$CODEX_HOME/hooks.json"
-  if register_hooks_py "$CODEX_HOME/hooks.json" "$SD"; then ok "Codex — plugin + 2 hooks"; else skip "Codex plugin copied; hook registration failed"; fi
-  say "  ${D}For a project Codex reads directly (.agents/skills/): $PY \"$DEST/scripts/install.py\" --codex <project>${N}"
+  DEST="$AGENTS_SKILLS/$SKILL"
+  copy_skill "$DEST"
+  ok "Codex — skill copied to ~/.agents/skills/$SKILL"
+  AGENTS_MD="$CODEX_HOME/AGENTS.md"
+  if [ -f "$AGENTS_MD" ] && ! grep -q "$SKILL" "$AGENTS_MD" 2>/dev/null; then
+    printf '\n## Design checks\n\nBefore presenting any web or mobile UI, load the `%s` skill from `~/.agents/skills/` and quote the line `verify_all.py` prints.\n' "$SKILL" >> "$AGENTS_MD"
+    ok "Codex — noted the skill in ~/.codex/AGENTS.md"
+  fi
+  say "  ${D}For one project instead: python3 \"$DEST/scripts/install.py\" --codex <project>${N}"
 }
-uninstall_codex() { rm -rf "$CODEX_HOME/plugins/$SKILL" 2>/dev/null || true; ok "Codex — removed"; }
-
-# ---- install: editors via skills CLI ----
-install_editor() {
-  e="$1"; ag=$(agent_for "$e")
-  ensure_node || { skip "$e — needs Node/npx (couldn't bootstrap). Manual: npx -y skills@latest add ${OWNER}/${REPO_NAME} --global --agent $ag --copy --full-depth"; return 0; }
-  NB=$(node_bin); NPX=$(dirname "$NB")/npx
-  if "$NPX" -y skills@latest add "${OWNER}/${REPO_NAME}" --global --agent "$ag" --skill '*' -y --copy --full-depth >/dev/null 2>&1; then ok "$e — installed (agent: $ag)"; else skip "$e — skills CLI failed; manual: npx -y skills@latest add ${OWNER}/${REPO_NAME} --global --agent $ag --copy --full-depth"; fi
+uninstall_codex() {
+  rm -rf "$AGENTS_SKILLS/$SKILL" 2>/dev/null || true
+  ok "Codex — removed (~/.agents/skills/$SKILL; the AGENTS.md note, if any, is left for you to delete)"
 }
-uninstall_editor() { e="$1"; ag=$(agent_for "$e"); NB=$(node_bin) && NPX=$(dirname "$NB")/npx && "$NPX" -y skills@latest remove "$SKILL" --global --agent "$ag" >/dev/null 2>&1 || true; ok "$e — remove attempted"; }
 
 hdr "${ACT}ing…"
 if [ $UNINSTALL -eq 1 ]; then
-  [ $PLAN_CLAUDE -eq 1 ] && uninstall_claude "$CLAUDE_HOME"
+  [ $PLAN_CLAUDE -eq 1 ] && uninstall_claude
   [ $PLAN_CODEX -eq 1 ] && uninstall_codex
-  for e in $PLAN_ED; do uninstall_editor "$e"; done
-  hdr "Uninstalled. Restart your editor to clear loaded skills."
+  hdr "Uninstalled. Restart Claude Code to clear the loaded skill."
   exit 0
 fi
-[ $PLAN_CLAUDE -eq 1 ] && install_claude "$CLAUDE_HOME"
+[ $PLAN_CLAUDE -eq 1 ] && install_claude
 [ $PLAN_CODEX -eq 1 ] && install_codex
-for e in $PLAN_ED; do install_editor "$e"; done
 
-# ---- 6. summary ----
 hdr "Done."
 say ""
-say "${B}Next:${N} open Claude Code and type ${B}/design-check <a page>${N} — or just build a page; the hooks run by themselves."
-say "${B}One thing this installer cannot do:${N} the five warning rules only load from the folder you work in."
-say "  Inside any project, run:  ${B}python3 \"$CLAUDE_HOME/skills/$SKILL/scripts/install.py\" .${N}"
-say "${D}Tips: /design-fix (repair what the scan found) · /design-brief (before building) · re-run with --uninstall to remove.${N}"
+say "${B}Next:${N} open Claude Code and type ${B}/design-check <a page>${N} — or just build a page; the hooks run on their own."
+say ""
+say "${B}Two things this installer deliberately leaves to you:${N}"
+say "  1. The five warning rules load only from the folder you work in. Inside a project:"
+say "     ${B}python3 \"$CLAUDE_HOME/skills/$SKILL/scripts/install.py\" .${N}"
+say "  2. For Cursor, VS Code and other editors, one command adds the skill."
+say "     It needs Node and downloads a third-party tool, so it is yours to run:"
+say "     ${B}npx -y skills@latest add ${OWNER}/${REPO_NAME} --global --agent cursor --copy${N}"
+say ""
+say "${D}Re-run with --uninstall to remove everything above. --dry-run shows the plan and writes nothing.${N}"

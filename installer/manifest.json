@@ -79,42 +79,23 @@
       "method": "codex-home",
       "detect": { "dirs": ["~/.codex"] },
       "install": {
-        "skill_to": "~/.codex/plugins/anti-ai-design-style",
-        "hooks_to": "~/.codex/hooks.json",
-        "hook_scripts_at": "~/.codex/plugins/anti-ai-design-style/scripts"
+        "skill_to": "~/.agents/skills/anti-ai-design-style",
+        "note_in": "~/.codex/AGENTS.md"
       },
-      "verify": ["~/.codex/plugins/anti-ai-design-style/SKILL.md"],
-      "note": "Codex has no slash commands. For the per-project layout Codex reads (.agents/skills/<name>/), use 'python3 <skill>/scripts/install.py --codex <project>'."
-    },
-    { "id": "cursor", "label": "Cursor", "tier": "first-class", "method": "npx-skills",
-      "detect": { "apps": ["Cursor"], "bins": ["cursor"] }, "agent": "cursor" },
-    { "id": "vscode", "label": "VS Code + Copilot", "tier": "first-class", "method": "npx-skills",
-      "detect": { "apps": ["Visual Studio Code", "VSCodium"], "bins": ["code", "codium"] }, "agent": "github-copilot" },
-    { "id": "windsurf", "label": "Windsurf", "method": "npx-skills",
-      "detect": { "apps": ["Windsurf"], "bins": ["windsurf"] }, "agent": "windsurf" },
-    { "id": "zed", "label": "Zed", "method": "npx-skills",
-      "detect": { "apps": ["Zed"], "bins": ["zed"] }, "agent": "zed" },
-    { "id": "cline", "label": "Cline", "method": "npx-skills",
-      "detect": { "vscode_ext": ["saoudrizwan.claude-dev"] }, "agent": "cline" },
-    { "id": "roo", "label": "Roo Code", "method": "npx-skills",
-      "detect": { "vscode_ext": ["rooveterinaryinc.roo-cline"] }, "agent": "roo" },
-    { "id": "continue", "label": "Continue", "method": "npx-skills",
-      "detect": { "dirs": ["~/.continue"] }, "agent": "continue" },
-    { "id": "gemini-cli", "label": "Gemini CLI", "method": "npx-skills",
-      "detect": { "bins": ["gemini"], "dirs": ["~/.gemini"] }, "agent": "gemini-cli" },
-    { "id": "aider", "label": "Aider", "method": "npx-skills",
-      "detect": { "bins": ["aider"] }, "agent": "aider-desk" },
-    { "id": "opencode", "label": "opencode", "method": "npx-skills",
-      "detect": { "bins": ["opencode"] }, "agent": "opencode" },
-    { "id": "amp", "label": "Amp", "method": "npx-skills",
-      "detect": { "bins": ["amp"] }, "agent": "amp" }
+      "verify": ["~/.agents/skills/anti-ai-design-style/SKILL.md"],
+      "no_hooks": "Codex hook wiring could not be verified, so neither installer registers or claims it.",
+      "note": "Codex has no slash commands. The skill goes to the .agents/skills convention, which is also what this skill's own scripts/install.py --codex writes for a single project."
+    }
   ],
-  "package_managers": {
-    "macos": ["brew"],
-    "linux": ["apt-get", "dnf", "pacman", "zypper", "apk", "brew"],
-    "windows": ["winget", "choco", "scoop"]
+  "editors_are_manual": {
+    "why": "Adding the skill to Cursor, VS Code and the rest means running a third-party CLI (npx skills), which needs Node and downloads packages. Measured on 2026-09-12: it installs the skill to the shared ~/.agents/skills folder, not to anything editor-specific, while reporting a per-editor success. An installer that says 'cursor installed' when nothing cursor-shaped was written is lying, and installing Node and npm packages is not installing this skill. So both installers print the command and let the user run it knowingly.",
+    "command": "npx -y skills@latest add ahmedbenaw/anti-ai-design-skill --global --agent <agent> --copy",
+    "agents": ["cursor", "github-copilot", "windsurf", "zed", "cline", "roo", "continue", "gemini-cli", "aider-desk", "opencode", "amp"]
   },
-  "npx_skills_broad": "npx -y skills@latest add ahmedbenaw/anti-ai-design-skill --global --agent <agent> --skill '*' -y --copy --full-depth",
+  "installs_nothing_else": {
+    "rule": "Neither installer may install software other than this skill. No Node, no npm packages, no system package-manager calls, no third-party CLI.",
+    "python": "Needed only by the two hooks. If it is missing the installer says so, prints the one command to fix it, installs the files anyway and skips the hooks."
+  },
   "notes": [
     "The commands ship with a ${CLAUDE_PLUGIN_ROOT} placeholder. Outside a plugin that variable is unset, so every installer must replace it with the absolute path of the installed skill or the commands will call nothing.",
     "A hook command containing a space breaks tool use in Claude Code. Every layer refuses to write a hook whose script path contains a space, and says so loudly rather than writing a broken one.",

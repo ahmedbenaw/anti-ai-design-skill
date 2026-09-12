@@ -11,3 +11,6 @@ anti-ai-design-style-workspace/live-audit/
 
 # Per-project install output (absolute local paths); run install.py to recreate
 .claude/
+
+# Residue if a third-party skills CLI is ever run here
+.agents/
