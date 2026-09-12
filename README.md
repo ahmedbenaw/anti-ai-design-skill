@@ -24,6 +24,12 @@ own scanner. A printed `PASS:` line is the proof; copied files are not. `--dry-r
 touches nothing; `--uninstall` removes it all. The shared algorithm both
 scripts follow is in `installer/INSTALL-SPEC.md`.
 
+Status, stated plainly: `install.sh` was run end to end on macOS, both from
+a clone and from the downloaded archive. `install.ps1` was written to the same
+spec but has not yet been executed on Windows, because no PowerShell was
+available where it was built. If you run it first, `-DryRun` shows the plan
+and changes nothing.
+
 ## What is where
 
 | Path | What it is | Trust it? |
