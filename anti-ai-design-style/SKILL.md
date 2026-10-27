@@ -34,7 +34,7 @@ Two scores, kept separate on purpose:
 - **Library misuse**: one of the nine ported libraries used in the way that
   produces a known tell. The library is fine. That use of it is not.
 
-Every rule traces to `reference/tells-register.md` (version 2026.10).
+Every rule traces to `reference/tells-register.md` (version 2026.10.1).
 That traces to 368 sourced entries in `reference/sources-compendium.md`.
 Every source there carries context bullets and ADOPT or AVOID tags.
 Do not add or repeat "AI tells" from memory. If it is not in the register,
@@ -145,6 +145,7 @@ real browser. It needs Playwright (`RENDER_PYTHON` or a `.venv-render` beside
 the skill). `rendered SKIPPED` means the browser check did not happen. Add
 `--allow-network` only for a live site (`reference/live-audit.md`); the line
 then reads `rendered PASS (network)`.
+SVG text is sized as shown on screen: shrunk below 24px, it needs 4.5:1.
 
 It prints one line; Step 4 shows it, with the two rule fingerprints.
 
@@ -201,8 +202,8 @@ fingerprints are not decoration. They say which rules gave this verdict.
 
 ```
 PASS: AI-look 0/100 (distinct), craft flags 0, library misuse 0, copy grade
-4.6, brand distance COMPLIANT, rendered PASS | register 2026.10, rules
-b591c533d917bdd4, brand rules 5697117fa1b27195 (installed)
+4.6, brand distance COMPLIANT, rendered PASS | register 2026.10.1, rules
+ceb58447cffcc597, brand rules 5697117fa1b27195 (native, cross-checked)
 ```
 
 Paste the real one. Never retype it, shorten it, or add a word to it.
@@ -215,6 +216,14 @@ product's own. No design-theory lecture.
 Scan first. Report pre-existing findings to the user instead of silently
 fixing or keeping them; their page, their call. In fix mode change
 presentation only, never behaviour or meaning.
+
+When the owner rules that a finding stays, write the ruling down. List it
+in `.claude/anti-ai-design-style.exceptions.json` in their project. Each
+entry names one check, the exact files, one colour code or finding phrase,
+and the ruling. `verify_all.py` then reports those items as accepted and
+prints them on the proof line. An entry with no ruling is ignored. Never
+use the file to quiet a finding nobody decided. `project_exceptions.py`
+has the format and the rules.
 
 ## When a library is involved
 

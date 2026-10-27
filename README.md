@@ -63,6 +63,10 @@ spec but has not yet been executed on Windows. Its `-DryRun` changes nothing.
 | `/design-brief` | Writes the two-minute brief that stops generic output before it starts. |
 | Two hooks | Scan each UI file as it is written; re-check the session before it ends. Silent on anything that is not a UI file. |
 
+The two hooks register themselves through the skill's own `hooks/hooks.json`.
+Do not also add them to `settings.json`: a second entry runs the same hook
+twice on every stop.
+
 One thing the installer cannot do: five hookify warning rules load only from
 the folder you work in. Inside any project, run
 `python3 ~/.claude/skills/anti-ai-design-style/scripts/install.py .` once.

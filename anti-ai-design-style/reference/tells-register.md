@@ -2,7 +2,7 @@
 
 **What this file is.** Every "AI design tell" this skill acts on, with the evidence
 behind it. Nothing in the skill's rules or scanner exists without an entry here.
-Register version: **2026.10** (rules fingerprint `b591c533d917bdd4`) (dated on purpose: tells drift; see "Why this
+Register version: **2026.10.1** (rules fingerprint `ceb58447cffcc597`) (dated on purpose: tells drift; see "Why this
 register is dated" at the end).
 
 **How to read an entry.**
@@ -210,6 +210,27 @@ The word lists live in `scripts/rules.json` (grouped, weighted). Highlights:
 | CP5 | Gamified microcopy | "Let's Go!", "Great Job!" toasts, over-explained obvious UI | 1 | medium | Weak-to-verified (C-T41, one Medium source M) |
 | CP6 | Interchangeable-product test | could this H2 sit on 500 other SaaS pages? swap-the-logo test | judgment | — | Verified as the practitioner consensus test (P-T34-quote, C-T22) |
 
+**What counts as copy, by file type (2026-10-11).** The copy tells and the
+reading grade run on what a user reads, never on code. `copy_check.py` used to
+grade a stylesheet or component whole. The LINTEL repo's `app.css` scored
+reading grade 627 on its selectors. Two components scored 19 and 20 on their
+import lines. The stop hook then blocked every session that touched one, over
+findings no edit could fix. Here is what each type now contributes.
+
+| File type | Read as copy | Never read |
+|---|---|---|
+| `.html`, `.md`, `.txt` | unchanged: visible text, prose | script, style, code blocks, quoted examples |
+| `.css`, `.scss`, `.sass`, `.less` | `content:` strings only, the one place CSS shows text | selectors, declarations, comments |
+| `.jsx`, `.tsx`, `.js`, `.ts` | JSX text; `alt`, `title`, `placeholder`, `label` and `aria-*` text values; any string that reads as a sentence (mostly words, one of them a function word like *the* or *your*) | imports, comments, class lists, enum values, SVG paths, logs, test names, style blocks in strings |
+| `.vue`, `.svelte`, `.astro` | template text, the same attributes, sentence strings in `<script>` and frontmatter | `<style>`, imports, directives that hold no text |
+
+A single word in code (`"warning"`, `variant="elevated"`) is a value, not copy,
+unless it sits in one of the visible attributes. A string holding markup or a
+stylesheet is read as that file type. The scanner's copy tells (CP1-CP3) still
+read source text whole. A buzzword there is one point, capped at 4, and cannot
+cross a band alone, so a stray identifier costs little. That is a known gap,
+not an oversight.
+
 ## Part 4 — Judgment-only tells (checklists, never the scanner)
 
 - **JD1: Domain-blindness.** A meditation app, a bank and a dev tool getting the
@@ -247,6 +268,22 @@ Verified false-positive traps: flagging these embarrasses the skill:
   mistakes (P-T4).
 - "Built with a website builder" fingerprints (Framer/Webflow meta): proves a
   builder, not AI (P-T18).
+- **A page's own ban list.** A brand book that lists the words it never uses
+  mentions them; it does not use them. Before 2026-10-11 the LINTEL brand book
+  ("Seamless · robust · cutting-edge", "Delve · tapestry · testament") was
+  reported as buzzwords and AI cadence in use. Now the text inside an element
+  the page marks as banned is cut before the vocabulary tells. Those are
+  buzzwords, cadence, em-dash density, fake proof and placeholders. Both
+  `copy_check.py` and the scanner's CP1-CP3 cut it. It is still graded for
+  reading level, because someone still reads it. Three things mark an element.
+  The documented one, for any page, is `data-copy-check="banned"`. A class
+  token also counts: `no`, `dont`, `do-not`, `ban`, `banned`, `never` or
+  `avoid`. It must be a whole token or a BEM modifier like `card--dont`, so
+  `no-js` does not count. Last, `<del>` and `<s>` count. The markers live in
+  `rules.json` under `copy_tells.banned_markers`, so changing them changes the
+  fingerprint. Markdown style guides already get this through backticks and
+  quotes. The marker is for quoted bad examples only. Wrapping real copy in it
+  to clear a finding falsifies the check.
 
 ## Part 6 — Accessibility thresholds enforced on OUTPUT (craft axis)
 

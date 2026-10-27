@@ -27,6 +27,7 @@ Reads the hook payload on stdin. Exit 0 with nothing to say, or 2 with the
 reminder on stderr.
 """
 
+import datetime
 import json
 import os
 import re
@@ -72,26 +73,102 @@ def is_recorded_evidence(path):
     return bool(EVIDENCE_DIR.search(norm) or EVIDENCE_FIXTURE.search(norm))
 
 
-def ui_files_from(transcript_path):
-    """Every existing UI file path the transcript mentions, newest first.
+UI_EXT = r"(?:html|htm|css|scss|jsx|tsx|vue|svelte|astro)"
+QUOTED_UI = re.compile(r'["\']([^"\'\n]+?\.' + UI_EXT + r')["\']')
+BARE_UI = re.compile(r'(?<![\w./~$-])([\w./~-]*[\w-]\.' + UI_EXT + r')(?![\w.-])')
+# Tools that only look. A file a session merely read is not its work.
+READ_ONLY_TOOLS = {"Read", "Grep", "Glob", "LS", "NotebookRead", "WebFetch", "WebSearch"}
 
-    Deliberately loose. This is a reminder, and a path that appears in the
-    transcript but was only read rather than written costs one extra file in
-    a scan. Missing a file that was written costs the thing the hook is for.
+
+def _strings(value):
+    if isinstance(value, str):
+        yield value
+    elif isinstance(value, dict):
+        for v in value.values():
+            yield from _strings(v)
+    elif isinstance(value, list):
+        for v in value:
+            yield from _strings(v)
+
+
+def _epoch(timestamp):
+    try:
+        return datetime.datetime.fromisoformat(timestamp.replace("Z", "+00:00")).timestamp()
+    except (AttributeError, TypeError, ValueError):
+        return None
+
+
+def ui_files_from(transcript_path, cwd=None):
+    """UI files this session changed, newest first.
+
+    A file counts when two things hold. One of the session's own tool calls
+    named it, and it was modified after the session's first transcript line.
+
+    Named: the input of every tool call the session made, except tools that
+    only read. Edit and Write name the file they change. A Bash command
+    counts too, quoted or not, because `sed -i`, `cat >` and `tee` write
+    files without an Edit. Text the session did not write does not count.
+    That covers tool output, the user's messages, hook feedback, and context
+    injected at session start.
+
+    Modified: a Bash command that only reads names a file just as one that
+    writes it does. The file's mtime tells them apart. When no timestamp in
+    the transcript can be read, this test is skipped and every named file is
+    scanned.
+
+    The first version read the whole transcript. On 2026-10-11 that blocked
+    a LINTEL session over DeliveryPlan.jsx and SmokeTest.jsx, which it never
+    changed. One path came from a memory injected out of another session.
+    The other came from the output of a read-only sweep, and later from
+    read-only Bash commands. Each file fails on copy its owner wrote, so the
+    block stood, and no edit by that session could clear it.
+
+    The trade-offs:
+    - A script that writes a UI file without naming it is missed.
+    - `git checkout`, `merge` or `stash apply` refresh mtimes, so a named file
+      the session checked out is scanned.
+    - In a worktree created after the first transcript line, every named file
+      looks modified, which is the old behaviour.
+    The last two err toward guarding. Relative paths resolve against the
+    session's cwd from the hook payload. The hook's own cwd can be another
+    checkout.
     """
+    names, start = [], None
     try:
         with open(transcript_path, encoding="utf-8", errors="replace") as f:
-            body = f.read()
+            for line in f:
+                if start is None and '"timestamp"' in line:
+                    try:
+                        start = _epoch(json.loads(line).get("timestamp"))
+                    except ValueError:
+                        pass
+                if '"tool_use"' not in line:
+                    continue
+                try:
+                    entry = json.loads(line)
+                except ValueError:
+                    continue
+                message = entry.get("message") if entry.get("type") == "assistant" else None
+                content = message.get("content") if isinstance(message, dict) else None
+                for block in content if isinstance(content, list) else []:
+                    if (not isinstance(block, dict) or block.get("type") != "tool_use"
+                            or block.get("name") in READ_ONLY_TOOLS):
+                        continue
+                    for text in _strings(block.get("input")):
+                        names += QUOTED_UI.findall(text) + BARE_UI.findall(text)
     except OSError:
         return []
-    pattern = r'["\']([^"\']+?\.(?:html|htm|css|scss|jsx|tsx|vue|svelte|astro))["\']'
+    base = cwd or os.getcwd()
     seen, out = set(), []
-    for match in reversed(re.findall(pattern, body)):
-        if match in seen:
+    for name in reversed(names):
+        path = os.path.normpath(os.path.join(base, os.path.expanduser(name)))
+        if path in seen:
             continue
-        seen.add(match)
-        if os.path.isfile(match):
-            out.append(match)
+        seen.add(path)
+        # The mtime test runs before the cap, or a dozen files that were only
+        # read would crowd out the one that was edited.
+        if os.path.isfile(path) and (start is None or os.path.getmtime(path) >= start):
+            out.append(path)
         if len(out) >= MAX_FILES:
             break
     return out
@@ -112,7 +189,7 @@ def main():
     transcript = payload.get("transcript_path")
     if not transcript:
         return 0
-    files = ui_files_from(transcript)
+    files = ui_files_from(transcript, payload.get("cwd"))
     evidence = [f for f in files if is_recorded_evidence(f)]
     files = [f for f in files if not is_recorded_evidence(f)]
     if not files:
@@ -195,14 +272,22 @@ EVIDENCE_CASES = [
 ]
 
 
+def _tool_call(name, timestamp=None, **tool_input):
+    """One transcript line in Claude Code's real shape: the session's own call."""
+    entry = {"type": "assistant", "message": {"role": "assistant", "content": [
+        {"type": "tool_use", "id": "toolu_test", "name": name, "input": tool_input}]}}
+    if timestamp:
+        entry["timestamp"] = timestamp
+    return json.dumps(entry) + "\n"
+
+
 def selftest():
     """Both directions, driven through real transcript files."""
+    ok = True
     for path, want_skip, why in EVIDENCE_CASES:
         got = is_recorded_evidence(path)
         print("  {} {}: {}".format("ok  " if got == want_skip else "FAIL", why, path))
-        ok_ev = got == want_skip
-        if not ok_ev:
-            globals()["_EVIDENCE_FAILED"] = True
+        ok = ok and got == want_skip
     import tempfile
     import shutil
     here = os.path.dirname(HERE)
@@ -219,7 +304,6 @@ def selftest():
         ("stays silent when the page passes", fixed, 0),
         ("stays silent when no UI file was touched", None, 0),
     ]
-    ok = True
     # The loop guard, and the case that would otherwise trap a user.
     out = subprocess.run(
         [sys.executable, os.path.abspath(__file__)],
@@ -232,7 +316,7 @@ def selftest():
         "ok  " if good else "FAIL"))
 
     t = tempfile.NamedTemporaryFile("w", suffix=".jsonl", delete=False)
-    t.write(json.dumps({"file_path": fixed}) + "\n")
+    t.write(_tool_call("Write", file_path=fixed, content=""))
     t.close()
     env = dict(os.environ, HOME=tempfile.mkdtemp())
     env.pop("ANTI_ANTROPIK_PATH", None)
@@ -250,8 +334,7 @@ def selftest():
 
     for label, path, want in cases:
         t = tempfile.NamedTemporaryFile("w", suffix=".jsonl", delete=False)
-        t.write(json.dumps({"tool": "Write",
-                            "file_path": path or "scripts/etl.py"}) + "\n")
+        t.write(_tool_call("Write", file_path=path or "scripts/etl.py", content=""))
         t.close()
         out = subprocess.run(
             [sys.executable, os.path.abspath(__file__)],
@@ -262,6 +345,114 @@ def selftest():
         ok = ok and good
         print("  {} {} (exit {})".format("ok  " if good else "FAIL", label,
                                          out.returncode))
+    # Code is not copy. On 2026-10-11 every LINTEL session that touched a
+    # stylesheet or a component was blocked here: the copy check graded
+    # app.css at reading grade 627, on its selectors. Nothing an edit could
+    # fix. The same shapes must now pass, and slop copy inside a component
+    # must still block, or the fix only switched the check off.
+    sys.path.insert(0, HERE)
+    from copy_check import STYLESHEET, COMPONENT, SLOP_COMPONENT
+    code_files = {}
+    for fname, body in (("app.css", STYLESHEET), ("DecisionRecord.jsx", COMPONENT),
+                        ("Hero.jsx", SLOP_COMPONENT)):
+        code_files[fname] = os.path.join(scratch, fname)
+        with open(code_files[fname], "w", encoding="utf-8") as f:
+            f.write(body)
+    for label, names, want in (
+            ("stays silent on a clean stylesheet and component",
+             ("app.css", "DecisionRecord.jsx"), 0),
+            ("speaks up on slop copy inside a component", ("Hero.jsx",), 2)):
+        t = tempfile.NamedTemporaryFile("w", suffix=".jsonl", delete=False)
+        for n in names:
+            t.write(_tool_call("Edit", file_path=code_files[n], old_string="a",
+                               new_string="b"))
+        t.close()
+        out = subprocess.run(
+            [sys.executable, os.path.abspath(__file__)],
+            input=json.dumps({"hook_event_name": "Stop", "transcript_path": t.name}),
+            capture_output=True, text=True)
+        good = out.returncode == want and not (want == 0 and out.stderr.strip())
+        ok = ok and good
+        print("  {} {} (exit {})".format("ok  " if good else "FAIL", label,
+                                         out.returncode))
+
+    # Only the session's own actions count. On 2026-10-11 a LINTEL session
+    # was blocked over two screens it never touched: one path came from a
+    # memory injected at session start, one from a sweep's printed output.
+    # The failing page must block when the session's own call names it, and
+    # must not when it only appears in text the session did not write.
+    # Single quotes, as in a printed Python list: that is how the real paths
+    # got in. JSON leaves them unescaped, so the old whole-text scan saw them.
+    quoted = "['" + slop + "']"
+    not_its_work = [
+        ("a path only in a tool's output", json.dumps({"type": "user", "message": {
+            "role": "user", "content": [{"type": "tool_result", "tool_use_id": "toolu_test",
+                                         "content": "graded " + quoted + " at 12.3"}]}})),
+        ("a path only in context injected at session start", json.dumps({
+            "type": "attachment", "attachment": {"type": "hook_additional_context",
+                                                 "content": ["see " + quoted]}})),
+        ("a path only in the user's message", json.dumps({"type": "user", "message": {
+            "role": "user", "content": "look at " + quoted}})),
+        ("a path the session only read", _tool_call("Read", file_path=slop).strip()),
+    ]
+    for label, line in not_its_work:
+        t = tempfile.NamedTemporaryFile("w", suffix=".jsonl", delete=False)
+        t.write(line + "\n")
+        t.close()
+        out = subprocess.run(
+            [sys.executable, os.path.abspath(__file__)],
+            input=json.dumps({"hook_event_name": "Stop", "transcript_path": t.name}),
+            capture_output=True, text=True)
+        good = out.returncode == 0 and not out.stderr.strip()
+        ok = ok and good
+        print("  {} ignores {} (exit {})".format("ok  " if good else "FAIL", label,
+                                                 out.returncode))
+    elsewhere = tempfile.mkdtemp()
+    for label, command, cwd in (
+            ("a page a Bash command wrote, path unquoted", "sed -i '' s/a/b/ " + slop, None),
+            ("a relative path, resolved against the session's cwd",
+             "cat > bad-page.html <<'EOF'\nEOF", scratch)):
+        t = tempfile.NamedTemporaryFile("w", suffix=".jsonl", delete=False)
+        t.write(_tool_call("Bash", command=command))
+        t.close()
+        payload = {"hook_event_name": "Stop", "transcript_path": t.name}
+        if cwd:
+            payload["cwd"] = cwd
+        out = subprocess.run(
+            [sys.executable, os.path.abspath(__file__)], input=json.dumps(payload),
+            capture_output=True, text=True, cwd=elsewhere)
+        good = out.returncode == 2
+        ok = ok and good
+        print("  {} speaks up on {} (exit {})".format("ok  " if good else "FAIL", label,
+                                                      out.returncode))
+
+    # Named is not changed. A Bash command that only reads a page names it
+    # too, so the page's mtime decides. Timestamps are in Claude Code's own
+    # format, with milliseconds and a Z.
+    import time
+    now = time.time()
+    stamp = datetime.datetime.fromtimestamp(now, datetime.timezone.utc).strftime(
+        "%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+    aged = os.path.join(scratch, "aged-page.html")
+    shutil.copy(slop, aged)
+    for label, stamped, mtime, want in (
+            ("stays silent on a page a Bash command only read", True, now - 60, 0),
+            ("speaks up on a page changed after the session began", True, now + 60, 2),
+            ("scans every named page when the transcript has no timestamp", False,
+             now - 60, 2)):
+        os.utime(aged, (mtime, mtime))
+        t = tempfile.NamedTemporaryFile("w", suffix=".jsonl", delete=False)
+        t.write(_tool_call("Bash", timestamp=stamp if stamped else None,
+                           command="grep -c div " + aged))
+        t.close()
+        out = subprocess.run(
+            [sys.executable, os.path.abspath(__file__)],
+            input=json.dumps({"hook_event_name": "Stop", "transcript_path": t.name}),
+            capture_output=True, text=True)
+        good = out.returncode == want and not (want == 0 and out.stderr.strip())
+        ok = ok and good
+        print("  {} {} (exit {})".format("ok  " if good else "FAIL", label, out.returncode))
+
     out = subprocess.run([sys.executable, os.path.abspath(__file__)],
                          input="not json", capture_output=True, text=True)
     good = out.returncode == 0

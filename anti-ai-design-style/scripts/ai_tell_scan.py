@@ -39,6 +39,7 @@ import re
 import sys
 import hashlib
 from collections import defaultdict
+from html.parser import HTMLParser
 
 SCAN_EXTENSIONS = {".html", ".htm", ".css", ".scss", ".less", ".js", ".jsx",
                    ".ts", ".tsx", ".vue", ".svelte", ".astro", ".mdx",
@@ -74,6 +75,80 @@ def fingerprint(path=None):
 def load_rules():
     with open(rules_path(), encoding="utf-8") as f:
         return json.load(f)
+
+
+def is_banned_element(tag, attrs, markers):
+    """True when the page marks this element as a list of things it never says.
+
+    attrs comes from HTMLParser, so names are lower-case: JSX `className`
+    arrives as `classname`. Class tokens match whole, or as a BEM modifier
+    (`card--dont`), so `no-js` and `nothing` never count as `no`.
+    """
+    if tag.lower() in markers["tags"]:
+        return True
+    if (attrs.get(markers["attribute"]) or "").strip().lower() == markers["value"]:
+        return True
+    tokens = set(markers["class_tokens"])
+    for cls in (attrs.get("class") or attrs.get("classname") or "").lower().split():
+        if cls in tokens or ("--" in cls and cls.rsplit("--", 1)[1] in tokens):
+            return True
+    return False
+
+
+class _BannedSpans(HTMLParser):
+    """Finds the source span of every element marked as banned.
+
+    Nesting is counted by tag name, because a ban list is usually a box with
+    a label and a list inside it, and stopping at the first inner </div>
+    would leave the list behind. An element that never closes drops nothing:
+    a false finding is visible and fixable, a silently skipped page is not.
+    """
+
+    def __init__(self, src, markers):
+        super().__init__(convert_charrefs=False)
+        self.src, self.markers = src, markers
+        self.line_starts = [0] + [m.end() for m in re.finditer(r"\n", src)]
+        self.spans, self.open = [], None    # open = [tag, depth, start]
+
+    def _offset(self):
+        line, col = self.getpos()
+        return self.line_starts[line - 1] + col
+
+    def handle_starttag(self, tag, attrs):
+        if self.open:
+            if tag == self.open[0]:
+                self.open[1] += 1
+        elif is_banned_element(tag, dict(attrs), self.markers):
+            self.open = [tag, 1, self._offset()]
+
+    def handle_endtag(self, tag):
+        if self.open and tag == self.open[0]:
+            self.open[1] -= 1
+            if self.open[1] == 0:
+                end = self.src.find(">", self._offset())
+                self.spans.append((self.open[2], len(self.src) if end < 0 else end + 1))
+                self.open = None
+
+
+def drop_banned(text, markers):
+    """The text with every element the page marks as banned cut out.
+
+    Used by both copy checks, so a word on a page's own ban list is never
+    counted as that word in use. Works on HTML, Markdown with inline HTML,
+    and component markup alike: only tags are read, nothing else is touched.
+    """
+    if not markers or "<" not in text:
+        return text
+    finder = _BannedSpans(text, markers)
+    finder.feed(text)
+    finder.close()
+    out, last = [], 0
+    for start, end in finder.spans:
+        out.append(text[last:start])
+        out.append(" ")
+        last = end
+    out.append(text[last:])
+    return "".join(out)
 
 
 def gather_files(paths):
@@ -203,8 +278,12 @@ def scan_texts(texts, rules):
                                          rule["explain"], rule["fix"], "tell"))
 
     # --- Copy tells on markup text ---------------------------------------
+    # A page's own ban list is mentioned, not used. copy_check.py drops it
+    # with the same helper and the same rule data, so the two cannot drift.
     ct = rules["copy_tells"]
-    lower_all = all_text.lower()
+    copy_text = "\n".join(drop_banned(t, ct.get("banned_markers"))
+                          for t in texts.values())
+    lower_all = copy_text.lower()
     verb_hits = sorted({w for w in ct["transformation_verbs"] if w in lower_all})
     if verb_hits:
         pts = min(len(verb_hits), 4)
@@ -225,7 +304,7 @@ def scan_texts(texts, rules):
             "tell"))
     fake_hits = []
     for pat in compile_patterns(ct["fake_proof_regex"]):
-        m = pat.search(all_text)
+        m = pat.search(copy_text)
         if m:
             fake_hits.append(m.group(0))
     if fake_hits:
@@ -639,8 +718,21 @@ button:focus{outline:0}
 TOKEN_CRAFT_EXPECT = {"CR7", "CR8", "CR9"}
 
 
+# A brand book listing the words it never uses. The list is nested the way the
+# LINTEL book nests it: a box, a label, then the list. The second page uses
+# two of the same words in its own voice, and those must still count.
+BANLIST_FIXTURE = """<section><h3>Words that never appear</h3>
+<div class="specbox no"><div class="speclbl">English</div>
+<ul><li>Seamless · robust · cutting-edge</li><li>Unlock · empower · elevate</li></ul></div>
+<p>We write the plain word instead.</p></section>"""
+BANLIST_USED_FIXTURE = BANLIST_FIXTURE + "<p>Unlock seamless reporting today.</p>"
+
+
 def selftest():
     rules = load_rules()
+    _, tells_ban, _, _ = scan_texts({"brand.html": BANLIST_FIXTURE}, rules)
+    _, tells_used, _, _ = scan_texts({"brand.html": BANLIST_USED_FIXTURE}, rules)
+    cp1_used = [f for f in tells_used if f.rule_id == "CP1"]
     prov1, tells1, craft1, lib1 = scan_texts({"slop.html": SLOP_FIXTURE}, rules)
     score1 = min(sum(f.points for f in tells1), AI_SCORE_CAP)
     prov2, tells2, craft2, lib2 = scan_texts({"clean.html": CLEAN_FIXTURE}, rules)
@@ -675,6 +767,11 @@ def selftest():
     craft_false = {f.rule_id for f in craft10} & TOKEN_CRAFT_EXPECT
 
     problems = []
+    if any(f.rule_id == "CP1" for f in tells_ban):
+        problems.append("a page's own ban list was scored as buzzwords in use")
+    if not cp1_used or sorted(cp1_used[0].evidence) != ["seamless", "unlock"]:
+        problems.append("buzzwords used outside the ban list were not scored, or the "
+                        f"ban list leaked into them: {[f.evidence for f in cp1_used]}")
     if css_edge_missing:
         problems.append(f"CSS twins missed a spelling the reviewers found: {sorted(css_edge_missing)}")
     if css_missing:

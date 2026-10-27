@@ -4,6 +4,28 @@ Versions follow the skill's own `plugin.json`. Every scanner verdict prints a
 rules fingerprint, so a number quoted in one version can be checked against
 the rules that produced it.
 
+## Unreleased — 2026-10-27
+
+Rules fingerprint `ceb58447cffcc597`, register 2026.10.1. Brought across from
+the installed copy, which was ahead of this repository.
+
+**Fixed**
+- Copy check: grades only the words a reader sees. Code inside `.css`, `.jsx`
+  and `.tsx` files is no longer read as prose; the strings and screen text in
+  it still are.
+- Copy check and AI-tell scan: a list a page marks as words it never uses is
+  skipped, so a brand book's own ban list stops counting against it.
+- Stop hook: a file counts as the session's work only when the session's own
+  tool call named it and the file changed after the session began. It used to
+  blame a session for files it had merely read or seen mentioned.
+
+**Added**
+- `scripts/project_exceptions.py`.
+
+**Note**
+- Register the two hooks once, through the skill's own `hooks/hooks.json`.
+  A second entry in `settings.json` runs the same hook twice.
+
 ## 3.1.0 — 2026-09-12, first public release
 
 Rules fingerprint `b591c533d917bdd4`, register 2026.10.

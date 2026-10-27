@@ -29,6 +29,8 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
+import project_exceptions  # noqa: E402
+sys.path.insert(0, HERE)
 from ai_tell_scan import fingerprint, load_rules  # noqa: E402
 from find_brand_guard import locate, source_of  # noqa: E402
 
@@ -232,20 +234,27 @@ def proof_line(summary):
     score = "{}/100".format(s["score"]) if s["score"] is not None else "not run"
     craft = s["craft"] if s["craft"] is not None else "?"
     lib = s["lib"] if s["lib"] is not None else "?"
-    grade = c["grade"] if c["grade"] is not None else "not run"
+    # A copy check that ran on files with too little prose to grade - a
+    # stylesheet, a component of short labels - is not a check that did not
+    # run, and must not read like one.
+    grade = (c["grade"] if c["grade"] is not None
+             else "n/a (too little prose)" if "findings" in c else "not run")
     r = summary.get("render") or {"state": "SKIPPED"}
+    acc = summary.get("accepted") or {}
+    brand = b["verdict"] + (" ({} accepted)".format(len(acc["brand"]))
+                            if acc.get("brand") else "")
     return ("{verdict}: AI-look {score} ({band}), craft flags {craft}, "
             "library misuse {lib}, copy grade {grade}, brand distance {brand}, "
             "rendered {render} | register {reg}, rules {rf}, brand rules {bf}{src}"
             ).format(
         verdict="PASS" if summary["passed"] else "FAIL",
         score=score, band=s["band"], craft=craft, lib=lib, grade=grade,
-        brand=b["verdict"], render=r["state"] + (" (network)" if r.get("network") else ""), reg=s["register"],
+        brand=brand, render=r["state"] + (" (network)" if r.get("network") else ""), reg=s["register"],
         src=(" ({})".format(
             "native, cross-checked" if (b.get("cross_checked") or {}).get("agrees")
             else b.get("source"))
             if b.get("source") and b.get("fingerprint") else ""),
-        rf=s["fingerprint"], bf=b["fingerprint"] or "-")
+        rf=s["fingerprint"], bf=b["fingerprint"] or "-") + project_exceptions.describe(acc)
 
 
 def selftest():
@@ -300,6 +309,36 @@ def selftest():
     checks.append(("copy findings fail the gate",
                    not summarise(bad_copy, rules)["passed"]))
 
+    no_prose = summarise(dict(good, copy={"app.css": {"grade": None, "findings": []}}), rules)
+    checks.append(("a copy check with nothing to grade passes", no_prose["passed"]))
+    checks.append(("it says n/a, never 'not run', which means a crash",
+                   "copy grade n/a" in proof_line(no_prose)
+                   and "not run" not in proof_line(no_prose)))
+    checks.append(("a copy check that did not run still says so",
+                   "copy grade not run" in proof_line(summarise(dict(good, copy=None), rules))))
+
+    # End to end through the real copy check, on the shapes that failed the
+    # stop hook in the LINTEL repo: code is not prose, and copy in code is.
+    import tempfile
+    from copy_check import STYLESHEET, COMPONENT, SLOP_COMPONENT
+    scratch = tempfile.mkdtemp(prefix="verify-all-")
+    paths = {}
+    for fname, body in (("app.css", STYLESHEET), ("DecisionRecord.jsx", COMPONENT),
+                        ("Hero.jsx", SLOP_COMPONENT)):
+        paths[fname] = os.path.join(scratch, fname)
+        with open(paths[fname], "w", encoding="utf-8") as f:
+            f.write(body)
+
+    def real_copy(*names):
+        return _json_cmd([sys.executable, os.path.join(HERE, "copy_check.py"), "--json",
+                          "--max-grade", "9"] + [paths[n] for n in names])
+    clean = real_copy("app.css", "DecisionRecord.jsx")
+    checks.append(("a stylesheet and a component pass the real copy check",
+                   clean is not None and summarise(dict(good, copy=clean), rules)["passed"]))
+    slop = real_copy("Hero.jsx")
+    checks.append(("slop copy inside a component still fails the gate",
+                   slop is not None and not summarise(dict(good, copy=slop), rules)["passed"]))
+
     noncompliant = dict(good, brand={"verdict": "NON-COMPLIANT",
                                      "exclusion_fingerprint": "def456"})
     checks.append(("a NON-COMPLIANT brand verdict fails the gate",
@@ -330,6 +369,15 @@ def selftest():
     checks.append(("every guard missing fails the gate",
                    not summarise(dead, rules)["passed"]))
 
+    checks.append(("project exceptions pass their own selftest",
+                   project_exceptions.selftest(quiet=True) == 0))
+    ruled = summarise(good, rules)
+    ruled["accepted"] = {"brand": [{"file": "p.html", "hex": "#2E86C8", "ruling": "R1"}],
+                         "copy": [], "invalid": [], "errors": []}
+    checks.append(("accepted findings are printed on the line, never hidden",
+                   "brand distance COMPLIANT (1 accepted)" in proof_line(ruled)
+                   and "accepted by ruling: brand distance 1 (R1)" in proof_line(ruled)))
+
     for label, passed in checks:
         print("  {} {}".format("ok  " if passed else "FAIL", label))
     allok = all(p for _, p in checks)
@@ -359,9 +407,16 @@ def main():
         ap.error("give me at least one file to check")
 
     brand_dir = locate(allow_vendored=False)   # optional cross-check only
-    summary = summarise(gather(args.paths, brand_dir, args.max_grade,
-                               render=args.render,
-                               allow_network=args.allow_network), load_rules())
+    results = gather(args.paths, brand_dir, args.max_grade,
+                     render=args.render, allow_network=args.allow_network)
+    # Findings the project's owner ruled on are reported as accepted, never
+    # dropped. See project_exceptions.py for the rules.
+    accepted = project_exceptions.apply(results, args.paths)
+    summary = summarise(results, load_rules())
+    summary["accepted"] = accepted
+    for e in accepted["errors"] + ["{file} entry {index}: {problem}".format(**i)
+                                   for i in accepted["invalid"]]:
+        sys.stderr.write("exceptions: {}\n".format(e))
     if args.allow_network and not args.render:
         sys.stderr.write("note: --allow-network does nothing without --render; no browser check ran.\n")
     if args.json:

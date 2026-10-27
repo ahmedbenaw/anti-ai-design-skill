@@ -104,3 +104,39 @@ The first version of the rule also skipped `examples/slop-example.html`,
 because that fixture fails on purpose too. That broke the selftest which uses
 that very file to prove the hook still speaks up. A rule that removes its own
 proof is not a rule worth having, so the rule was narrowed.
+
+## The copy check graded code as prose
+
+In the LINTEL repo the stop hook blocked every session that touched a
+stylesheet or a component. The copy check read `app.css` as one long sentence
+and gave it reading grade 627. It read two components' import lines as prose.
+No edit to the page could clear it, so the only way out was to ignore the
+hook, which teaches people to ignore the hook.
+
+The same repo's brand book was flagged for "seamless" and "delve". Both words
+sat in its own list of words it never uses.
+
+Both had one root: the check scored text a reader never reads as the author's
+own. It now grades only the copy inside code, and it skips a ban list the page
+marks as one (register Part 3 and Part 5). Each fix ships with the opposite
+proof. Slop copy inside a component still blocks the hook. The same buzzwords
+used outside the ban list still count.
+
+## The stop hook blamed a session for files it never changed
+
+With the copy check fixed, the hook still blocked the session that fixed it.
+It named six files. That session had changed none of them. Two screens had
+real copy over grade 9, so the block stood, and the session could not clear
+it without editing someone else's screens.
+
+The hook took every UI path in the transcript as the session's work. One
+path came from a memory injected out of another session. Others came from
+the printed output of a read-only sweep. Paths only named in Bash commands
+that read the files counted as well.
+
+A file now counts only when two things hold. One of the session's own tool
+calls named it, apart from tools that only read. And it changed after the
+session's first transcript line. The name rule keeps Bash writes such as
+`sed -i` in view. The mtime rule drops Bash reads. Replayed on that session,
+the old logic blocked on six files and the new one on none. The selftest
+proves both directions, and the new cases fail when run on the old logic.

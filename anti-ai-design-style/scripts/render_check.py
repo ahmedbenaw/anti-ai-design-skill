@@ -17,12 +17,17 @@ Needs Playwright. It is optional on purpose: verify_all.py reports
 "render: SKIPPED" when it is missing rather than failing, because most of this
 skill works without a browser.
 
-  python3 -m venv .venv && .venv/bin/pip install playwright
+  python3 -m venv .venv && .venv/bin/pip install playwright pillow
   .venv/bin/playwright install chromium
+
+Pillow is what lets a text node that fails on computed colours be
+re-measured from the pixels painted behind it. Without it those failures
+stand as computed, so a missing Pillow can only make the check stricter.
   .venv/bin/python scripts/render_check.py page.html
 """
 
 import argparse
+import io
 import json
 import os
 import sys
@@ -81,6 +86,16 @@ PAGE_SCRIPT = r"""
     return r.width > 0 && r.height > 0;
   };
 
+  // SVG font-size is in user units, and a viewBox that scales the drawing
+  // scales the text with it: 30 units in a half-size viewBox is 15px on
+  // screen. The glyph's vertical axis maps to (c, d) of the screen CTM, so
+  // its length is the scale. HTML text is returned unchanged.
+  const shownSize = (el, size) => {
+    if (!(el instanceof SVGGraphicsElement)) return size;
+    const m = el.getScreenCTM();
+    return m ? size * Math.hypot(m.c, m.d) : size;
+  };
+
   const out = { text: [], targets: [], focus: [], animated: [] };
 
   // How much author CSS actually made it into the page. This is what tells
@@ -101,17 +116,30 @@ PAGE_SCRIPT = r"""
       .map(n => n.textContent.trim()).join(' ');
     if (!own) continue;
     const s = getComputedStyle(el);
-    const fg = parse(s.color);
+    // SVG text is painted by `fill`, not `color`. Reading `color` measures a
+    // value nobody sees: a pale wordmark on navy read as navy on navy.
+    let fg = parse(s.color);
+    if (el instanceof SVGElement) {
+      const f = parse(s.fill);
+      if (f) fg = f;
+    }
     if (!fg) continue;
-    const size = px(s.fontSize);
+    const cssSize = px(s.fontSize);
+    const size = shownSize(el, cssSize);
     const weight = parseInt(s.fontWeight, 10) || 400;
-    // "Large text" is >=24px, or >=18.66px when bold.
+    // "Large text" is >=24px, or >=18.66px when bold, at the size displayed.
     const large = size >= 24 || (size >= 18.66 && weight >= 700);
     const r = ratio(fg.rgb, bgOf(el));
-    out.text.push({ tag: el.tagName.toLowerCase(), size, weight, large,
-                    ratio: Math.round(r * 100) / 100,
-                    need: large ? 3 : 4.5,
-                    sample: own.slice(0, 60) });
+    const item = { tag: el.tagName.toLowerCase(),
+                   size: Math.round(size * 100) / 100, weight, large,
+                   ratio: Math.round(r * 100) / 100,
+                   need: large ? 3 : 4.5,
+                   sample: own.slice(0, 60) };
+    if (size !== cssSize) item.user_size = cssSize;
+    // Keep a handle on every node that fails here, so it can be re-measured
+    // from the pixels actually painted behind it (see repaint() below).
+    if (r < item.need) item.idx = (window.__rcFail = window.__rcFail || []).push(el) - 1;
+    out.text.push(item);
   }
 
   // --- target size (2.5.8 AA / 2.5.5 AAA)
@@ -155,8 +183,104 @@ PAGE_SCRIPT = r"""
 """
 
 
+REPAINT_CAP = 80
+
+
+def _rgb_counts(png_bytes):
+    from PIL import Image
+    im = Image.open(io.BytesIO(png_bytes)).convert("RGB")
+    raw = im.tobytes()
+    return im.size, [tuple(raw[i:i + 3]) for i in range(0, len(raw), 3)]
+
+
+def _lum(c):
+    def f(x):
+        x /= 255.0
+        return x / 12.92 if x <= 0.03928 else ((x + 0.055) / 1.055) ** 2.4
+    return 0.2126 * f(c[0]) + 0.7152 * f(c[1]) + 0.0722 * f(c[2])
+
+
+def _ratio(a, b):
+    x, y = sorted((_lum(a), _lum(b)), reverse=True)
+    return (x + 0.05) / (y + 0.05)
+
+
+def painted(page, idx):
+    """Ink and backdrop as painted, for failing text node `idx`, or None.
+
+    The computed check reads the nearest opaque background-color among the
+    node's ancestors. That misses anything painted by another layer: a
+    positioned sibling block, a pseudo-element, a background image. Pages
+    that put numerals on a coloured block do exactly that, and get flagged
+    against a colour that is not behind the text at all.
+
+    So shoot the node twice, text visible and text made transparent. The
+    pixels that changed are the glyphs. The backdrop is read from the
+    hidden shot at those same pixels, so it is what sits under the letters,
+    not the most common colour in the box. The ink is the most common
+    changed pixel; anti-aliasing can only pull that toward the backdrop,
+    which lowers the ratio, so this errs toward failing, never toward
+    passing.
+    """
+    from collections import Counter
+    handle = page.evaluate_handle("i => (window.__rcFail || [])[i]", idx)
+    el = handle.as_element()
+    if el is None:
+        return None
+    try:
+        el.scroll_into_view_if_needed(timeout=2000)
+        on = el.screenshot(timeout=5000)
+        el.evaluate("""e => { e.__rcStyle = e.getAttribute('style');
+            for (const p of ['color', '-webkit-text-fill-color', 'fill'])
+              e.style.setProperty(p, 'transparent', 'important');
+            e.style.setProperty('text-shadow', 'none', 'important'); }""")
+        off = el.screenshot(timeout=5000)
+        el.evaluate("""e => { if (e.__rcStyle === null) e.removeAttribute('style');
+            else e.setAttribute('style', e.__rcStyle); }""")
+    except Exception:
+        return None
+    size_on, a = _rgb_counts(on)
+    size_off, b = _rgb_counts(off)
+    if size_on != size_off:
+        return None
+    changed = [i for i in range(len(a)) if a[i] != b[i]]
+    if not changed:
+        return None
+    ink = Counter(a[i] for i in changed).most_common(1)[0][0]
+    back = Counter(b[i] for i in changed).most_common(1)[0][0]
+    return {"ink": "#%02X%02X%02X" % ink, "backdrop": "#%02X%02X%02X" % back,
+            "ratio": round(_ratio(ink, back), 2)}
+
+
+def repaint(page, text):
+    """Re-measure every failing text node from pixels. Returns a summary.
+
+    A node passes only if what is painted passes. Without Pillow nothing is
+    re-measured and every computed failure stands: this fails closed.
+    """
+    failing = [t for t in text if t["ratio"] < t["need"] and "idx" in t]
+    try:
+        import PIL  # noqa: F401
+    except ImportError:
+        return {"state": "unavailable (Pillow not installed)", "remeasured": 0,
+                "cleared": 0}
+    done = cleared = 0
+    for t in failing[:REPAINT_CAP]:
+        p = painted(page, t["idx"])
+        if not p:
+            continue
+        done += 1
+        t["computed_ratio"] = t["ratio"]
+        t["ratio"] = p["ratio"]
+        t["painted"] = p
+        if p["ratio"] >= t["need"]:
+            cleared += 1
+    return {"state": "ran", "remeasured": done, "cleared": cleared,
+            "not_remeasured": len(failing) - done}
+
+
 def measure(path, width=1280, height=800, reduced_motion=None, screenshot=None,
-            allow_network=False):
+            allow_network=False, repaint_failures=False):
     """Render the page and read what the browser computed.
 
     Third-party requests are blocked by default. Two reasons, and the second
@@ -204,6 +328,8 @@ def measure(path, width=1280, height=800, reduced_motion=None, screenshot=None,
             pass          # slow third-party asset; measure what rendered
         page.wait_for_timeout(300)
         data = page.evaluate(PAGE_SCRIPT)
+        if repaint_failures:
+            data["repaint"] = repaint(page, data["text"])
         if screenshot:
             page.screenshot(path=screenshot, full_page=True)
         browser.close()
@@ -283,7 +409,7 @@ def findings_for(desktop, touch, motion_off):
 def report(path, args):
     net = getattr(args, "allow_network", False)
     desktop = measure(path, 1280, 800, screenshot=args.screenshot,
-                      allow_network=net)
+                      allow_network=net, repaint_failures=True)
     touch = measure(path, 390, 844, allow_network=net)
     motion_off = measure(path, 1280, 800, reduced_motion="reduce",
                          allow_network=net)
@@ -309,7 +435,8 @@ def report(path, args):
                      "targets": len(touch["targets"]),
                      "animated_after_reduce": len(motion_off["animated"]),
                      "blocked_requests": desktop.get("blocked_requests", []),
-                     "author_style_rules": desktop.get("author_style_rules", 0)},
+                     "author_style_rules": desktop.get("author_style_rules", 0),
+                     "repainted": desktop.get("repaint")},
         "findings": found,
         "aa_failures": len(fails),
         "inconclusive": inconclusive,
@@ -394,14 +521,59 @@ def selftest():
     cdn_only = """<!doctype html><html><head>
       <link rel="stylesheet" href="https://cdn.example.invalid/all.css">
       </head><body><p>Text</p><button>Go</button></body></html>"""
+    # Numerals on a block painted by a positioned sibling. The nearest
+    # opaque ancestor is navy, so computed colours say 1.25:1; what is
+    # painted behind the glyphs is copper, 4.89:1 for 40px text.
+    sibling_ok = """<!doctype html><html><head><style>
+      body{background:#fff;margin:0;font-family:system-ui}
+      .box{position:relative;background:#0a2a3f;width:400px;height:120px}
+      .blk{position:absolute;inset:0;background:#b87333}
+      .num{position:relative;color:#1a1207;font-size:40px;font-weight:600}
+    </style></head><body><div class="box"><div class="blk"></div>
+      <div class="num">01</div></div></body></html>"""
+    # The same layout with a block that really is too dark behind the text.
+    sibling_bad = sibling_ok.replace("#b87333", "#2a2e33")
+    # A wordmark drawn in SVG: painted by fill, while CSS color is navy.
+    svg_text = """<!doctype html><html><head><style>
+      body{background:#fff;margin:0;font-family:system-ui}
+      .tile{background:#0a2a3f;color:#0a2a3f;padding:12px;width:240px}
+    </style></head><body><div class="tile">
+      <svg width="220" height="60" role="img" aria-label="Wordmark">
+      <text x="0" y="42" font-size="32" fill="#eaf2f6">WORDMARK</text></svg>
+      </div></body></html>"""
+    # A label in an SVG that its viewBox scales to half size. font-size 30 is
+    # in user units; on screen it is 15px, so it needs 4.5:1, and #888 on
+    # white is 3.54:1. Judged at 30px it would pass as large text.
+    svg_scaled = """<!doctype html><html><head><style>
+      body{background:#fff;margin:0;font-family:system-ui}
+    </style></head><body>
+      <svg width="200" height="40" viewBox="0 0 400 80" role="img" aria-label="Label">
+      <text x="10" y="55" font-size="30" fill="#888888">LABEL</text></svg>
+      </body></html>"""
     checks = []
     d = tempfile.mkdtemp(prefix="render-selftest-")
     try:
+        for name, html, want_fail, label in (
+                ("sibling-ok", sibling_ok, False,
+                 "text on a block painted by a sibling is measured as painted"),
+                ("sibling-bad", sibling_bad, True,
+                 "a sibling-painted block that really fails still fails"),
+                ("svg-text", svg_text, False,
+                 "SVG text is measured by its fill, not its CSS color")):
+            p = os.path.join(d, name + ".html")
+            open(p, "w").write(html)
+            res = report(p, argparse.Namespace(screenshot=None))
+            checks.append((label, (res["verdict"] == "FAIL") == want_fail))
         p = os.path.join(d, "cdn.html")
         open(p, "w").write(cdn_only)
         res = report(p, argparse.Namespace(screenshot=None))
         checks.append(("a CDN-styled page offline is INCONCLUSIVE, not a verdict",
                        res["verdict"] == "INCONCLUSIVE"))
+        p = os.path.join(d, "svg-scaled.html")
+        open(p, "w").write(svg_scaled)
+        res = report(p, argparse.Namespace(screenshot=None))
+        checks.append(("scaled-down SVG text is judged at its displayed size",
+                       "RC1" in {f["id"] for f in res["findings"]}))
         for name, html in (("bad", bad), ("good", good)):
             p = os.path.join(d, name + ".html")
             open(p, "w").write(html)
@@ -449,7 +621,7 @@ def main():
             "It is optional. Everything else in this skill works without it.\n"
             "To add it:\n"
             "  python3 -m venv .venv\n"
-            "  .venv/bin/pip install playwright\n"
+            "  .venv/bin/pip install playwright pillow\n"
             "  .venv/bin/playwright install chromium\n"
             "Then run this script with .venv/bin/python.\n")
         return 2

@@ -1,5 +1,5 @@
 {
-  "register_version": "2026.10",
+  "register_version": "2026.10.1",
   "comment": "Machine-readable rules derived from reference/tells-register.md. Every rule id maps to a register entry. Weights follow the measured evidence in research file 04 (12 verified AI-generated repos) and the register's verification pass.",
   "provenance": [
     {
@@ -567,7 +567,14 @@
       "correlate",
       "underscore"
     ],
-    "ai_cadence_comment": "Era-tagged, because AI vocabulary turns over about every 12-18 months. Structural phrases in ai_cadence are shapes, not fashions, and hold across eras. The 2023 bucket is kept as a legacy signal: Wikipedia's Signs of AI writing records that 'delve' dropped off sharply in 2025. The 2025 bucket needs a higher bar than the others because those are ordinary marketing words - flagging 'enhance' on its own would be wrong far more often than right. Re-check by 2027-03. Source: M11."
+    "ai_cadence_comment": "Era-tagged, because AI vocabulary turns over about every 12-18 months. Structural phrases in ai_cadence are shapes, not fashions, and hold across eras. The 2023 bucket is kept as a legacy signal: Wikipedia's Signs of AI writing records that 'delve' dropped off sharply in 2025. The 2025 bucket needs a higher bar than the others because those are ordinary marketing words - flagging 'enhance' on its own would be wrong far more often than right. Re-check by 2027-03. Source: M11.",
+    "banned_markers": {
+      "attribute": "data-copy-check",
+      "value": "banned",
+      "class_tokens": ["no", "dont", "do-not", "ban", "banned", "never", "avoid"],
+      "tags": ["del", "s"]
+    },
+    "banned_markers_comment": "Text inside an element the page marks as banned is mentioned, not used: a brand book's list of words it never uses is not those words in use. Such an element has the attribute above with that value, a class token from class_tokens (or a BEM modifier like card--dont), or is one of tags. Its text is dropped from the vocabulary tells (buzzwords, cadence, em-dashes, fake proof, placeholders) in both copy_check.py and ai_tell_scan.py, and is still graded for reading level, because someone still reads it. Added 2026-10-11 after the LINTEL brand book's ban list was reported as buzzwords in use. Register: Part 5."
   },
   "craft_checks": {
     "comment": "These are quality/accessibility failures, NOT proof of AI. They feed the craft score. Thresholds are cited in reference/accessibility.md.",

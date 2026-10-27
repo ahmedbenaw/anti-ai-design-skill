@@ -14,6 +14,11 @@ What it does, in plain words:
      fake-proof numbers. These use the same rules.json as the code scanner.
 
   It works on .md, .txt, and .html files (HTML tags are stripped first).
+  Given a stylesheet or a component (.css, .scss, .jsx, .tsx, .js, .ts,
+  .vue, .svelte, .astro), it grades only the copy inside it: text a user
+  sees or hears. Imports, class names, comments and logic are never prose.
+  A page's own ban list is read for readability but never counted as the
+  words in use (rules.json copy_tells.banned_markers; register Part 5).
 
 Usage:
   python3 copy_check.py README.md page.html
@@ -34,7 +39,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 # One loader, used by both run() and selftest(). They read the same rule file
 # as ai_tell_scan.py, so a copy tell and a code tell can never drift apart.
 sys.path.insert(0, HERE)
-from ai_tell_scan import load_rules, fingerprint  # noqa: E402
+from ai_tell_scan import load_rules, fingerprint, drop_banned  # noqa: E402
 VOWELS = "aeiouy"
 
 
@@ -71,6 +76,331 @@ def strip_markdown(text):
     return text
 
 
+# --- Copy inside code --------------------------------------------------------
+# A stylesheet or a component is code with a little copy in it. Graded whole,
+# LINTEL's app.css scored reading grade 627 and two components scored 19 and
+# 20 on their import lines, and every session that touched one failed the
+# stop hook with nothing an edit could fix. So only the copy is pulled out.
+
+STYLE_EXTS = (".css", ".scss", ".sass", ".less")
+SCRIPT_EXTS = (".jsx", ".tsx", ".js", ".mjs", ".cjs", ".ts", ".mts", ".cts")
+TEMPLATE_EXTS = (".vue", ".svelte", ".astro")
+NO_JSX_EXTS = (".ts", ".mts", ".cts")      # `<Foo>x` there is a type cast
+
+# Attributes a user sees or hears. Their values are copy even when short, so
+# aria-label="Unlock Pro" is read. Any other attribute counts only when its
+# value reads as a sentence, which a class list or an SVG path never does.
+VISIBLE_ATTRS = {"alt", "title", "placeholder", "label", "aria-label",
+                 "aria-description", "aria-placeholder", "aria-roledescription",
+                 "aria-valuetext"}
+# Strings passed to these are for developers: logs, test names, module paths.
+DEV_CALLS = {"console", "describe", "it", "test", "expect", "require", "import"}
+DEV_ERRORS = {"Error", "TypeError", "RangeError"}
+# A string in code is copy when most of it is words and one of them is a
+# word only sentences have. "flex items-center", "warning" and "M4 12a8 8"
+# never contain one; "Your draft was saved" does. "a" and "i" are left out:
+# as single letters they are also tag names and SVG commands.
+FUNCTION_WORDS = {"an", "the", "and", "or", "but", "to", "of", "in", "on",
+                  "at", "for", "with", "from", "by", "as", "is", "are", "was",
+                  "be", "it", "its", "this", "that", "we", "you", "your", "our",
+                  "us", "my", "not", "no", "can", "will", "if", "all"}
+# A string that holds a stylesheet or a piece of markup (a shadow-DOM style
+# block, an innerHTML template) is read the way that file type would be.
+_CSS_LIKE = re.compile(r"/\*|[\w-]+\s*:\s*[^;{}()\n]+;\s*[\w-]+\s*:"
+                       r"|\(\s*[\w-]+\s*:\s*[\w.-]+\s*\)")
+_MARKUP_LIKE = re.compile(r"<([A-Za-z][\w-]*)\b[^<>]*>.*?</\1\s*>", re.DOTALL)
+# Closing one of these ends a sentence: the list strip_html uses. A capitalised
+# component (a <Badge>, a <Card>) is a block of its own and ends one too.
+SENTENCE_TAGS = {"p", "li", "h1", "h2", "h3", "h4", "h5", "h6", "td", "th",
+                 "tr", "div", "section", "article", "nav", "header", "footer",
+                 "button", "a", "dt", "dd", "label", "figcaption", "summary"}
+VOID_TAGS = {"area", "base", "br", "col", "embed", "hr", "img", "input",
+             "link", "meta", "source", "track", "wbr"}
+_WORD = re.compile(r"[^\w]*[A-Za-z][A-Za-z'\u2019-]*[^\w]*")
+_TAG_NAME = re.compile(r"<([A-Za-z][\w.:-]*)?")
+_ATTR_NAME = re.compile(r"[@:#]?[A-Za-z_][\w:.@-]*")
+_CLOSE_TAG = re.compile(r"</\s*([A-Za-z][\w.:-]*)?\s*>")
+_ESCAPE = re.compile(r"\\(?:u\{([0-9a-fA-F]+)\}|u([0-9a-fA-F]{4})|x([0-9a-fA-F]{2}))")
+
+
+def _has_letters(s):
+    return bool(re.search(r"[A-Za-z]", s))
+
+
+def _reads_as_sentence(s):
+    toks = s.split()
+    if len(toks) < 2:
+        return False
+    words = [t for t in toks if _WORD.fullmatch(t)]
+    return (len(words) >= 0.6 * len(toks)
+            and any(w.strip(".,;:!?\"'()").lower() in FUNCTION_WORDS for w in words))
+
+
+def _reads_as_label(s):
+    """Short visible text, like a button label. One lower-case token is a
+    value ("warning", "elevated"), not copy."""
+    return _has_letters(s) and not re.fullmatch(r"[a-z][\w.:-]*", s)
+
+
+def _dev_call(callee):
+    return callee.split(".")[0] in DEV_CALLS or callee in DEV_ERRORS
+
+
+class _CopyScanner:
+    """Walks a component and keeps only what a user would read.
+
+    Three modes, entered by the brackets that start them: code (a string is
+    kept only when it reads as a sentence), a tag (attributes a user sees are
+    kept), and a tag's children (text is kept). It is not a parser. Anything
+    that does not look like a tag stays code, so a comparison or a TypeScript
+    generic is never read as markup, and an apostrophe in "It's" or the // in
+    a URL never starts a string or a comment, because text is not code.
+    """
+
+    def __init__(self, src, expr="{", lenient=False, jsx=True):
+        self.s, self.n = src, len(src)
+        self.expr = expr          # what opens an expression in text: { or {{
+        self.lenient = lenient    # templates may leave a <p> or <li> open
+        self.jsx = jsx
+        self.out, self.run, self.stack = [], [], []
+
+    def keep(self, text, test):
+        text = " ".join(re.sub(r"&#?\w+;", " ", text).split())
+        if text and test(text):
+            self.out.append(text)
+
+    def flush(self):
+        self.keep("".join(self.run), _has_letters)
+        self.run = []
+
+    def string(self, i):
+        """The string literal at i: (index after it, its text)."""
+        s, q = self.s, self.s[i]
+        j, text = i + 1, []
+        while j < self.n:
+            c = s[j]
+            if c == "\\":
+                esc = _ESCAPE.match(s, j)
+                if esc:                                 # \u2014 is a dash, not "u2014"
+                    text.append(chr(int(next(g for g in esc.groups() if g), 16)))
+                    j = esc.end()
+                    continue
+                nxt = s[j + 1:j + 2]
+                text.append(" " if nxt in "nrt" else nxt)
+                j += 2
+            elif c == q:
+                return j + 1, "".join(text)
+            elif q == "`" and s.startswith("${", j):
+                text.append(" ")
+                j = self.code(j + 2, "}", quiet=True)
+            elif c == "\n" and q != "`":
+                break                 # not a string after all; resync at the line end
+            else:
+                text.append(c)
+                j += 1
+        return j, "".join(text)
+
+    def code(self, i, close=None, quiet=False, visible=False):
+        """Scan JavaScript from i up to the bracket `close`; index after it."""
+        s = self.s
+        while i < self.n:
+            c = s[i]
+            if c == close:
+                return i + 1
+            if s.startswith("//", i) and s[i - 1:i] != ":":    # not the // in https://
+                j = s.find("\n", i)
+                i = self.n if j < 0 else j
+            elif s.startswith("/*", i):
+                j = s.find("*/", i + 2)
+                i = self.n if j < 0 else j + 2
+            elif c in "\"'`":
+                i, text = self.string(i)
+                if quiet:
+                    pass
+                elif _MARKUP_LIKE.search(text):
+                    self.keep(strip_html(text), _has_letters)
+                elif _CSS_LIKE.search(text):
+                    self.keep(code_copy("embedded.css", text), _has_letters)
+                else:
+                    self.keep(text, _reads_as_label if visible else _reads_as_sentence)
+            elif c in "([{":
+                callee = re.search(r"([\w$.]+)\s*$", s[max(0, i - 60):i]) if c == "(" else None
+                dev = bool(callee) and _dev_call(callee.group(1))
+                i = self.code(i + 1, ")]}"["([{".index(c)], quiet or dev, visible)
+            elif c == "<" and self.markup_starts(i):
+                i = self.element(i) or i + 1
+            else:
+                i += 1
+        return i
+
+    def markup_starts(self, i):
+        """Is the < at i a tag? Not after a name or a bracket, where it is a
+        comparison or a generic (`a<b`, `useState<number>`), unless the name
+        is a keyword such as `return`."""
+        nxt = self.s[i + 1:i + 2]
+        if not self.jsx or not (nxt.isalpha() or nxt == ">"):
+            return False
+        before = self.s[max(0, i - 40):i].rstrip()
+        if before and (before[-1].isalnum() or before[-1] in "_$)]"):
+            return bool(re.search(r"\b(?:return|yield|default|case|else|do|in|of|await)$", before))
+        return True
+
+    def attributes(self, j):
+        """Read a tag's attributes: (index after the tag, self-closed), or
+        None when this was not a tag after all."""
+        s = self.s
+        while j < self.n:
+            while j < self.n and s[j].isspace():
+                j += 1
+            if s.startswith("/>", j):
+                return j + 2, True
+            if s.startswith(">", j):
+                return j + 1, False
+            if s.startswith("{", j):                    # {...props}
+                j = self.code(j + 1, "}", quiet=True)
+                continue
+            m = _ATTR_NAME.match(s, j)
+            if not m or m.group(0) == "extends":       # <T extends X>: a generic
+                return None
+            attr, j = m.group(0), m.end()
+            while j < self.n and s[j].isspace():
+                j += 1
+            if not s.startswith("=", j):
+                continue                                # a bare flag: disabled
+            j += 1
+            while j < self.n and s[j].isspace():
+                j += 1
+            visible = re.sub(r"^(?:v-bind)?:", "", attr).lower() in VISIBLE_ATTRS
+            test = _reads_as_label if visible else _reads_as_sentence
+            q = s[j:j + 1]
+            if q and q in "\"'":
+                end = s.find(q, j + 1)
+                if end < 0:
+                    return None
+                if attr[0] in ":@#" or attr.startswith("v-"):   # Vue: the value is code
+                    self.code(j + 1, q, visible=visible)
+                else:
+                    self.keep(re.sub(r"\{[^{}]*\}", " ", s[j + 1:end]), test)
+                j = end + 1
+            elif q == "{":
+                j = self.code(j + 1, "}", visible=visible)
+            else:
+                m = re.compile(r"[^\s>]*").match(s, j)  # unquoted HTML value
+                j = m.end()
+        return None
+
+    def element(self, i):
+        """The element at i and everything inside it: index after it, or
+        None when this < turned out not to be a tag. A tag that never closes
+        in a script file was a comparison, so what it collected is dropped."""
+        m = _TAG_NAME.match(self.s, i)
+        name = m.group(1) or ""                         # "" is a fragment, <>
+        kept = (len(self.out), len(self.run))
+        after = self.attributes(m.end())
+        if after is None:
+            return None
+        j, closed = after
+        low = name.lower()
+        if closed or low in VOID_TAGS:
+            return j
+        if low in ("script", "style"):
+            end = self.s.lower().find("</" + low, j)
+            end = self.n if end < 0 else end
+            if low == "script":
+                inner = _CopyScanner(self.s[j:end])
+                inner.code(0)
+                self.out += inner.out
+            k = self.s.find(">", end)
+            return self.n if k < 0 else k + 1
+        self.stack.append(low)
+        k = self.children(j, low)
+        self.stack.pop()
+        if k is None:
+            del self.out[kept[0]:]
+            del self.run[kept[1]:]
+            return None
+        if low in SENTENCE_TAGS or name[:1].isupper():
+            self.flush()
+        else:
+            self.run.append(" ")                        # an inline tag still separates words
+        return k
+
+    def children(self, j, name):
+        """Text inside an element, up to its closing tag."""
+        s = self.s
+        while j < self.n:
+            if s.startswith("</", j):
+                m = _CLOSE_TAG.match(s, j)
+                if m:
+                    closing = (m.group(1) or "").lower()
+                    if closing == name:
+                        return m.end()
+                    if closing in self.stack[:-1]:
+                        return j                        # a parent closes: this was left open
+                    j = m.end()                         # a stray closing tag
+                    continue
+            if s.startswith("<!--", j):
+                k = s.find("-->", j)
+                j = self.n if k < 0 else k + 3
+                continue
+            if s.startswith("<", j) and (s[j + 1:j + 2].isalpha() or s[j + 1:j + 2] == ">"):
+                self.run.append(" ")
+                k = self.element(j)
+                if k:
+                    j = k
+                    continue
+            if s.startswith(self.expr, j):
+                self.run.append(" ")                    # a value filled in at runtime
+                j = self.code(j + len(self.expr), "}")
+                if self.expr == "{{" and s.startswith("}", j):
+                    j += 1
+                continue
+            self.run.append(s[j])
+            j += 1
+        return j if self.lenient else None
+
+
+def code_copy(name, raw):
+    """The copy in a stylesheet or component, one fragment per sentence."""
+    low = name.lower()
+    if low.endswith(STYLE_EXTS):
+        # Only `content:` is ever shown to a user. Comments are for developers.
+        body = re.sub(r"/\*.*?\*/", " ", raw, flags=re.DOTALL)
+        if not low.endswith(".css"):
+            body = re.sub(r"(?m)(?:^|\s)//.*$", " ", body)
+        frags = [re.sub(r"\\[0-9a-fA-F]{1,6}\s?", " ", m.group(2)).strip()
+                 for m in re.finditer(
+                     r"(?<![\w-])content\s*:\s*([\"'])((?:\\.|(?!\1).)*)\1", body)]
+        return ". ".join(f for f in frags if _has_letters(f))
+    if low.endswith(SCRIPT_EXTS):
+        sc = _CopyScanner(raw, jsx=not low.endswith(NO_JSX_EXTS))
+        sc.code(0)
+    else:
+        sc = _CopyScanner(raw, expr="{{" if low.endswith(".vue") else "{", lenient=True)
+        start = 0
+        front = re.match(r"\s*---\r?\n(.*?)\r?\n---", raw, re.DOTALL)
+        if low.endswith(".astro") and front:            # Astro's frontmatter is code
+            inner = _CopyScanner(front.group(1))
+            inner.code(0)
+            sc.out += inner.out
+            start = front.end()
+        sc.children(start, "")
+    sc.flush()
+    return ". ".join(sc.out)
+
+
+def copy_of(name, raw):
+    """What a reader actually reads in this file, as plain text."""
+    low = name.lower()
+    if low.endswith((".html", ".htm")):
+        return strip_html(raw)
+    if low.endswith((".md", ".mdx")):
+        return strip_markdown(raw)
+    if low.endswith(STYLE_EXTS + SCRIPT_EXTS + TEMPLATE_EXTS):
+        return code_copy(low, raw)
+    return raw
+
+
 def count_syllables(word):
     """Rough but consistent syllable estimate - fine for grade scoring."""
     word = word.lower().strip(".,;:!?\"'()")
@@ -104,14 +434,17 @@ def fk_grade(text):
 
 
 def check_text(name, raw, rules, max_grade):
-    text = raw
-    if name.endswith((".html", ".htm")):
-        text = strip_html(text)
-    if name.endswith((".md", ".mdx")):
-        text = strip_markdown(text)
+    # Two views of one file. `text` is everything a reader reads, and the
+    # reading checks run on it. `used` drops what the page marks as banned:
+    # a brand book's list of words it never uses is still read, so it is
+    # still graded, but it is not those words in use, so every check after
+    # the reading checks - placeholders, buzzwords, cadence, dashes, fake
+    # proof - runs on `used`. Register Part 5.
+    text = copy_of(name, raw)
+    used_raw = drop_banned(raw, rules["copy_tells"].get("banned_markers"))
+    used = copy_of(name, used_raw)
 
     findings = []
-    lower = text.lower()
 
     grade = fk_grade(text)
     if grade is not None and grade > max_grade:
@@ -133,7 +466,7 @@ def check_text(name, raw, rules, max_grade):
     ph = re.findall(
         r"\[\s*(?:[A-Z]{2,}(?: [A-Z]{2,})+|(?:NAME|ADDRESS|PHONE|EMAIL|CITY|PRICE|DATE|COMPANY|LOGO|TBD|XXX+)\b[A-Z ]{0,40}|[A-Za-z ]{2,30}\bname|"
         r"(?:Street|Address|Phone|Email|Logo|Your|Landmark|Company|Insert|Placeholder)\b[^\]]{0,40})\s*\]",
-        text)
+        used)
     if ph:
         findings.append((
             f"Shipped placeholder(s): {', '.join(dict.fromkeys(p.strip() for p in ph[:3]))}",
@@ -143,12 +476,13 @@ def check_text(name, raw, rules, max_grade):
     # Headings are labels and cited titles, not the author's own marketing
     # copy. A paper called "Unlocking ..." is a proper noun, not a buzzword.
     # Drop headings from the RAW text, before the markdown marks are stripped.
-    if name.endswith((".md", ".mdx")):
-        body_raw = "\n".join(ln for ln in raw.splitlines()
+    markdown = name.lower().endswith((".md", ".mdx"))
+    if markdown:
+        body_raw = "\n".join(ln for ln in used_raw.splitlines()
                              if not re.match(r"^\s*#", ln))
         body_only = strip_markdown(body_raw).lower()
     else:
-        body_only = lower
+        body_only = used.lower()
     buzz = sorted({w for w in ct["transformation_verbs"] if w in body_only})
     if buzz:
         findings.append((
@@ -169,13 +503,13 @@ def check_text(name, raw, rules, max_grade):
                 "AI cadence phrases (%s): %s" % (era, ", ".join(hits[:4])),
                 "Rewrite in the words you would say out loud to a customer."))
 
-    words_n = max(len(text.split()), 1)
+    words_n = max(len(used.split()), 1)
     # Count dashes in running prose only. A dash used as a separator in a
     # heading ("Part 1 - Setup") or a list label ("- `cmd` - what it does")
     # is typography, not the AI writing cadence the register describes.
-    # For HTML, count in the visible text: script payloads (Next.js data,
-    # translations) carry their own dashes and are not the author's voice.
-    source = text if name.lower().endswith((".html", ".htm")) else raw
+    # For HTML and code, count in the visible text: script payloads (Next.js
+    # data, translations) and `calc(100% - 2rem)` are not the author's voice.
+    source = used_raw if markdown else used
     no_code = re.sub(r"```.*?```", " ", source, flags=re.DOTALL)
     no_code = re.sub(r"\A---.*?---", " ", no_code, flags=re.DOTALL)
     prose_lines = []
@@ -194,7 +528,7 @@ def check_text(name, raw, rules, max_grade):
             "Most can become commas, colons, or full stops."))
 
     for pat in ct["fake_proof_regex"]:
-        m = re.search(pat, text)
+        m = re.search(pat, used)
         if m:
             findings.append((
                 f"Unverifiable-looking stat: \"{m.group(0)}\"",
@@ -301,8 +635,183 @@ BRACKETS_OK_COPY = """<p>See the register [1] and press [Enter] to continue. The
 <p>[NOTE] Grab the menu as a [PDF]. Shipping by [DHL]. Press [ESC] to close. [BETA] features are marked.</p>"""
 
 
+# Code is not copy. These are the shapes that failed the stop hook on the
+# LINTEL repo on 2026-10-11: a stylesheet graded 627 and two components graded
+# 19 and 20 on their import lines. The comments carry an apostrophe and a URL
+# on purpose, because each one breaks a naive reader.
+STYLESHEET = """/* Reset. Don't touch: see https://lintel.app/docs/tokens for why the
+   scale is fixed and what happens to the whole layout when someone changes it. */
+* { box-sizing: border-box; } html { scroll-behavior: smooth; }
+body { margin: 0; font: 400 1rem/1.5 var(--lin-font-body); }
+.lin-bar { display: flex; justify-content: space-between; width: calc(100% - 2rem); }
+.lin-bar > span { padding: 0 var(--lin-space-2) - 1px; }
+.lin-step::before { content: "\\2192"; }"""
+STYLESHEET_COPY = '.badge-new::after { content: "Unlock seamless savings"; }'
+
+COMPONENT = """import React from "react";
+import { Badge } from "../atoms/Badge.jsx";
+
+// Owner is a placeholder when omitted: a real name belongs to a real account,
+// never to a component default. See https://lintel.app/docs/owners - it's long.
+const STAGE_CSS = `
+  /* The stage keeps its own black so the page never flashes white on load. */
+  :host { position: fixed; inset: 0; display: block; }
+  @media (hover: hover) { .rail { opacity: 0; } }`;
+const INLINE_TAGS = "a abbr b bdi bdo br cite code del dfn em i ins kbd mark q s samp small span";
+
+export function DecisionRecord({ recommendation, ruling, owner, when, items }) {
+  const [open, setOpen] = useState<boolean>(false);
+  const tone = owner && items.length < 3 ? "info" : "warning";
+  return (
+    <section className="lin-decision-record grid gap-4" aria-label="Delivery decision record">
+      <div><span>Recommendation</span><strong>{recommendation}</strong></div>
+      <div><span>Current ruling</span><strong>{ruling}</strong></div>
+      <p><strong>Option A</strong><span>Baseline first</span></p>
+      <Badge tone={tone} data-action="decide">Final owner · {owner || "\\u2014 the name on your account"}</Badge>
+      {when ? <span className={cn("lin-micro", "text-sm")}>{when}</span> : null}
+      <svg viewBox="0 0 24 24"><path d="M 4 12 a 8 8 0 1 0 16 0 a 8 8 0 1 0 -16 0" /></svg>
+    </section>
+  );
+}"""
+# Words that must never reach the grader from COMPONENT: an import, a path,
+# a comment, a class name, an enum value, an SVG path, a style block, a list
+# of tag names, and an escape read as letters.
+CODE_LEAKS = ("import", "react", "badge.jsx", "placeholder", "lintel.app",
+              "lin-", "gap-4", "warning", "decide", "viewbox", "16 0",
+              "position", "flashes", "hover", "abbr", "u2014")
+
+SLOP_COMPONENT = """import { Sparkles } from "lucide-react";
+
+const features = [
+  { title: "Built for teams", body: "Unlock seamless collaboration with an all-in-one workspace for your team." },
+];
+const card = `<div class="card"><p>Supercharge every release with ${name}.</p></div>`;
+
+export default function Hero() {
+  return (
+    <section className="hero">
+      <h1>Elevate your workflow with our cutting-edge platform.</h1>
+      <p>It's not just a tool. In today's fast-paced world, it's a revolution.</p>
+      <a href="/start" aria-label="Trusted by 10,000+ teams">Get started</a>
+      {features.map((f) => <p key={f.title}>{f.body}</p>)}
+    </section>
+  );
+}"""
+
+# A .ts file cannot hold JSX: `<HTMLElement>x` is a type cast, and what
+# follows it is code, never text. The sentence string is still copy.
+TYPESCRIPT = """const el = <HTMLElement>document.querySelector("main");
+const note = "Your draft was saved to this device.";
+if (el.childElementCount < 3) { el.dataset.state = "empty"; }"""
+
+# The same rule for the three template formats: script and frontmatter strings
+# are read only when they read as sentences, and an import never is.
+TEMPLATE_PAGES = {
+    "Hero.vue": """<script setup>
+import Badge from "./Badge.vue";
+const note = "Welcome to the future of seamless invoicing for your bakery.";
+</script>
+<template>
+  <section class="hero">
+    <h1>Elevate your workflow with our cutting-edge platform.</h1>
+    <p :title="note">{{ note }}</p>
+  </section>
+</template>
+<style scoped>.hero { justify-content: space-between; }</style>""",
+    "Hero.svelte": """<script>
+  import Badge from "./Badge.svelte";
+  const note = "Welcome to the future of seamless invoicing for your bakery.";
+</script>
+<section class="hero">
+  <h1>Elevate your workflow with our cutting-edge platform.</h1>
+  {#if note}<p>{note}</p>{/if}
+</section>
+<style>.hero { justify-content: space-between; }</style>""",
+    "Hero.astro": """---
+import Layout from "../layouts/Layout.astro";
+const note = "Welcome to the future of seamless invoicing for your bakery.";
+---
+<Layout title="Home">
+  <section class="hero">
+    <h1>Elevate your workflow with our cutting-edge platform.</h1>
+    <p>{note}</p>
+  </section>
+</Layout>""",
+}
+
+# A brand book's own ban list, nested the way the LINTEL book nests it: a box,
+# a label, then the list. Mentioned, not used, so no vocabulary finding. The
+# long item stays in on purpose: a ban list is still read, so it is still
+# graded for readability, and that finding must survive the exclusion.
+BANLIST_PAGE = """<section><h3>Words that never appear</h3>
+<p>Every word on this page is one we chose. The list below is closed.</p>
+<div class="specbox no"><div class="speclbl">English</div><ul>
+<li>Seamless · robust · cutting-edge · revolutionary</li>
+<li>Unlock · empower · supercharge · elevate</li>
+<li>Delve · tapestry · testament · landscape</li>
+<li>Any sentence that runs on and on past twenty-five words because the writer would not stop to think about where one idea ends and the next idea begins.</li>
+</ul></div>
+<ul data-copy-check="banned"><li>Trusted by 10,000+ teams</li><li>[ COMPANY NAME ]</li></ul>
+<p>Write <del>leverage</del> use.</p></section>"""
+# The same page, using two of the banned words in its own voice. Those count.
+BANLIST_USED_PAGE = BANLIST_PAGE + "<p>Unlock seamless reporting for your team.</p>"
+
+
 def selftest():
     rules = load_rules()
+    problems = []
+
+    def says(findings, word):
+        return any(word in f[0].lower() for f in findings)
+
+    css_grade, f_css = check_text("app.css", STYLESHEET, rules, 9)
+    if f_css or css_grade is not None:
+        problems.append(f"a stylesheet was graded as prose: grade {css_grade}, {[x[0] for x in f_css]}")
+    _, f_css2 = check_text("badges.css", STYLESHEET_COPY, rules, 9)
+    if not says(f_css2, "unlock"):
+        problems.append(f"a buzzword in a CSS content: string was not read: {[x[0] for x in f_css2]}")
+    comp_copy = copy_of("DecisionRecord.jsx", COMPONENT).lower()
+    leaks = [w for w in CODE_LEAKS if w in comp_copy]
+    if leaks:
+        problems.append(f"code reached the grader from a component: {leaks} in {comp_copy!r}")
+    for want in ("delivery decision record", "recommendation", "the name on your account",
+                 "option a baseline first"):
+        if want not in comp_copy:
+            problems.append(f"component copy {want!r} was not read: {comp_copy!r}")
+    _, f_comp = check_text("DecisionRecord.jsx", COMPONENT, rules, 9)
+    if f_comp:
+        problems.append(f"a clean component was flagged: {[x[0] for x in f_comp]}")
+    _, f_slopc = check_text("Hero.jsx", SLOP_COMPONENT, rules, 9)
+    for word, where in (("elevate", "JSX text"), ("unlock", "a string in code"),
+                        ("supercharge", "markup in a template literal"),
+                        ("cadence", "JSX text with an apostrophe"),
+                        ("10,000+", "an aria-label")):
+        if not says(f_slopc, word):
+            problems.append(f"slop in {where} was not caught in a component: {[x[0] for x in f_slopc]}")
+    if "sparkles" in copy_of("Hero.jsx", SLOP_COMPONENT).lower():
+        problems.append("an import reached the grader")
+    ts_copy = copy_of("store.ts", TYPESCRIPT)
+    if ts_copy != "Your draft was saved to this device.":
+        problems.append(f"a TypeScript cast was read as markup, or its copy was lost: {ts_copy!r}")
+    for fname, page in TEMPLATE_PAGES.items():
+        _, f_t = check_text(fname, page, rules, 9)
+        page_copy = copy_of(fname, page).lower()
+        if not (says(f_t, "elevate") and says(f_t, "seamless")):
+            problems.append(f"{fname}: template or script copy was not caught: {[x[0] for x in f_t]}")
+        if "import" in page_copy or "space-between" in page_copy:
+            problems.append(f"{fname}: code reached the grader: {page_copy!r}")
+
+    _, f_ban = check_text("brand.html", BANLIST_PAGE, rules, 9)
+    for word in ("buzzword", "cadence", "unverifiable", "placeholder"):
+        if says(f_ban, word):
+            problems.append(f"a ban list was scored as {word}s in use: {[x[0] for x in f_ban]}")
+    if not says(f_ban, "over 25 words"):
+        problems.append(f"the exclusion also dropped readability: {[x[0] for x in f_ban]}")
+    _, f_used = check_text("brand.html", BANLIST_USED_PAGE, rules, 9)
+    if "Buzzwords: seamless, unlock" not in [x[0] for x in f_used]:
+        problems.append("words used outside the ban list were not caught, or the list "
+                        f"leaked into them: {[x[0] for x in f_used]}")
+
     _, f5 = check_text("placeholders.html", PLACEHOLDER_COPY, rules, 9)
     _, f6 = check_text("brackets.html", BRACKETS_OK_COPY, rules, 9)
     _, f7 = check_text("react.html", REACT_COMMENTS_COPY, rules, 9)
@@ -310,7 +819,6 @@ def selftest():
     g2, f2 = check_text("clean.txt", CLEAN_COPY, rules, 9)
     _, f3 = check_text("current-era.txt", CURRENT_ERA_COPY, rules, 9)
     _, f4 = check_text("honest.txt", HONEST_MARKETING_COPY, rules, 9)
-    problems = []
     if any("dash" in x[0].lower() for x in f7):
         problems.append(f"React text-node comments counted as dashes: {[x[0] for x in f7]}")
     if not any("cadence" in x[0].lower() for x in f3):
@@ -338,7 +846,9 @@ def selftest():
         return 1
     print(f"SELFTEST: PASS (slop copy: {len(f1)} findings, grade {g1};"
           f" clean copy: 0 findings, grade {g2};"
-          f" current-era copy caught; honest copy not flagged)")
+          f" current-era copy caught; honest copy not flagged;"
+          f" stylesheet and component code not graded, their copy still caught"
+          f" in {len(TEMPLATE_PAGES) + 2} formats; a ban list read but not counted)")
     return 0
 
 
