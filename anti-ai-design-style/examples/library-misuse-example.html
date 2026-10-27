@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Harbour Lights — our story</title>
+<!--
+  FIXTURE. This page is the positive control for the library-misuse check.
+  The libraries here are fine. This use of them is not, and every fault in it
+  is one a generated scroll-story reaches for by default: smooth-scroll
+  hijacking, a reveal applied to every section at once, decoration that never
+  stops, toy easing on a serious page, and body copy hidden from a screen
+  reader so it can be animated per letter. Each fault is written the way it
+  actually appears in such a page, not as bait for a pattern.
+-->
+<style>
+  body { margin:0; background:#faf8f5; color:#1b1b1b; font-family:Georgia,serif; }
+  section { min-height:90vh; padding:72px 28px; max-width:36em; margin:0 auto; }
+  h1 { font-size:40px; font-weight:400; margin:0 0 20px; }
+  h2 { font-size:26px; font-weight:400; margin:0 0 14px; }
+  p { font-size:17px; line-height:1.6; }
+  .spinner { width:34px; height:34px; border:3px solid #1b1b1b; border-radius:50%; }
+</style>
+</head>
+<body>
+  <section>
+    <h1>Harbour Lights</h1>
+    <p>We have repaired boat engines on this quay since 1971. Three
+       generations, one workshop, the same slip at the end of Dock Road.</p>
+    <div class="spinner" aria-hidden="true"></div>
+  </section>
+
+  <section>
+    <h2>What we do</h2>
+    <p aria-hidden="true">We rebuild inboard diesels, service outboards up to
+       three hundred horsepower, and fabricate stainless fittings on site. If a
+       part is no longer made we will turn a replacement on the lathe.</p>
+  </section>
+
+  <section>
+    <h2>Getting here</h2>
+    <p>Dock Road, by the fuel berth. Call 01752 440 118 before you come; the
+       yard gate is locked outside working hours.</p>
+  </section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lenis/1.1.13/lenis.min.js"></script>
+<script>
+  // Take over the scrollbar so the whole page eases.
+  const lenis = new Lenis({ duration: 1.2, smoothWheel: true });
+  function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+  requestAnimationFrame(raf);
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Reveal every section on the way in, staggered.
+  ScrollTrigger.batch('section', {
+    onEnter: batch => gsap.from(batch, {
+      opacity: 0,
+      y: 40,
+      stagger: 0.15,
+      duration: 0.8,
+      ease: 'back.out(1.7)'
+    })
+  });
+
+  // Keep the badge turning for as long as the page is open.
+  gsap.to('.spinner', { rotation: 360, duration: 3, repeat: -1, ease: 'none' });
+</script>
+</body>
+</html>

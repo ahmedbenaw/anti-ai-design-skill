@@ -172,8 +172,16 @@ you stop anyway, because no edit to the page can fix it.
 
 - No pixel-based AI detector exists, and this skill never claims one. It
   measures code, copy and colour.
-- The library-misuse check has never discriminated in four evaluations. It
-  stays as a guard, not as evidence.
+- The library-misuse check never fired in the evaluations, and the reason is
+  sampling, not the check. Only one evaluation cell loaded an animation
+  library at all, and both pages in it used GSAP carefully, so nothing was
+  there to catch. It is now held to a pair of real pages. Both load GSAP and
+  ScrollTrigger. `examples/library-misuse-example.html` raises five rules, and
+  `examples/library-careful-example.html` raises none. The careful one is real
+  generated output, copied byte for byte out of the evaluation run. Presence
+  of the library is therefore not what separates them. One thing stays true.
+  No page in an evaluation has ever been caught by this check. It is a working
+  guard with no field catch to its name.
 - Near-grey gradients such as `#f4f4f5` still count as colour washes; a
   regex cannot judge colour distance.
 - The hooks run the browser check without network access. A page whose

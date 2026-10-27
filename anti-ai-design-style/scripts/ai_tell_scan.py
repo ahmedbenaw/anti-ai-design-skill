@@ -34,6 +34,7 @@ Exit codes: 0 = pass (AI score below threshold, no provenance hits)
 
 import argparse
 import json
+import io
 import os
 import re
 import sys
@@ -755,6 +756,33 @@ def selftest():
                   "LB9", "LB10", "LB11", "LB12"}
     missing_lib = expect_lib - lib_ids
 
+    # The minimal fixture above proves the twelve patterns match. It does not
+    # prove the check tells careful use from careless use on a real page, and
+    # that is the thing worth knowing: both pages below load GSAP and
+    # ScrollTrigger heavily, so presence of the library cannot be what
+    # separates them. The careless one is examples/library-misuse-example.html.
+    # The careful one is real generated output kept in the evaluation
+    # workspace, never edited after the fact.
+    skill = os.path.dirname(HERE)
+    pair = {
+        "careless": os.path.join(skill, "examples",
+                                 "library-misuse-example.html"),
+        # Real generated output, copied byte for byte out of the evaluation
+        # workspace (iteration-3/scroll-story-with-library/without_skill) so
+        # the pair ships with the skill. The installed skill has no workspace,
+        # and a selftest that only passes in the repo is not a selftest.
+        "careful": os.path.join(skill, "examples",
+                                "library-careful-example.html"),
+    }
+    real_lib, real_missing_files = {}, []
+    for label, path in pair.items():
+        if not os.path.exists(path):
+            real_missing_files.append(path)
+            continue
+        text = io.open(path, encoding="utf-8", errors="replace").read()
+        _, _, _, found = scan_texts({os.path.basename(path): text}, rules)
+        real_lib[label] = {f.rule_id for f in found}
+
     _, tells7, _, _ = scan_texts({"page.html": CSS_FORM_FIXTURE}, rules)
     css_missing = CSS_FORM_EXPECT - {f.rule_id for f in tells7}
     _, tells8, _, _ = scan_texts({"page.html": CSS_CLEAN_FIXTURE}, rules)
@@ -797,6 +825,17 @@ def selftest():
                         "the false-positive filter has been loosened")
     if missing_lib:
         problems.append(f"library fixture missed expected rules: {sorted(missing_lib)}")
+    for path in real_missing_files:
+        problems.append("library discrimination page is missing: " + path)
+    if not real_missing_files:
+        want = {"LB4", "LB6", "LB7"}
+        short = want - real_lib.get("careless", set())
+        if short:
+            problems.append("a real page misusing GSAP was not caught: "
+                            f"{sorted(short)} did not fire")
+        if real_lib.get("careful"):
+            problems.append("a real page using GSAP carefully was flagged: "
+                            f"{sorted(real_lib['careful'])}")
     if lib2:
         problems.append(f"clean fixture wrongly flagged for library misuse: "
                         f"{[f.rule_id for f in lib2]}")
@@ -819,7 +858,10 @@ def selftest():
         return 1
     print(f"SELFTEST: PASS (slop page scored {score1}, {len(tells1)} tells,"
           f" {len(craft1)} craft flags; clean page scored {score2};"
-          f" library fixture caught {len(lib3)} misuse rules)")
+          f" library fixture caught {len(lib3)} misuse rules;"
+          f" on real pages that both load GSAP, careless caught"
+          f" {len(real_lib.get('careless', ()))} and careful caught"
+          f" {len(real_lib.get('careful', ()))})")
     return 0
 
 

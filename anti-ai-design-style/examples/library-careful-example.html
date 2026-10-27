@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How We Make It — Siwa Olive Oil Press</title>
+<meta name="description" content="How our olive oil is made in the Siwa Oasis, Egypt: from the grove to the press to the bottle.">
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+
+<style>
+  :root {
+    --bg: #f7f3ea;
+    --ink: #2b2a26;
+    --muted: #6b6659;
+    --accent: #6d7a3d;
+    --rule: #ddd6c6;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 1.125rem;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--accent); }
+
+  header {
+    max-width: 40rem;
+    margin: 0 auto;
+    padding: 6rem 1.5rem 3rem;
+    text-align: center;
+  }
+
+  header .eyebrow {
+    font-family: var(--sans);
+    font-size: 0.8rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 1rem;
+  }
+
+  header h1 {
+    font-weight: 400;
+    font-size: clamp(2rem, 5vw, 3rem);
+    line-height: 1.15;
+    margin: 0 0 1rem;
+  }
+
+  header p { color: var(--muted); margin: 0; }
+
+  .scroll-hint {
+    font-family: var(--sans);
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 3rem;
+  }
+
+  main {
+    max-width: 40rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .step {
+    padding: 4.5rem 0;
+    border-top: 1px solid var(--rule);
+  }
+
+  .step:first-of-type { border-top: 0; }
+
+  .step .num {
+    font-family: var(--sans);
+    font-size: 0.8rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 0.75rem;
+  }
+
+  .step h2 {
+    font-weight: 400;
+    font-size: clamp(1.5rem, 3.5vw, 2rem);
+    line-height: 1.2;
+    margin: 0 0 1rem;
+  }
+
+  .step p { margin: 0 0 1rem; }
+  .step p:last-child { margin-bottom: 0; }
+
+  .where { padding-bottom: 3rem; }
+
+  #map {
+    height: 320px;
+    max-width: 100%;
+    margin: 1.5rem 0 1rem;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    background: #e9e4d6;
+  }
+
+  .map-note {
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  footer {
+    max-width: 40rem;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+    border-top: 1px solid var(--rule);
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  /*
+   * Animation is opt-in. Content is fully visible by default; the JS only
+   * hides and reveals sections when the browser has JS, GSAP loaded, AND
+   * the visitor has not asked for reduced motion.
+   */
+  .js-motion .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .js-motion .reveal {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* Leaflet tiles in a slightly softened tone to match the page */
+  .leaflet-container { font-family: var(--sans); }
+</style>
+</head>
+
+<body>
+
+<header>
+  <p class="eyebrow">Siwa Oasis, Egypt</p>
+  <h1>How we make it</h1>
+  <p>Five steps, one press, and a few hundred very old trees.</p>
+  <p class="scroll-hint" aria-hidden="true">Scroll down</p>
+</header>
+
+<main>
+
+  <section class="step reveal" id="grove">
+    <p class="num">01 &mdash; The grove</p>
+    <h2>It starts with the trees</h2>
+    <p>Our olives grow in the Siwa Oasis, a low green basin in the Western Desert about fifty kilometres from the Libyan border. The trees drink from natural springs, not the Nile. Many of them are older than anyone can remember, and most are the local Siwi variety, a small, dense olive that has adapted to the salt and the heat.</p>
+    <p>Nothing is sprayed. The desert does most of the pest control for us.</p>
+  </section>
+
+  <section class="step reveal" id="harvest">
+    <p class="num">02 &mdash; The harvest</p>
+    <h2>Picked by hand, in October</h2>
+    <p>Harvest begins when the fruit is turning from green to purple. Families climb the trees with rakes and combs and let the olives fall onto cloth spread beneath. It is slow work, and we keep it that way, because bruised fruit begins to ferment before it reaches the press.</p>
+    <p>Everything picked in the morning is at the press by the afternoon.</p>
+  </section>
+
+  <section class="step reveal" id="press">
+    <p class="num">03 &mdash; The press</p>
+    <h2>Washed, crushed, and pressed the same day</h2>
+    <p>At the press the olives are sorted, rinsed with spring water, and crushed whole, stone and all, into a thick paste. The paste is worked gently for a short while so the oil droplets can find each other, then separated in a cold process. We never let the temperature climb, which is why the oil keeps its green, peppery bite.</p>
+  </section>
+
+  <section class="step reveal" id="rest">
+    <p class="num">04 &mdash; The rest</p>
+    <h2>Settled in the dark</h2>
+    <p>Fresh oil is cloudy and a little wild. We let it stand in steel tanks in a cool room for a few weeks so the fine sediment sinks on its own. No filters, no additives. What rises is the oil; what settles stays behind.</p>
+  </section>
+
+  <section class="step reveal" id="bottle">
+    <p class="num">05 &mdash; The bottle</p>
+    <h2>Bottled small, sent out fresh</h2>
+    <p>We bottle in dark glass, in small runs, and label each batch with its harvest month. Oil is best in its first year, so we would rather sell out than sit on stock. If you open a bottle and it smells like cut grass and green tomato, it has arrived the way it left us.</p>
+  </section>
+
+  <section class="step where reveal" id="where">
+    <p class="num">Where to find us</p>
+    <h2>The press in Siwa</h2>
+    <p>The press sits on the edge of town, on the road toward the salt lakes. Visitors are welcome during the harvest season.</p>
+    <div id="map" role="region" aria-label="Map showing the location of the olive oil press in Siwa, Egypt"></div>
+    <p class="map-note" id="map-note">Siwa Oasis, Matrouh Governorate, Egypt &mdash; approximately 29.20&deg; N, 25.52&deg; E.</p>
+  </section>
+
+</main>
+
+<footer>
+  Siwa Olive Oil Press &middot; Made in the Siwa Oasis
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+<script>
+(function () {
+  // ---- Scroll reveal ---------------------------------------------------
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  function setupReveal() {
+    if (reduceMotion.matches) return;            // leave everything visible
+    if (!window.gsap || !window.ScrollTrigger) return; // CDN failed: leave visible
+
+    gsap.registerPlugin(ScrollTrigger);
+    document.documentElement.classList.add('js-motion');
+
+    var sections = document.querySelectorAll('.reveal');
+    sections.forEach(function (el) {
+      gsap.to(el, {
+        opacity: 1,
+        y: 0,
+        duration: 0.9,
+        ease: 'power2.out',
+        onComplete: function () { gsap.set(el, { clearProps: 'transform' }); },
+        scrollTrigger: {
+          trigger: el,
+          start: 'top 85%',
+          once: true
+        }
+      });
+    });
+
+    // If the visitor switches reduced motion on mid-visit, show everything.
+    reduceMotion.addEventListener && reduceMotion.addEventListener('change', function (e) {
+      if (e.matches) {
+        ScrollTrigger.getAll().forEach(function (t) { t.kill(); });
+        document.documentElement.classList.remove('js-motion');
+        gsap.set(sections, { clearProps: 'all' });
+      }
+    });
+  }
+
+  // ---- Map -------------------------------------------------------------
+  function setupMap() {
+    var note = document.getElementById('map-note');
+    if (!window.L) {
+      note.textContent = 'Map could not be loaded. ' + note.textContent;
+      return;
+    }
+
+    var press = [29.2032, 25.5195];
+    var map = L.map('map', {
+      scrollWheelZoom: false,       // don't hijack page scrolling
+      zoomControl: true
+    }).setView(press, 12);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    L.marker(press, { alt: 'The olive oil press' })
+      .addTo(map)
+      .bindPopup('<strong>The press</strong><br>Siwa Oasis, Egypt')
+      .openPopup();
+
+    // Leaflet's default fade-in on tiles and zoom animation are also motion.
+    if (reduceMotion.matches) {
+      map.options.fadeAnimation = false;
+      map.options.zoomAnimation = false;
+      map.options.markerZoomAnimation = false;
+    }
+
+    // Leaflet needs a size recalculation if it was hidden/animated at init.
+    setTimeout(function () { map.invalidateSize(); }, 300);
+  }
+
+  setupReveal();
+  setupMap();
+})();
+</script>
+
+</body>
+</html>

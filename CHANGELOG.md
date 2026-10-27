@@ -4,6 +4,44 @@ Versions follow the skill's own `plugin.json`. Every scanner verdict prints a
 rules fingerprint, so a number quoted in one version can be checked against
 the rules that produced it.
 
+## 3.4.0 — 2026-10-27
+
+**The library-misuse check works. The claim that it does not was wrong.**
+Four releases carried a note saying the check had never discriminated. It was
+offered as a guard rather than as evidence. That reads as "the check is
+broken". It is not what happened.
+
+The reason it never fired is sampling. Exactly one evaluation cell loaded an
+animation library. Both pages in that cell used GSAP carefully, so zero was
+the correct answer for both. The evaluation workspace
+recorded that reason at the time. The README dropped it and kept only the
+conclusion.
+
+It is now held to a pair of real pages instead of a minimal fixture. Both
+load GSAP and ScrollTrigger heavily. The library being present cannot be what
+separates them:
+
+- `examples/library-misuse-example.html` is new and raises five rules. Scroll
+  hijacking. A reveal applied to every section at once. An endless tween.
+  Overshoot easing. Body copy hidden from screen readers.
+- `examples/library-careful-example.html`, real generated output copied byte
+  for byte out of the evaluation run, raises none.
+
+Both now ship with the skill. The first version of this test read the careful
+page from the evaluation workspace. The installed skill does not have one. So
+the selftest passed in the repo and failed once installed. Caught by running
+the installed copy rather than trusting the repo.
+
+Swapping the two pages makes the selftest fail in both directions, so the
+assertions can fail. The selftest line now states the pair result, which
+means the claim is defended by a test rather than by a paragraph.
+
+What is still true, and now said plainly: no page in any evaluation has been
+caught by this check. It is a working guard with no field catch to its name.
+
+No rule changed. `rules.json` is untouched and the fingerprint stays
+`3c8f23a11db4e800`.
+
 ## 3.3.0 — 2026-10-27
 
 **The register's refresh date is now a check, not a note.** The register is
