@@ -425,12 +425,25 @@ function Install-Claude([string]$Dir) {
   $backup = "$settingsPath.bak.aads"
   if (Test-Path $settingsPath) { try { Copy-Item -Force -Path $settingsPath -Destination $backup } catch { } }
   else { Write-Utf8NoBom $settingsPath '{}' }
-  $registered = $false
-  try { $registered = Register-Hooks $settingsPath $scriptsDir } catch {
-    if (Test-Path $backup) { try { Copy-Item -Force -Path $backup -Destination $settingsPath } catch { } }
+  # The skill carries its own hooks/hooks.json. Claude Code loads it from the
+  # skills folder, so writing the same hooks into settings.json registers each
+  # one twice and every hook then runs twice on every stop. Measured on
+  # 2026-10-27. So when hooks.json is present we add nothing, and we strip any
+  # entry an older installer left, which heals an existing double registration.
+  $ownHooks = Join-Path $dest 'hooks\hooks.json'
+  if (Test-Path $ownHooks) {
+    try { Remove-Hooks $settingsPath } catch { }
+    Ok "Claude Code / Cowork $Em skill, 3 commands, 2 hooks (registered by the skill itself)"
+    Say "  hooks.json inside the skill is the single registration. Nothing was added to settings.json."
   }
-  if ($registered) { Ok "Claude Code / Cowork $Em skill, 3 commands, 2 hooks registered" }
-  else { Bad "hook registration failed; your settings.json is unchanged (backup: settings.json.bak.aads)" }
+  else {
+    $registered = $false
+    try { $registered = Register-Hooks $settingsPath $scriptsDir } catch {
+      if (Test-Path $backup) { try { Copy-Item -Force -Path $backup -Destination $settingsPath } catch { } }
+    }
+    if ($registered) { Ok "Claude Code / Cowork $Em skill, 3 commands, 2 hooks registered in settings.json" }
+    else { Bad "hook registration failed; your settings.json is unchanged (backup: settings.json.bak.aads)" }
+  }
   if (Test-ClaudeProof $dest) {
     Ok "verified: the installed skill printed PASS on its own example"
   } else {

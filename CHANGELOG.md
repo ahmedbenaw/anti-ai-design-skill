@@ -4,6 +4,21 @@ Versions follow the skill's own `plugin.json`. Every scanner verdict prints a
 rules fingerprint, so a number quoted in one version can be checked against
 the rules that produced it.
 
+## 3.2.2 — 2026-10-27
+
+**Fixed**
+- The installer registered the two hooks a second time. The skill already
+  carries `hooks/hooks.json`, which Claude Code loads from the skills folder,
+  so writing the same hooks into `settings.json` made each one run twice on
+  every stop. Both layers now add nothing when `hooks.json` is present. They also
+  strip any entry an older installer left. That heals an existing double
+  registration on the next run.
+- The README has said "do not also add these hooks to settings.json" since
+  2026-10-27 while the installer did exactly that. The code now matches.
+
+Measured after the fix: a full install leaves zero of this skill's entries in
+`settings.json`, and the 23 hooks belonging to other tools are untouched.
+
 ## 3.2.1 — 2026-10-27
 
 Rules fingerprint `3c8f23a11db4e800`, register 2026.10.1.

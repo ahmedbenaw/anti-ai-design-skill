@@ -1,6 +1,6 @@
 {
   "name": "anti-ai-design-style",
-  "version": "3.2.1",
+  "version": "3.2.2",
   "description": "Shared install contract. Every installer layer (install.sh, install.ps1) reads THIS and produces identical results. The GitHub owner is substituted at publish time.",
   "repo": "https://github.com/ahmedbenaw/anti-ai-design-skill",
   "tarball": "https://github.com/ahmedbenaw/anti-ai-design-skill/archive/refs/heads/main.tar.gz",
@@ -46,7 +46,12 @@
       "label": "Claude Code",
       "tier": "first-class",
       "method": "claude-home",
-      "detect": { "dirs": ["~/.claude"], "always_try": true },
+      "detect": {
+        "dirs": [
+          "~/.claude"
+        ],
+        "always_try": true
+      },
       "install": {
         "skill_to": "~/.claude/skills/anti-ai-design-style",
         "commands_to": "~/.claude/commands",
@@ -77,12 +82,18 @@
       "label": "Codex",
       "tier": "first-class",
       "method": "codex-home",
-      "detect": { "dirs": ["~/.codex"] },
+      "detect": {
+        "dirs": [
+          "~/.codex"
+        ]
+      },
       "install": {
         "skill_to": "~/.agents/skills/anti-ai-design-style",
         "note_in": "~/.codex/AGENTS.md"
       },
-      "verify": ["~/.agents/skills/anti-ai-design-style/SKILL.md"],
+      "verify": [
+        "~/.agents/skills/anti-ai-design-style/SKILL.md"
+      ],
       "no_hooks": "Codex hook wiring could not be verified, so neither installer registers or claims it.",
       "note": "Codex has no slash commands. The skill goes to the .agents/skills convention, which is also what this skill's own scripts/install.py --codex writes for a single project."
     }
@@ -90,13 +101,26 @@
   "editors_are_manual": {
     "why": "Adding the skill to Cursor, VS Code and the rest means running a third-party CLI (npx skills), which needs Node and downloads packages. Measured on 2026-09-12: it installs the skill to the shared ~/.agents/skills folder, not to anything editor-specific, while reporting a per-editor success. An installer that says 'cursor installed' when nothing cursor-shaped was written is lying, and installing Node and npm packages is not installing this skill. So both installers print the command and let the user run it knowingly.",
     "command": "npx -y skills@latest add ahmedbenaw/anti-ai-design-skill --global --agent <agent> --copy",
-    "agents": ["cursor", "github-copilot", "windsurf", "zed", "cline", "roo", "continue", "gemini-cli", "aider-desk", "opencode", "amp"]
+    "agents": [
+      "cursor",
+      "github-copilot",
+      "windsurf",
+      "zed",
+      "cline",
+      "roo",
+      "continue",
+      "gemini-cli",
+      "aider-desk",
+      "opencode",
+      "amp"
+    ]
   },
   "installs_nothing_else": {
     "rule": "Neither installer may install software other than this skill. No Node, no npm packages, no system package-manager calls, no third-party CLI.",
     "python": "Needed only by the two hooks. If it is missing the installer says so, prints the one command to fix it, installs the files anyway and skips the hooks."
   },
   "notes": [
+    "Hooks are registered once, by the skill's own hooks/hooks.json. No installer layer may also write them into settings.json: that registers each hook twice and every hook then runs twice on every stop. Measured 2026-10-27. Each layer also strips entries an older installer left.",
     "The commands ship with a ${CLAUDE_PLUGIN_ROOT} placeholder. Outside a plugin that variable is unset, so every installer must replace it with the absolute path of the installed skill or the commands will call nothing.",
     "A hook command containing a space breaks tool use in Claude Code. Every layer refuses to write a hook whose script path contains a space, and says so loudly rather than writing a broken one.",
     "Uninstall removes only entries whose command contains 'anti-ai-design-style/scripts/', so hooks belonging to other tools are never touched."

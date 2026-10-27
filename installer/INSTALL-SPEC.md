@@ -51,12 +51,17 @@ command the user runs knowingly.
      `~/.claude/skills/anti-ai-design-style/`. A clean replace, never a
      merge, so a file the new version deleted cannot linger. Copy
      `commands/*.md` → `~/.claude/commands/` **with `${CLAUDE_PLUGIN_ROOT}`
-     replaced by the absolute installed skill path**. Register the 2
-     `manifest.hooks` in `~/.claude/settings.json` as
-     `python3 <hook_scripts_at>/<script>`. Back up `settings.json` first.
-     Idempotently remove any prior entries whose command contains
-     `anti-ai-design-style/scripts/` before adding. Refuse to write a hook
-     whose path contains a space, and say so.
+     replaced by the absolute installed skill path**. **Hooks: the skill
+     carries its own `hooks/hooks.json`, which Claude Code loads from the
+     skills folder. When that file is present at the destination, write
+     nothing to `settings.json`, and remove any entry a previous installer
+     left whose command contains `anti-ai-design-style/scripts/`. Writing
+     them in both places registers each hook twice. Every hook then runs
+     twice on every stop (measured 2026-10-27).** Only when the skill ships
+     no `hooks.json` does a layer register the 2 `manifest.hooks` in
+     `settings.json` as `python3 <hook_scripts_at>/<script>`. Back up
+     `settings.json` first either way. Refuse to write a hook whose path
+     contains a space, and say so.
    - **codex-home** (Codex): copy the skill folder →
      `~/.agents/skills/anti-ai-design-style/`. That is the same convention
      this skill's own `scripts/install.py --codex` writes for one project.

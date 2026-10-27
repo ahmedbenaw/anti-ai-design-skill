@@ -216,8 +216,17 @@ install_claude() {
   fi
   [ -f "$CLAUDE_HOME/settings.json" ] && cp "$CLAUDE_HOME/settings.json" "$CLAUDE_HOME/settings.json.bak.aads" 2>/dev/null || true
   [ -f "$CLAUDE_HOME/settings.json" ] || echo '{}' > "$CLAUDE_HOME/settings.json"
-  if register_hooks "$CLAUDE_HOME/settings.json" "$DEST/scripts"; then
-    ok "Claude Code / Cowork — skill, 3 commands, 2 hooks registered"
+  # The skill carries its own hooks/hooks.json. Claude Code loads it from the
+  # skills folder, so writing the same hooks into settings.json registers each
+  # one twice and every hook then runs twice on every stop. Measured on
+  # 2026-10-27. So when hooks.json is present we add nothing, and we strip any
+  # entry an older installer left, which heals an existing double registration.
+  if [ -f "$DEST/hooks/hooks.json" ]; then
+    drop_hooks "$CLAUDE_HOME/settings.json" || true
+    ok "Claude Code / Cowork — skill, 3 commands, 2 hooks (registered by the skill itself)"
+    say "  ${D}hooks.json inside the skill is the single registration. Nothing was added to settings.json.${N}"
+  elif register_hooks "$CLAUDE_HOME/settings.json" "$DEST/scripts"; then
+    ok "Claude Code / Cowork — skill, 3 commands, 2 hooks registered in settings.json"
   else
     bad "hook registration failed; your settings.json is unchanged (backup: settings.json.bak.aads)"
   fi
