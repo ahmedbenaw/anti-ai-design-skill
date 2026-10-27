@@ -62,6 +62,29 @@ def _json_cmd(cmd):
         return None
 
 
+# A venv puts its interpreter in bin/ on macOS and Linux and in Scripts/ on
+# Windows, and names it python3 or python depending on both. Probing only
+# bin/python3 made the venv unreachable on Windows: render_python fell through
+# to the interpreter running the scan, and a machine without Playwright in
+# that one reported "rendered SKIPPED" for ever with no way to fix it.
+VENV_LAYOUTS = (("bin", "python3"), ("bin", "python"),
+                ("Scripts", "python.exe"), ("Scripts", "python3.exe"))
+
+
+def render_candidates(skill):
+    """Every place a render venv may sit, nearest first, both layouts.
+
+    Beside the skill folder first, then beside its parent. The parent is
+    where it belongs in practice, because the installer replaces the skill
+    folder outright and would delete a venv kept inside it.
+    """
+    out = []
+    for root in (skill, os.path.dirname(skill)):
+        for folder, exe in VENV_LAYOUTS:
+            out.append(os.path.join(root, ".venv-render", folder, exe))
+    return out
+
+
 def render_python(env=None):
     """The interpreter that has Playwright, or None.
 
@@ -73,11 +96,9 @@ def render_python(env=None):
     that can import playwright.
     """
     env = os.environ if env is None else env
-    skill = os.path.dirname(HERE)
-    cands = [env.get("RENDER_PYTHON"),
-             os.path.join(skill, ".venv-render", "bin", "python3"),
-             os.path.join(os.path.dirname(skill), ".venv-render", "bin", "python3"),
-             sys.executable]
+    cands = [env.get("RENDER_PYTHON")]
+    cands += render_candidates(os.path.dirname(HERE))
+    cands.append(sys.executable)
     for c in cands:
         if not c or not os.path.isfile(c):
             continue
@@ -364,6 +385,22 @@ def selftest():
 
     checks.append(("RENDER_PYTHON that cannot import playwright is not chosen over a working one",
                    render_python(env={"RENDER_PYTHON": "/nonexistent/python3"}) != "/nonexistent/python3"))
+
+    # A venv is bin/ on Unix and Scripts/ on Windows. Probing only one layout
+    # left the browser check permanently unreachable on the other, reported as
+    # a skip rather than a fault. Both layouts, in both locations, or the check
+    # is dead on a platform nobody here can run.
+    cand = render_candidates(os.path.join("S", "skill"))
+    beside = os.path.join("S", "skill", ".venv-render")
+    above = os.path.join("S", ".venv-render")
+    for where, label in ((beside, "beside the skill"), (above, "beside its parent")):
+        checks.append((f"a Unix venv {label} is probed",
+                       os.path.join(where, "bin", "python3") in cand))
+        checks.append((f"a Windows venv {label} is probed",
+                       os.path.join(where, "Scripts", "python.exe") in cand))
+    checks.append(("the venv beside the skill is probed before the one above it",
+                   cand.index(os.path.join(beside, "bin", "python3"))
+                   < cand.index(os.path.join(above, "bin", "python3"))))
 
     dead = {"scan": None, "copy": None, "brand": None}
     checks.append(("every guard missing fails the gate",

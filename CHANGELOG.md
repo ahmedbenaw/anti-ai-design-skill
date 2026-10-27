@@ -4,6 +4,30 @@ Versions follow the skill's own `plugin.json`. Every scanner verdict prints a
 rules fingerprint, so a number quoted in one version can be checked against
 the rules that produced it.
 
+## 3.4.1 — 2026-10-27
+
+**The browser check could never have worked on Windows.** Shipped two
+releases ago, found by auditing the PowerShell installer rather than the
+Python. A virtual environment keeps its interpreter in `bin/` on macOS and
+Linux and in `Scripts/` on Windows. Only `bin/python3` was probed.
+
+So on Windows the venv was unreachable. The check fell back to whichever
+interpreter ran the scan. If that one lacked Playwright the answer was
+`rendered SKIPPED`, for ever, with nothing to indicate the cause. The setup
+instructions added in 3.2.3 were Unix-only too, so there was no way to follow
+them and no sign anything was wrong.
+
+Both venv layouts are now probed in both locations, nearest first. Five
+selftest cases pin the paths and their order. Reverting to the old Unix-only
+list fails two of them, so the test catches the bug as it shipped. The README
+carries the PowerShell commands beside the shell ones.
+
+This is a path-construction fault, provable by inspection and held by a test
+that runs anywhere. It does not need a Windows machine, which is why it could
+be fixed without one. Running `install.ps1` on Windows is still untested.
+
+No rule changed. Fingerprint stays `3c8f23a11db4e800`.
+
 ## 3.4.0 — 2026-10-27
 
 **The library-misuse check works. The claim that it does not was wrong.**

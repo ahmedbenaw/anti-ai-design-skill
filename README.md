@@ -129,6 +129,14 @@ python3 -m venv ~/.claude/skills/.venv-render
 ~/.claude/skills/.venv-render/bin/python3 -m playwright install chromium
 ```
 
+On Windows, in PowerShell:
+
+```powershell
+py -m venv "$HOME\.claude\skills\.venv-render"
+& "$HOME\.claude\skills\.venv-render\Scripts\python.exe" -m pip install playwright Pillow
+& "$HOME\.claude\skills\.venv-render\Scripts\python.exe" -m playwright install chromium
+```
+
 Three things about that path and those packages:
 
 - The folder sits **beside** the skill, not inside it. The installer replaces
@@ -140,7 +148,8 @@ Three things about that path and those packages:
   Measured on 2026-10-27: the sibling-paint case in
   `render_check.py --selftest` fails without Pillow.
 - `verify_all.py` looks for `$RENDER_PYTHON` first, then `.venv-render`
-  inside the skill, then `.venv-render` beside it.
+  inside the skill, then `.venv-render` beside it. It checks both venv
+  layouts in each place, `bin/` and `Scripts/`, so either platform is found.
 
 Check it, from `anti-ai-design-style/`:
 
@@ -148,6 +157,10 @@ Check it, from `anti-ai-design-style/`:
 ~/.claude/skills/.venv-render/bin/python3 scripts/render_check.py --selftest
 python3 scripts/verify_all.py --render examples/fixed-example.html
 ```
+
+On Windows, swap the first path for
+`$HOME\.claude\skills\.venv-render\Scripts\python.exe` and `python3` for
+`py`.
 
 Expected: a `SELFTEST: PASS` line, then a `PASS:` line ending in
 `rendered PASS`.
