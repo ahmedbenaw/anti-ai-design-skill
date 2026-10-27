@@ -116,6 +116,46 @@ python3 scripts/verify_all.py examples/slop-example.html
 Expected: two `SELFTEST: PASS` lines, then a `PASS:` line for the fixed
 example and a `FAIL:` line scoring 50 for the slop example.
 
+## Turn on the browser check
+
+Contrast, tap-target size and focus rings are measured by rendering the page
+in a real browser. That check needs a Python with Playwright in it. Without
+one the proof line reads `rendered SKIPPED`, and a skipped check is not a
+passed one. Set it up once:
+
+```bash
+python3 -m venv ~/.claude/skills/.venv-render
+~/.claude/skills/.venv-render/bin/python3 -m pip install playwright Pillow
+~/.claude/skills/.venv-render/bin/python3 -m playwright install chromium
+```
+
+Three things about that path and those packages:
+
+- The folder sits **beside** the skill, not inside it. The installer replaces
+  the skill folder outright, so a virtual environment kept inside it is
+  deleted on every install.
+- **Pillow is required, not optional.** Without it the check cannot sample
+  what is actually painted behind the text. It falls back to the colours in
+  the stylesheet and then reports a contrast failure on text that is fine.
+  Measured on 2026-10-27: the sibling-paint case in
+  `render_check.py --selftest` fails without Pillow.
+- `verify_all.py` looks for `$RENDER_PYTHON` first, then `.venv-render`
+  inside the skill, then `.venv-render` beside it.
+
+Check it, from `anti-ai-design-style/`:
+
+```bash
+~/.claude/skills/.venv-render/bin/python3 scripts/render_check.py --selftest
+python3 scripts/verify_all.py --render examples/fixed-example.html
+```
+
+Expected: a `SELFTEST: PASS` line, then a `PASS:` line ending in
+`rendered PASS`.
+
+A browser that is installed but cannot start, as happens in a sandbox or a
+container, gives `rendered ERROR` instead. The stop hook prints that and lets
+you stop anyway, because no edit to the page can fix it.
+
 ## Repository map
 
 | Path | What it is |

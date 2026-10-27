@@ -28,6 +28,7 @@ reminder on stderr.
 """
 
 import datetime
+import io
 import json
 import os
 import re
@@ -197,8 +198,15 @@ def main():
 
     try:
         out = subprocess.run(
+            # --render is explicit: verify_all leaves the browser check off
+            # by default, so without it every hook run reported
+            # "rendered SKIPPED" and contrast, tap targets and focus were
+            # never measured. Measured on 2026-10-27: about 10s fixed plus
+            # 2s per file, so the 120s timeout below holds ~50 files. When
+            # no browser is installed the check still reports SKIPPED
+            # rather than failing, so this is safe on a bare machine.
             [sys.executable, os.path.join(HERE, "verify_all.py"),
-             "--json"] + files,
+             "--render", "--json"] + files,
             capture_output=True, text=True, timeout=120)
     except Exception:
         return 0
@@ -231,6 +239,24 @@ def main():
     others_ok = all(
         summary.get(k, {}).get("ok", False) for k in ("scan", "copy")) \
         if summary else False
+
+    # The rendered check is the only guard that depends on a browser being
+    # launchable, and a browser can be installed and still refuse to start:
+    # a sandbox, a container, or a CI box with no Mach ports gives ERROR, and
+    # a page whose styling lives on a CDN gives INCONCLUSIVE offline. Neither
+    # is fixable by editing the page, so blocking every stop on it would be
+    # the brand-missing mistake again. Say it plainly instead, and keep the
+    # proof line visible so a skipped measurement never reads as a passed one.
+    render_state = (summary.get("render") or {}).get("state", "")
+    design_ok = all(
+        summary.get(k, {}).get("ok", False) for k in ("scan", "copy", "brand")) \
+        if summary else False
+    if design_ok and render_state in ("ERROR", "INCONCLUSIVE"):
+        print("The design guards passed. The rendered check could not return a "
+              "verdict, so\ncontrast, tap targets and focus are unmeasured "
+              "here - no edit to the page\nchanges that.\n\n  " + line +
+              "\n\nFiles checked: " + checked)
+        return 0                      # informative, not a blocker
 
     if brand_missing and others_ok:
         print("The design guards passed, but brand distance never ran. That "
@@ -458,6 +484,21 @@ def selftest():
     good = out.returncode == 0
     ok = ok and good
     print("  {} survives junk input".format("ok  " if good else "FAIL"))
+    # The rendered check is opt-in, so leaving --render off the invocation
+    # silently drops contrast, tap targets and focus from every hook run and
+    # still prints a PASS line. That is the failure this skill exists to
+    # prevent, and nothing caught it for three releases. Assert on the source
+    # of both hooks, because an argv built without the flag is the bug.
+    # Anchor on each hook's actual invocation text. hook_scan builds a command
+    # string for Claude to run; this file builds an argv list.
+    for mod, want in (("stop_check.py", '"--render", "--json"] + files'),
+                      ("hook_scan.py", 'Run: python3 "{}" --render')):
+        src = io.open(os.path.join(HERE, mod), encoding="utf-8").read()
+        good = want in src
+        ok = ok and good
+        print("  {} {} asks verify_all for the rendered check".format(
+            "ok  " if good else "FAIL", mod))
+
     print("SELFTEST: {}".format("PASS" if ok else "FAIL"))
     return 0 if ok else 1
 

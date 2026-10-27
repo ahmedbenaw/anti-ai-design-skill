@@ -4,6 +4,41 @@ Versions follow the skill's own `plugin.json`. Every scanner verdict prints a
 rules fingerprint, so a number quoted in one version can be checked against
 the rules that produced it.
 
+## 3.2.3 — 2026-10-27
+
+**The browser check had never run.** Contrast, tap-target size and focus
+rings went unmeasured on this machine. Nobody noticed. The proof line said
+`rendered SKIPPED` instead of failing. A skipped check that reads as a passed
+one is the exact failure this skill exists to prevent.
+
+Three things were wrong. Each one alone was enough to hide the other two.
+
+- **The hooks never asked for it.** `verify_all.py` leaves the rendered check
+  off unless `--render` is passed. Neither `stop_check.py` nor `hook_scan.py`
+  passed it. Both do now. A selftest case asserts it in each file, because
+  nothing caught this for three releases.
+- **No Python had Playwright in it.** How to set one up is now in the README.
+  So is why it belongs beside the skill folder rather than inside it. The
+  installer replaces that folder. Anything kept inside is deleted on every
+  install.
+- **Pillow was missing, and that corrupted a measurement silently.** Without
+  it the check cannot sample what is painted behind the text. It falls back
+  to the colours in the stylesheet. A number sitting on a block painted by a
+  positioned sibling was reported at 1.25:1. What is painted behind those
+  glyphs measures 4.89:1. That is a false failure, and it points at the wrong
+  fix. Reproduced in two separate environments.
+
+**A browser that cannot start no longer blocks you.** In a sandbox or a
+container the browser is installed but refuses to launch. That gives
+`rendered ERROR`. Treating it as a failure would block every stop with "fix
+what the line names", and no edit to the page can fix it. The stop hook now
+reports it and lets you stop. It already handled a brand check that could not
+run the same way. The proof line still shows the state, so the measurement is
+never quietly counted as a pass.
+
+No rule changed. `rules.json` is untouched and the fingerprint stays
+`3c8f23a11db4e800`.
+
 ## 3.2.2 — 2026-10-27
 
 **Fixed**

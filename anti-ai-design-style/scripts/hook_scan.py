@@ -88,7 +88,7 @@ def main():
     # Absolute and quoted. Claude's working directory is the user's project,
     # not the skill, so a relative path here resolves to nothing. Both paths
     # can contain spaces.
-    lines.append('Run: python3 "{}" "{}" before presenting.'.format(
+    lines.append('Run: python3 "{}" --render "{}" before presenting.'.format(
         os.path.join(HERE, "verify_all.py"), os.path.abspath(path)))
     sys.stderr.write("\n".join(lines) + "\n")
     return 2                          # exit 2 feeds stderr back to Claude
