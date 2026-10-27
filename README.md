@@ -176,6 +176,11 @@ you stop anyway, because no edit to the page can fix it.
   stays as a guard, not as evidence.
 - Near-grey gradients such as `#f4f4f5` still count as colour washes; a
   regex cannot judge colour distance.
+- The hooks run the browser check without network access. A page whose
+  styling comes from a CDN therefore reports `rendered INCONCLUSIVE`, and
+  contrast, tap targets and focus go unmeasured for that page. This is
+  deliberate: a hook that fetches from the network on every stop is worse.
+  Run `verify_all.py --render --allow-network <page>` by hand to measure one.
 - `install.ps1` is unexecuted on Windows at the time of writing.
 
 ## Refresh the register by March 2028
@@ -189,7 +194,11 @@ own fixture while matching nothing real.
 
 March 2028 is about eighteen months out, which is roughly how long the
 previous register held up. Nothing breaks on that date. It is the point to
-re-read the rows rather than trust them. The steps are at the end of
+re-read the rows rather than trust them.
+
+You do not have to remember it. `scripts/check_citations.py` reads the stamp
+and prints one line once the register passes eighteen months. It still exits
+0, because a stale register works; it just stops being evidence. The steps are at the end of
 `anti-ai-design-style/reference/tells-register.md`, under "Keeping this
 register alive".
 

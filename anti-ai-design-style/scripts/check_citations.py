@@ -15,6 +15,7 @@ reported, never assumed good.
 Run it with no arguments to check the register, or with --selftest.
 """
 
+import datetime
 import os
 import re
 import sys
@@ -103,6 +104,43 @@ def check(register_text, compendium_text):
     return resolved, problems, unverifiable
 
 
+# How long the previous register held up before its rows went stale. The
+# README explains the reasoning; this is that number as a mechanism, so the
+# date stops depending on somebody remembering it.
+REFRESH_MONTHS = 18
+STAMP = re.compile(r"Register version:\s*\*\*(\d{4})\.(\d{1,2})")
+
+
+def register_age(register_text, today=None):
+    """Months since the register was stamped, and whether that is overdue.
+
+    Returns (stamp, months, overdue). A register with no readable stamp
+    returns (None, None, False). A missing stamp is a different fault, and
+    check() already speaks for the rows themselves.
+    """
+    m = STAMP.search(register_text)
+    if not m:
+        return None, None, False
+    year, month = int(m.group(1)), int(m.group(2))
+    today = today or datetime.date.today()
+    months = (today.year - year) * 12 + (today.month - month)
+    return "%04d.%02d" % (year, month), months, months >= REFRESH_MONTHS
+
+
+def age_note(register_text, today=None):
+    """One line, or nothing. Never an error. A stale register still works,
+    and failing a build on a calendar date would be its own kind of wrong."""
+    stamp, months, overdue = register_age(register_text, today)
+    if stamp is None or not overdue:
+        return None
+    return ("Register %s is %d months old; refresh was due at %d. Re-read the "
+            "rows marked [STALE-RISK] and the era-tagged ones. The steps are "
+            "under \"Keeping this register alive\" in "
+            "reference/tells-register.md. A stale rule is quiet, not loud. It "
+            "keeps passing its own fixture while matching nothing real."
+            % (stamp, months, REFRESH_MONTHS))
+
+
 def report(resolved, problems, unverifiable):
     for number, cite, why in problems:
         print("  line %d: %s — %s" % (number, cite, why))
@@ -112,6 +150,8 @@ def report(resolved, problems, unverifiable):
           % (resolved, len(problems), len(unverifiable)))
     return 0 if not problems else 1
 
+
+FRESH_STAMP = "Register version: **2026.10.1** (rules fingerprint `x`)"
 
 SELFTEST_REGISTER = """
 | TY5 | eyebrow | ... | Verified (P-T13, C-T11, V-T23) |
@@ -133,6 +173,20 @@ def selftest():
         ("an HTML heading name is not read as a citation", "H1" not in broken),
         ("a real source is not flagged", "R3" not in broken),
         ("a WCAG technique number is not read as a citation", "C39" not in broken),
+        # The refresh date is a mechanism, not a note somebody has to recall,
+        # so it is tested at both ends of the horizon on a fixed clock.
+        ("a fresh register says nothing about its age",
+         age_note(FRESH_STAMP, datetime.date(2027, 1, 1)) is None),
+        ("a register past the horizon says so",
+         (age_note(FRESH_STAMP, datetime.date(2028, 5, 1)) or "").startswith(
+             "Register 2026.10 is 19 months old")),
+        ("the month before the horizon is still quiet",
+         age_note(FRESH_STAMP, datetime.date(2028, 3, 1)) is None),
+        ("a register with no stamp is not reported as stale",
+         age_note("no stamp here", datetime.date(2030, 1, 1)) is None),
+        ("the shipped register carries a readable stamp",
+         register_age(read(os.path.join(REF, "tells-register.md")))[0]
+         is not None),
         ("nothing is silently unverifiable here", not unverifiable),
     ]
     for name, ok in checks:
@@ -173,7 +227,11 @@ def main(argv):
         read(os.path.join(REF, "tells-register.md")),
         read(os.path.join(REF, "sources-compendium.md")),
     )
-    return report(resolved, problems, unverifiable)
+    code = report(resolved, problems, unverifiable)
+    note = age_note(read(os.path.join(REF, "tells-register.md")))
+    if note:
+        print("\n" + note)
+    return code
 
 
 if __name__ == "__main__":

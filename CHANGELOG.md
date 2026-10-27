@@ -4,6 +4,26 @@ Versions follow the skill's own `plugin.json`. Every scanner verdict prints a
 rules fingerprint, so a number quoted in one version can be checked against
 the rules that produced it.
 
+## 3.3.0 — 2026-10-27
+
+**The register's refresh date is now a check, not a note.** The register is
+stamped, and the stamp ages. Until now the only thing watching that date was
+a paragraph in the README asking someone to remember it.
+`check_citations.py` now reads the stamp and prints one line once the
+register is eighteen months old. It names the rows to re-read first. It still
+exits 0, because a stale register works. It just stops being evidence. Five
+selftest cases hold it at both ends of the horizon on a fixed clock, so the
+check cannot drift into always-warning or never-warning.
+
+**One limit written down rather than left implied.** The hooks run the
+browser check with no network access. A page styled from a CDN reports
+`rendered INCONCLUSIVE`, so contrast, tap targets and focus are unmeasured
+for that page. That is the intended trade: a hook that fetches from the
+network on every stop is worse. Measure one by hand with
+`verify_all.py --render --allow-network`. Now in the README's known limits.
+
+No rule changed. Fingerprint stays `3c8f23a11db4e800`.
+
 ## 3.2.3 — 2026-10-27
 
 **The browser check had never run.** Contrast, tap-target size and focus
