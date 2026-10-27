@@ -4,7 +4,7 @@ Versions follow the skill's own `plugin.json`. Every scanner verdict prints a
 rules fingerprint, so a number quoted in one version can be checked against
 the rules that produced it.
 
-## Unreleased — 2026-10-27
+## 3.2.0 — 2026-10-27
 
 Rules fingerprint `ceb58447cffcc597`, register 2026.10.1. Brought across from
 the installed copy, which was ahead of this repository.
