@@ -78,7 +78,7 @@ def strip_markdown(text):
 
 # --- Copy inside code --------------------------------------------------------
 # A stylesheet or a component is code with a little copy in it. Graded whole,
-# LINTEL's app.css scored reading grade 627 and two components scored 19 and
+# One client's app.css scored reading grade 627 and two components scored 19 and
 # 20 on their import lines, and every session that touched one failed the
 # stop hook with nothing an edit could fix. So only the copy is pulled out.
 
@@ -636,10 +636,10 @@ BRACKETS_OK_COPY = """<p>See the register [1] and press [Enter] to continue. The
 
 
 # Code is not copy. These are the shapes that failed the stop hook on the
-# LINTEL repo on 2026-10-11: a stylesheet graded 627 and two components graded
+# a client repo on 2026-10-11: a stylesheet graded 627 and two components graded
 # 19 and 20 on their import lines. The comments carry an apostrophe and a URL
 # on purpose, because each one breaks a naive reader.
-STYLESHEET = """/* Reset. Don't touch: see https://lintel.app/docs/tokens for why the
+STYLESHEET = """/* Reset. Don't touch: see https://example.com/docs/tokens for why the
    scale is fixed and what happens to the whole layout when someone changes it. */
 * { box-sizing: border-box; } html { scroll-behavior: smooth; }
 body { margin: 0; font: 400 1rem/1.5 var(--lin-font-body); }
@@ -652,7 +652,7 @@ COMPONENT = """import React from "react";
 import { Badge } from "../atoms/Badge.jsx";
 
 // Owner is a placeholder when omitted: a real name belongs to a real account,
-// never to a component default. See https://lintel.app/docs/owners - it's long.
+// never to a component default. See https://example.com/docs/owners - it's long.
 const STAGE_CSS = `
   /* The stage keeps its own black so the page never flashes white on load. */
   :host { position: fixed; inset: 0; display: block; }
@@ -676,7 +676,7 @@ export function DecisionRecord({ recommendation, ruling, owner, when, items }) {
 # Words that must never reach the grader from COMPONENT: an import, a path,
 # a comment, a class name, an enum value, an SVG path, a style block, a list
 # of tag names, and an escape read as letters.
-CODE_LEAKS = ("import", "react", "badge.jsx", "placeholder", "lintel.app",
+CODE_LEAKS = ("import", "react", "badge.jsx", "placeholder", "example.com",
               "lin-", "gap-4", "warning", "decide", "viewbox", "16 0",
               "position", "flashes", "hover", "abbr", "u2014")
 
@@ -739,7 +739,7 @@ const note = "Welcome to the future of seamless invoicing for your bakery.";
 </Layout>""",
 }
 
-# A brand book's own ban list, nested the way the LINTEL book nests it: a box,
+# A brand book's own ban list, nested the way a client brand book nests it: a box,
 # a label, then the list. Mentioned, not used, so no vocabulary finding. The
 # long item stays in on purpose: a ban list is still read, so it is still
 # graded for readability, and that finding must survive the exclusion.

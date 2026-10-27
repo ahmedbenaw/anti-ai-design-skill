@@ -4,6 +4,23 @@ Versions follow the skill's own `plugin.json`. Every scanner verdict prints a
 rules fingerprint, so a number quoted in one version can be checked against
 the rules that produced it.
 
+## 3.2.1 — 2026-10-27
+
+Rules fingerprint `3c8f23a11db4e800`, register 2026.10.1.
+
+**Changed**
+- The repository a fix was found in is no longer named. The notes, code
+  comments and fixtures now say "a client repo". The product those failures
+  came from is outside this skill's scope. It was the case that exposed the
+  bugs, not a subject of the rules.
+- Fixture URLs point at example.com.
+
+**Why the fingerprint moved without a rule change**
+- One of the renamed strings is a comment inside `rules.json`, and the
+  fingerprint covers that whole file. No pattern, weight, threshold or tell
+  changed. The register stays 2026.10.1 for that reason. Every selftest
+  passes unchanged on 3.9.6 and 3.15.1.
+
 ## 3.2.0 — 2026-10-27
 
 Rules fingerprint `ceb58447cffcc597`, register 2026.10.1. Brought across from

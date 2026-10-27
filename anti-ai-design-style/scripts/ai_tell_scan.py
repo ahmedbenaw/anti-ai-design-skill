@@ -719,7 +719,7 @@ TOKEN_CRAFT_EXPECT = {"CR7", "CR8", "CR9"}
 
 
 # A brand book listing the words it never uses. The list is nested the way the
-# LINTEL book nests it: a box, a label, then the list. The second page uses
+# client brand book nests it: a box, a label, then the list. The second page uses
 # two of the same words in its own voice, and those must still count.
 BANLIST_FIXTURE = """<section><h3>Words that never appear</h3>
 <div class="specbox no"><div class="speclbl">English</div>

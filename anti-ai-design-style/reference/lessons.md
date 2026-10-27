@@ -107,7 +107,7 @@ proof is not a rule worth having, so the rule was narrowed.
 
 ## The copy check graded code as prose
 
-In the LINTEL repo the stop hook blocked every session that touched a
+In a client repo the stop hook blocked every session that touched a
 stylesheet or a component. The copy check read `app.css` as one long sentence
 and gave it reading grade 627. It read two components' import lines as prose.
 No edit to the page could clear it, so the only way out was to ignore the

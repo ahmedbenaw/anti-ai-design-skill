@@ -318,7 +318,7 @@ def selftest():
                    "copy grade not run" in proof_line(summarise(dict(good, copy=None), rules))))
 
     # End to end through the real copy check, on the shapes that failed the
-    # stop hook in the LINTEL repo: code is not prose, and copy in code is.
+    # stop hook in a client repo: code is not prose, and copy in code is.
     import tempfile
     from copy_check import STYLESHEET, COMPONENT, SLOP_COMPONENT
     scratch = tempfile.mkdtemp(prefix="verify-all-")

@@ -117,7 +117,7 @@ def ui_files_from(transcript_path, cwd=None):
     scanned.
 
     The first version read the whole transcript. On 2026-10-11 that blocked
-    a LINTEL session over DeliveryPlan.jsx and SmokeTest.jsx, which it never
+    a client session over two screen files, which it never
     changed. One path came from a memory injected out of another session.
     The other came from the output of a read-only sweep, and later from
     read-only Bash commands. Each file fails on copy its owner wrote, so the
@@ -345,7 +345,7 @@ def selftest():
         ok = ok and good
         print("  {} {} (exit {})".format("ok  " if good else "FAIL", label,
                                          out.returncode))
-    # Code is not copy. On 2026-10-11 every LINTEL session that touched a
+    # Code is not copy. On 2026-10-11 every session in a client repo that touched a
     # stylesheet or a component was blocked here: the copy check graded
     # app.css at reading grade 627, on its selectors. Nothing an edit could
     # fix. The same shapes must now pass, and slop copy inside a component
@@ -376,7 +376,7 @@ def selftest():
         print("  {} {} (exit {})".format("ok  " if good else "FAIL", label,
                                          out.returncode))
 
-    # Only the session's own actions count. On 2026-10-11 a LINTEL session
+    # Only the session's own actions count. On 2026-10-11 a client session
     # was blocked over two screens it never touched: one path came from a
     # memory injected at session start, one from a sweep's printed output.
     # The failing page must block when the session's own call names it, and

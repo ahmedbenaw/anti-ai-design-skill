@@ -574,7 +574,7 @@
       "class_tokens": ["no", "dont", "do-not", "ban", "banned", "never", "avoid"],
       "tags": ["del", "s"]
     },
-    "banned_markers_comment": "Text inside an element the page marks as banned is mentioned, not used: a brand book's list of words it never uses is not those words in use. Such an element has the attribute above with that value, a class token from class_tokens (or a BEM modifier like card--dont), or is one of tags. Its text is dropped from the vocabulary tells (buzzwords, cadence, em-dashes, fake proof, placeholders) in both copy_check.py and ai_tell_scan.py, and is still graded for reading level, because someone still reads it. Added 2026-10-11 after the LINTEL brand book's ban list was reported as buzzwords in use. Register: Part 5."
+    "banned_markers_comment": "Text inside an element the page marks as banned is mentioned, not used: a brand book's list of words it never uses is not those words in use. Such an element has the attribute above with that value, a class token from class_tokens (or a BEM modifier like card--dont), or is one of tags. Its text is dropped from the vocabulary tells (buzzwords, cadence, em-dashes, fake proof, placeholders) in both copy_check.py and ai_tell_scan.py, and is still graded for reading level, because someone still reads it. Added 2026-10-11 after a client brand book's ban list was reported as buzzwords in use. Register: Part 5."
   },
   "craft_checks": {
     "comment": "These are quality/accessibility failures, NOT proof of AI. They feed the craft score. Thresholds are cited in reference/accessibility.md.",

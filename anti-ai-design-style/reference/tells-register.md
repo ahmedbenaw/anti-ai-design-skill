@@ -2,7 +2,7 @@
 
 **What this file is.** Every "AI design tell" this skill acts on, with the evidence
 behind it. Nothing in the skill's rules or scanner exists without an entry here.
-Register version: **2026.10.1** (rules fingerprint `ceb58447cffcc597`) (dated on purpose: tells drift; see "Why this
+Register version: **2026.10.1** (rules fingerprint `3c8f23a11db4e800`) (dated on purpose: tells drift; see "Why this
 register is dated" at the end).
 
 **How to read an entry.**
@@ -212,7 +212,7 @@ The word lists live in `scripts/rules.json` (grouped, weighted). Highlights:
 
 **What counts as copy, by file type (2026-10-11).** The copy tells and the
 reading grade run on what a user reads, never on code. `copy_check.py` used to
-grade a stylesheet or component whole. The LINTEL repo's `app.css` scored
+grade a stylesheet or component whole. One client repo's `app.css` scored
 reading grade 627 on its selectors. Two components scored 19 and 20 on their
 import lines. The stop hook then blocked every session that touched one, over
 findings no edit could fix. Here is what each type now contributes.
@@ -269,7 +269,7 @@ Verified false-positive traps: flagging these embarrasses the skill:
 - "Built with a website builder" fingerprints (Framer/Webflow meta): proves a
   builder, not AI (P-T18).
 - **A page's own ban list.** A brand book that lists the words it never uses
-  mentions them; it does not use them. Before 2026-10-11 the LINTEL brand book
+  mentions them; it does not use them. Before 2026-10-11 a client brand book
   ("Seamless · robust · cutting-edge", "Delve · tapestry · testament") was
   reported as buzzwords and AI cadence in use. Now the text inside an element
   the page marks as banned is cut before the vocabulary tells. Those are
