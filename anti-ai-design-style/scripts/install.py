@@ -99,7 +99,13 @@ def shell_safe(path, sep=os.sep):
     # left there is nothing to double.
     if sep == "\\":
         path = path.replace("\\", "/")
-    if path and any(c in path for c in ' \t"\'\\$`&|;<>()*?[]#~!'):
+    # A tilde expands only at the start of a word; inside a path it is an
+    # ordinary character. Windows short paths are full of them - the CI
+    # runner's own profile is C:/Users/RUNNER~1 - and quoting on those was
+    # wrong often enough to matter.
+    leading_tilde = path.startswith("~")
+    if path and (leading_tilde or
+                 any(c in path for c in ' \t"\'\\$`&|;<>()*?[]#!')):
         return '"{}"'.format(path.replace('\\', '\\\\').replace('"', '\\"'))
     return path
 
@@ -243,7 +249,11 @@ def selftest():
                        os.path.isfile(os.path.join(target, ".claude",
                                                    "commands", "c.md"))))
         checks.append(("no placeholders remain", SKILL_TOKEN not in rule + cmd))
-        checks.append(("real paths substituted", skill in rule and skill in cmd))
+        # The written path is forward-slashed on Windows by design, so the
+        # expectation is built the same way rather than from the native path.
+        skill_fwd = skill.replace(os.sep, "/")
+        checks.append(("real paths substituted",
+                       skill_fwd in rule and skill_fwd in cmd))
         # A doubled quote means the path was quoted twice and the shell will
         # split it at the first space, which is the whole bug this guards.
         checks.append(('no doubled quotes around a substituted path',
@@ -255,7 +265,8 @@ def selftest():
         checks.append(("no installed sibling is an ordinary success: the brand "
                        "check ships here", code == EXIT_OK))
         checks.append(("no installed sibling still installs a complete file",
-                       SKILL_TOKEN not in rule2 and skill in rule2))
+                       SKILL_TOKEN not in rule2 and
+                       skill.replace(os.sep, "/") in rule2))
 
         spacey_skill = os.path.join(root, "a skill dir")
         shutil.copytree(skill, spacey_skill)
@@ -292,7 +303,15 @@ def selftest():
                  '"/home/a b/skill"'),
                 ("a POSIX path with no space is still bare",
                  shell_safe("/home/ab/skill", sep="/"),
-                 "/home/ab/skill")):
+                 "/home/ab/skill"),
+                # A tilde expands only at the start of a word. Windows short
+                # paths carry one in the middle constantly, and quoting on
+                # those made a correct bare path come out quoted.
+                ("a leading tilde is quoted, because it would expand",
+                 shell_safe("~/skill", sep="/"), '"~/skill"'),
+                ("a tilde inside a Windows short path is left bare",
+                 shell_safe(r"C:\Users\RUNNER~1\skill", sep="\\"),
+                 "C:/Users/RUNNER~1/skill")):
             checks.append((label, got == want))
 
         dry = os.path.join(root, "proj3")
