@@ -4,6 +4,58 @@ Versions follow the skill's own `plugin.json`. Every scanner verdict prints a
 rules fingerprint, so a number quoted in one version can be checked against
 the rules that produced it.
 
+## 3.6.0 — 2026-10-28
+
+**The Windows installer now runs on Windows, and that found two real bugs.**
+`install.ps1` had only ever run under PowerShell 7 on macOS. A Windows runner
+is real Windows, so the last untested half of this repo does not have to stay
+untested. Four jobs run on every push. The parser check and the whole install
+round trip each run twice, under Windows PowerShell 5.1 and PowerShell 7.
+Every scanner selftest runs against native backslash paths on Python 3.9 and
+3.13. A fourth job runs the installer alone in an empty folder, which is the
+`irm | iex` path.
+
+The first Windows run failed, and both failures were real.
+
+`stop_check.py` had neither a backslash nor a colon in its path character
+class. An absolute Windows path therefore matched as the bare filename, was
+joined to the session's working directory, pointed at nothing and was
+dropped. On Windows the Stop hook went silent on every absolute path it was
+handed. Measured: the old class returns `bad-page.html` where the new one
+returns `C:\Users\...\bad-page.html`.
+
+`install.py` treated a backslash as a shell metacharacter, so every Windows
+path was quoted and had its separators doubled. The commands this script
+writes into your rules came out mangled for every Windows user. Fixed by
+writing forward slashes, which Windows, PowerShell and Python all accept, and
+which `install.ps1` already did for its Python path. A tilde is now special only at the start of a word. A
+Windows short path such as `C:/Users/RUNNER~1` carries one in the middle and
+needed no quoting.
+
+Both take the separator as a parameter, so each platform's behaviour is
+asserted from either one. The Unix classes are untouched.
+
+**A CDN page is no longer a dead end.**
+
+Such a page was reported as `INCONCLUSIVE`, with the words "styles blocked"
+and nothing else. The reader could not tell a missing
+webfont from a missing stylesheet. There was no command to run either. The hook now names the hosts
+and prints the exact command that returns a verdict. Measured on a real page:
+`rendered INCONCLUSIVE` with `styling blocked from cdn.jsdelivr.net,
+fonts.googleapis.com`, then `rendered FAIL (network)` once that command ran.
+
+Three of my own mistakes are worth recording, because each wasted a round
+trip. The parser check judged line endings, which git legitimately converts
+on a Windows checkout. It also inspected a decoded string for a byte-order
+mark, which 5.1 and 7 disagreed about. Both checks now read raw bytes, and
+the real 5.1 hazard is asserted instead. The round-trip script computed its
+repo root in a `param()` default, where `$PSCommandPath` is empty under
+`powershell -File`. And Windows PowerShell 5.1 wraps a native command's
+stderr in an error that a `Stop` preference makes fatal. A scanner printing a
+note to stderr therefore killed the run under 5.1 and not under 7.
+
+No rule changed, so the fingerprint stays `3c8f23a11db4e800`.
+
 ## 3.5.1 — 2026-10-28
 
 **Tests and a stale lesson, no behaviour change.** 3.5.0 claimed the session

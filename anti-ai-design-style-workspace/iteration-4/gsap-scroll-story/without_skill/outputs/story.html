@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tidewrack Press — Letterpress, Whitstable</title>
+<meta name="description" content="Tidewrack Press: letterpress printers in Whitstable, Kent since 1974. Wedding stationery, poetry pamphlets and gig posters, printed on one Heidelberg platen.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,400&family=Spectral:ital,wght@0,300;0,400;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f3ede1;
+    --paper-deep:#e7dece;
+    --ink:#1b1714;
+    --ink-soft:#4a423a;
+    --red:#b23a24;
+    --teal:#28514b;
+    --rule:rgba(27,23,20,.18);
+    --display:"Fraunces",Georgia,serif;
+    --body:"Spectral",Georgia,serif;
+    --mono:"IBM Plex Mono",ui-monospace,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--body);
+    font-size:clamp(17px,1.05vw + 14px,20px);
+    line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  /* paper tooth */
+  body::before{
+    content:"";position:fixed;inset:0;z-index:999;pointer-events:none;opacity:.5;
+    background-image:
+      radial-gradient(rgba(27,23,20,.055) 1px, transparent 1.2px),
+      radial-gradient(rgba(27,23,20,.04) 1px, transparent 1.2px);
+    background-size:3px 3px, 7px 7px;
+    background-position:0 0, 2px 3px;
+    mix-blend-mode:multiply;
+  }
+  img,svg{display:block;max-width:100%}
+  a{color:inherit}
+
+  .wrap{width:min(1180px,92vw);margin-inline:auto}
+  .mono{font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase}
+
+  /* ---------- progress rail ---------- */
+  .rail{position:fixed;top:0;left:0;height:3px;width:100%;z-index:900;background:transparent}
+  .rail i{display:block;height:100%;width:100%;transform:scaleX(0);transform-origin:0 50%;
+    background:linear-gradient(90deg,var(--red),var(--teal))}
+
+  /* ---------- top bar ---------- */
+  header.bar{position:fixed;top:0;left:0;right:0;z-index:800;
+    display:flex;align-items:baseline;justify-content:space-between;gap:1rem;
+    padding:1.1rem clamp(1rem,4vw,2.5rem);}
+  header.bar .mark{font-family:var(--display);font-weight:900;font-size:1.02rem;letter-spacing:.02em}
+  header.bar .mark em{font-style:normal;color:var(--red)}
+  header.bar nav{display:flex;gap:1.3rem}
+  header.bar nav a{text-decoration:none;opacity:.72}
+  header.bar nav a:hover{opacity:1;color:var(--red)}
+  @media (max-width:720px){header.bar nav{display:none}}
+
+  /* ---------- hero ---------- */
+  .hero{min-height:100svh;display:grid;place-items:center;position:relative;padding:7rem 0 4rem;overflow:hidden}
+  .hero .plate{position:relative;z-index:2;text-align:center}
+  .hero .kicker{display:flex;justify-content:center;gap:1.2rem;flex-wrap:wrap;color:var(--ink-soft);margin-bottom:1.6rem}
+  .hero h1{
+    font-family:var(--display);font-weight:900;font-optical-sizing:auto;
+    font-size:clamp(3.4rem,13vw,10.5rem);line-height:.84;letter-spacing:-.035em;
+    margin:0;text-transform:uppercase;
+  }
+  .hero h1 .word{display:block}
+  .hero h1 .ch{display:inline-block;will-change:transform}
+  .hero h1 .word:last-child{color:var(--red);-webkit-text-stroke:0}
+  .hero .sub{max-width:46ch;margin:2rem auto 0;color:var(--ink-soft);font-size:1.06rem}
+  .hero .scrollcue{margin-top:3.2rem;display:inline-flex;align-items:center;gap:.7rem;color:var(--ink-soft)}
+  .hero .scrollcue span{display:block;width:1px;height:46px;background:var(--rule)}
+  .hero .blot{position:absolute;border-radius:50%;filter:blur(2px);opacity:.14;z-index:1}
+  .b1{width:46vw;height:46vw;background:var(--teal);left:-14vw;top:4vh}
+  .b2{width:30vw;height:30vw;background:var(--red);right:-8vw;bottom:-6vh}
+  .registration{position:absolute;inset:0;z-index:1;pointer-events:none}
+  .registration .x{position:absolute;width:26px;height:26px;opacity:.35}
+  .registration .x::before,.registration .x::after{content:"";position:absolute;background:var(--ink)}
+  .registration .x::before{left:50%;top:0;width:1px;height:100%}
+  .registration .x::after{top:50%;left:0;height:1px;width:100%}
+
+  /* ---------- story sections ---------- */
+  .story{padding:clamp(5rem,12vh,10rem) 0}
+  .chapter{
+    display:grid;grid-template-columns:7rem minmax(0,1fr) minmax(0,1fr);
+    gap:clamp(1.5rem,4vw,4rem);align-items:start;
+    padding:clamp(4rem,10vh,8.5rem) 0;border-top:1px solid var(--rule);
+  }
+  .chapter:first-of-type{border-top:0}
+  .chapter .num{
+    font-family:var(--display);font-weight:900;font-size:clamp(2.6rem,5vw,4.6rem);
+    line-height:.8;color:transparent;-webkit-text-stroke:1px var(--ink);opacity:.55
+  }
+  .chapter h2{
+    font-family:var(--display);font-weight:600;font-size:clamp(2rem,4.4vw,3.5rem);
+    line-height:1.02;letter-spacing:-.02em;margin:0 0 1.1rem;
+  }
+  .chapter h2 em{font-style:italic;color:var(--red)}
+  .chapter .lede{font-size:1.14rem;margin:0 0 1.2rem}
+  .chapter p{color:var(--ink-soft)}
+  .chapter .aside{align-self:stretch}
+  .spec{list-style:none;margin:1.6rem 0 0;padding:1.1rem 0 0;border-top:1px solid var(--rule)}
+  .spec li{display:flex;justify-content:space-between;gap:1rem;padding:.42rem 0;border-bottom:1px dotted var(--rule)}
+  .spec b{font-weight:400;font-family:var(--mono);font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+  blockquote{margin:1.8rem 0 0;padding-left:1.2rem;border-left:2px solid var(--red);
+    font-family:var(--display);font-style:italic;font-size:1.18rem;line-height:1.4}
+  blockquote cite{display:block;margin-top:.7rem;font-style:normal;font-family:var(--mono);
+    font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+  @media (max-width:860px){
+    .chapter{grid-template-columns:3.5rem minmax(0,1fr)}
+    .chapter .aside{grid-column:2}
+  }
+
+  /* illustrative plates (CSS only) */
+  .plate-art{position:relative;aspect-ratio:4/5;background:var(--paper-deep);
+    box-shadow:0 1px 0 rgba(255,255,255,.6) inset, 0 18px 40px -28px rgba(27,23,20,.55);
+    border:1px solid var(--rule);overflow:hidden}
+  .plate-art .layer{position:absolute;inset:0}
+  .stack{position:absolute;inset:8%;display:grid;gap:6px;align-content:end}
+  .stack i{display:block;height:9px;background:var(--ink);opacity:.14}
+  .stack i:nth-child(odd){opacity:.22;background:var(--teal)}
+  .swatches{position:absolute;inset:10%;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .swatches i{display:block;border:1px solid var(--rule)}
+  .ring{position:absolute;left:50%;top:50%;translate:-50% -50%;width:62%;aspect-ratio:1;border-radius:50%;
+    border:14px solid var(--teal);opacity:.75}
+  .ring.inner{width:34%;border-width:10px;border-color:var(--red);opacity:.85}
+  .barline{position:absolute;left:10%;right:10%;height:2px;background:var(--ink);opacity:.35}
+  .glyph{position:absolute;left:50%;top:52%;translate:-50% -50%;font-family:var(--display);
+    font-weight:900;font-size:min(34vw,13rem);line-height:.7;color:var(--red);opacity:.9}
+  .grid-type{position:absolute;inset:12%;display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:1fr;gap:4px}
+  .grid-type i{background:var(--ink);opacity:.1}
+
+  /* ---------- press run marquee ---------- */
+  .pressrun{padding:clamp(3rem,8vh,6rem) 0;overflow:hidden;border-block:1px solid var(--rule);
+    background:var(--ink);color:var(--paper)}
+  .pressrun .ticker{display:flex;gap:2.4rem;white-space:nowrap;font-family:var(--display);
+    font-weight:900;text-transform:uppercase;font-size:clamp(2.4rem,7vw,6rem);line-height:1;letter-spacing:-.02em}
+  .pressrun .ticker span{opacity:.92}
+  .pressrun .ticker span:nth-child(even){color:transparent;-webkit-text-stroke:1px rgba(243,237,225,.75)}
+
+  /* ---------- gallery ---------- */
+  .gallery{padding:clamp(5rem,12vh,9rem) 0}
+  .gallery header{display:flex;justify-content:space-between;align-items:end;gap:2rem;
+    border-bottom:1px solid var(--rule);padding-bottom:1.2rem;margin-bottom:2.6rem;flex-wrap:wrap}
+  .gallery h2{font-family:var(--display);font-weight:600;font-size:clamp(1.8rem,3.6vw,2.8rem);margin:0;letter-spacing:-.02em}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:clamp(1.2rem,3vw,2.2rem)}
+  .card{text-decoration:none}
+  .card .frame{position:relative;aspect-ratio:3/4;border:1px solid var(--rule);background:var(--paper-deep);
+    overflow:hidden;transition:transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s}
+  .card:hover .frame{transform:translateY(-6px) rotate(-.6deg);box-shadow:0 26px 50px -30px rgba(27,23,20,.6)}
+  .card .meta{display:flex;justify-content:space-between;gap:1rem;margin-top:.8rem;color:var(--ink-soft)}
+  .card .meta strong{font-weight:400;font-family:var(--display);font-size:1.02rem;color:var(--ink)}
+  .poster{position:absolute;inset:0;display:grid;place-items:center;padding:12%}
+  .poster .big{font-family:var(--display);font-weight:900;text-transform:uppercase;line-height:.82;
+    font-size:clamp(1.6rem,3.6vw,2.6rem);letter-spacing:-.03em;text-align:center}
+  .poster.a{background:var(--paper-deep)} .poster.a .big{color:var(--red)}
+  .poster.b{background:var(--teal);color:var(--paper)}
+  .poster.c{background:var(--paper)} .poster.c .big{color:var(--teal);font-style:italic;font-weight:400}
+  .poster.d{background:var(--ink);color:var(--paper)}
+  .poster.e{background:var(--red);color:var(--paper)}
+  .poster.f{background:var(--paper-deep)} .poster.f .big{color:var(--ink)}
+  .poster small{display:block;font-family:var(--mono);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;margin-top:1rem;opacity:.75}
+
+  /* ---------- contact ---------- */
+  .contact{padding:clamp(5rem,12vh,9rem) 0 4rem;border-top:1px solid var(--rule)}
+  .contact .grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:clamp(2rem,6vw,5rem);align-items:start}
+  .contact h2{font-family:var(--display);font-weight:900;text-transform:uppercase;
+    font-size:clamp(2.2rem,6vw,4.6rem);line-height:.9;letter-spacing:-.03em;margin:0 0 1.2rem}
+  .contact h2 span{display:block;color:var(--red)}
+  .contact p{max-width:40ch}
+  .contact .btn{display:inline-block;margin-top:1.6rem;padding:.9rem 1.6rem;background:var(--ink);color:var(--paper);
+    text-decoration:none;font-family:var(--mono);font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;
+    transition:background .3s, transform .3s}
+  .contact .btn:hover{background:var(--red);transform:translateY(-2px)}
+  .details{list-style:none;margin:0;padding:0}
+  .details li{padding:.9rem 0;border-bottom:1px solid var(--rule)}
+  .details b{display:block;font-family:var(--mono);font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:.25rem}
+  .details a{text-decoration:none;border-bottom:1px solid var(--rule)}
+  .details a:hover{color:var(--red)}
+  @media (max-width:820px){.contact .grid{grid-template-columns:1fr}}
+
+  footer.foot{padding:2.4rem 0 3rem;color:var(--ink-soft);display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+
+  .reveal{opacity:0}
+  @media (prefers-reduced-motion:reduce){
+    .reveal{opacity:1 !important;transform:none !important}
+    html{scroll-behavior:auto}
+  }
+</style>
+</head>
+<body>
+
+<div class="rail"><i id="railFill"></i></div>
+
+<header class="bar">
+  <div class="mark">Tidewrack<em>·</em>Press</div>
+  <nav class="mono">
+    <a href="#story">The job</a>
+    <a href="#work">Work</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="blot b1" data-depth="0.25"></div>
+  <div class="blot b2" data-depth="0.4"></div>
+  <div class="registration">
+    <div class="x" style="left:6vw;top:14vh"></div>
+    <div class="x" style="right:6vw;top:14vh"></div>
+    <div class="x" style="left:6vw;bottom:10vh"></div>
+    <div class="x" style="right:6vw;bottom:10vh"></div>
+  </div>
+
+  <div class="plate wrap">
+    <div class="kicker mono">
+      <span>Whitstable, Kent</span><span>Est. 1974</span><span>Two printers, one Heidelberg</span>
+    </div>
+    <h1 id="heroType">
+      <span class="word" data-word="Ink">Ink</span>
+      <span class="word" data-word="under">under</span>
+      <span class="word" data-word="pressure">pressure</span>
+    </h1>
+    <p class="sub reveal" id="heroSub">
+      Wedding stationery, poetry pamphlets and gig posters, printed one sheet at a time
+      on a 1963 Heidelberg platen press four streets back from the harbour.
+    </p>
+    <div class="scrollcue mono reveal" id="heroCue">
+      <span></span> Scroll to follow a job through the shop
+    </div>
+  </div>
+</section>
+
+<!-- ============ STORY ============ -->
+<main id="story" class="story wrap">
+
+  <article class="chapter">
+    <div class="num" data-num>01</div>
+    <div>
+      <h2 class="reveal" data-rv>The <em>paper</em> comes first</h2>
+      <p class="lede reveal" data-rv>Everything downstream is decided by the sheet. We put four or five in your hands and let you press a thumbnail into them.</p>
+      <p class="reveal" data-rv>Mould-made cotton rag takes a deep bite and holds it; a crisp laid sheet keeps the type sharp but shows every mistake. We buy in small quantities from two mills, so what is on the shelf in March may not be there in September — which is part of the pleasure, and occasionally part of the problem.</p>
+      <ul class="spec reveal" data-rv>
+        <li><b>Stock</b><span>Somerset 300gsm, Zerkall laid, Colorplan</span></li>
+        <li><b>Deckle</b><span>Torn by hand, four sides</span></li>
+        <li><b>Minimum</b><span>50 sheets</span></li>
+      </ul>
+    </div>
+    <div class="aside reveal" data-rv>
+      <div class="plate-art" data-parallax="0.12">
+        <div class="stack">
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="chapter">
+    <div class="num" data-num>02</div>
+    <div>
+      <h2 class="reveal" data-rv>Setting the <em>type</em>, backwards</h2>
+      <p class="lede reveal" data-rv>Metal for the small sizes, end-grain wood for anything shouting. Composed by hand, right to left, upside down.</p>
+      <p class="reveal" data-rv>A line of 12pt Caslon takes about four minutes to set and three seconds to drop on the floor. We have four cases of wood letter bought from a closing shop in Margate in 1981, and a sort of permanent argument about whether the ampersand in it is Victorian or merely tired.</p>
+      <blockquote class="reveal" data-rv>
+        You cannot rush a stick of type. You can only rush the mistake.
+        <cite>Maeve Garrity, compositor</cite>
+      </blockquote>
+    </div>
+    <div class="aside reveal" data-rv>
+      <div class="plate-art" data-parallax="0.18">
+        <div class="grid-type">
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        </div>
+        <div class="glyph">&amp;</div>
+      </div>
+    </div>
+  </article>
+
+  <article class="chapter">
+    <div class="num" data-num>03</div>
+    <div>
+      <h2 class="reveal" data-rv>Mixing <em>ink</em> on a slab</h2>
+      <p class="lede reveal" data-rv>Colour is weighed on a kitchen scale and recorded in a notebook that goes back to the first winter.</p>
+      <p class="reveal" data-rv>Rubine red, a knife-tip of black, a smear of transparent white to let the paper breathe through. We will match a swatch, a bridesmaid's dress or a particular shade of wet shingle at low tide, and we will write the recipe down so that the save-the-dates and the orders of service agree with each other eight months apart.</p>
+      <ul class="spec reveal" data-rv>
+        <li><b>System</b><span>Hand-mixed oil-based, Pantone reference</span></li>
+        <li><b>Colours per run</b><span>One at a time, dried between</span></li>
+        <li><b>Notebook</b><span>No. 11, since 2019</span></li>
+      </ul>
+    </div>
+    <div class="aside reveal" data-rv>
+      <div class="plate-art" data-parallax="0.1">
+        <div class="swatches">
+          <i style="background:#b23a24"></i><i style="background:#9a4e3a"></i><i style="background:#c9705a"></i>
+          <i style="background:#28514b"></i><i style="background:#3f6f67"></i><i style="background:#1b1714"></i>
+          <i style="background:#e7dece"></i><i style="background:#cdbfa4"></i><i style="background:#f3ede1"></i>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="chapter">
+    <div class="num" data-num>04</div>
+    <div>
+      <h2 class="reveal" data-rv>Locking up the <em>forme</em></h2>
+      <p class="lede reveal" data-rv>Type, furniture and quoins go into a steel chase and are tightened until the whole thing can be lifted by one corner without breathing.</p>
+      <p class="reveal" data-rv>Then the fiddling: tissue-thin packing behind the tympan to even the impression, a proof pulled, a letter found standing a hair high, the quoins slackened, the whole argument had again. Makeready is most of the job. The printing is the short bit at the end.</p>
+      <blockquote class="reveal" data-rv>
+        If it lifts, it prints. If it rains type on your boots, start again.
+        <cite>Shop rule, painted on the wall</cite>
+      </blockquote>
+    </div>
+    <div class="aside reveal" data-rv>
+      <div class="plate-art" data-parallax="0.16">
+        <div class="layer" id="formeArt">
+          <div class="barline" style="top:22%"></div>
+          <div class="barline" style="top:40%;right:30%"></div>
+          <div class="barline" style="top:58%;left:26%"></div>
+          <div class="barline" style="top:76%"></div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="chapter">
+    <div class="num" data-num>05</div>
+    <div>
+      <h2 class="reveal" data-rv>The <em>press run</em></h2>
+      <p class="lede reveal" data-rv>Nine hundred impressions an hour if you feed it well. We feed it at about four hundred, because we are reading every sheet.</p>
+      <p class="reveal" data-rv>The platen closes, the sheet takes the bite, the fingers lift it out. You hear the rhythm before you see it, and when the rhythm changes something is wrong: a sheet picking, the ink going short, a roller running hot. Three hundred of yours will be printed on a Tuesday afternoon with the harbour wind coming through the door.</p>
+      <ul class="spec reveal" data-rv>
+        <li><b>Press</b><span>Heidelberg platen, 10&times;15, 1963</span></li>
+        <li><b>Impression</b><span>Deep, with a visible bite</span></li>
+        <li><b>Turnaround</b><span>Three to four weeks</span></li>
+      </ul>
+    </div>
+    <div class="aside reveal" data-rv>
+      <div class="plate-art" data-parallax="0.2">
+        <div class="layer"><div class="ring" id="ringOuter"></div><div class="ring inner" id="ringInner"></div></div>
+      </div>
+    </div>
+  </article>
+
+</main>
+
+<!-- ============ PRESS RUN TICKER ============ -->
+<section class="pressrun" aria-hidden="true">
+  <div class="ticker" id="ticker">
+    <span>Impression</span><span>Makeready</span><span>Impression</span><span>Makeready</span>
+    <span>Impression</span><span>Makeready</span><span>Impression</span><span>Makeready</span>
+  </div>
+</section>
+
+<!-- ============ GALLERY ============ -->
+<section id="work" class="gallery wrap">
+  <header>
+    <h2 class="reveal" data-rv>Off the press lately</h2>
+    <p class="mono reveal" data-rv>Six jobs, 2024&ndash;2026</p>
+  </header>
+  <div class="cards">
+    <a class="card reveal" data-rv data-card href="#contact">
+      <div class="frame"><div class="poster a"><div class="big">Ivy &amp; Rook<small>Invitation suite</small></div></div></div>
+      <div class="meta mono"><strong>Ivy &amp; Rook</strong><span>2 colours</span></div>
+    </a>
+    <a class="card reveal" data-rv data-card href="#contact">
+      <div class="frame"><div class="poster b"><div class="big">Shingle Songs<small>Poetry pamphlet</small></div></div></div>
+      <div class="meta mono"><strong>Shingle Songs</strong><span>32pp, sewn</span></div>
+    </a>
+    <a class="card reveal" data-rv data-card href="#contact">
+      <div class="frame"><div class="poster c"><div class="big">Oyster Club<small>Menu cards</small></div></div></div>
+      <div class="meta mono"><strong>Oyster Club</strong><span>Blind deboss</span></div>
+    </a>
+    <a class="card reveal" data-rv data-card href="#contact">
+      <div class="frame"><div class="poster d"><div class="big">Four Bands One Night<small>Gig poster, wood type</small></div></div></div>
+      <div class="meta mono"><strong>Sea Street Hall</strong><span>Wood type</span></div>
+    </a>
+    <a class="card reveal" data-rv data-card href="#contact">
+      <div class="frame"><div class="poster e"><div class="big">Low Tide Press<small>Letterheads</small></div></div></div>
+      <div class="meta mono"><strong>Low Tide</strong><span>Rag stock</span></div>
+    </a>
+    <a class="card reveal" data-rv data-card href="#contact">
+      <div class="frame"><div class="poster f"><div class="big">Hurst &amp; Day<small>Trade cards</small></div></div></div>
+      <div class="meta mono"><strong>Hurst &amp; Day</strong><span>Edge painted</span></div>
+    </a>
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section id="contact" class="contact wrap">
+  <div class="grid">
+    <div>
+      <h2 class="reveal" data-rv>Bring us<span>a job</span></h2>
+      <p class="reveal" data-rv>Tell us what it is for, roughly how many, and when it has to be in someone's hands. We will talk you through paper and colour and tell you honestly if letterpress is the wrong answer.</p>
+      <p class="reveal" data-rv>The shop is open Tuesday to Friday, 10 till 4. Knock if the door is shut — the press is loud.</p>
+      <a class="btn reveal" data-rv href="mailto:hello@tidewrackpress.co.uk">Start a conversation</a>
+    </div>
+    <ul class="details reveal" data-rv>
+      <li><b>Workshop</b>14b Sea Wall Lane, Whitstable, Kent CT5 1AP</li>
+      <li><b>Email</b><a href="mailto:hello@tidewrackpress.co.uk">hello@tidewrackpress.co.uk</a></li>
+      <li><b>Telephone</b><a href="tel:+441227000000">01227 000 000</a></li>
+      <li><b>Printers</b>Maeve Garrity &amp; Dunstan Pell</li>
+    </ul>
+  </div>
+  <footer class="foot mono">
+    <span>Tidewrack Press, Whitstable &mdash; printing since 1974</span>
+    <span>Set in Fraunces &amp; Spectral</span>
+  </footer>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+(function(){
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!window.gsap) { document.querySelectorAll('.reveal').forEach(function(n){n.style.opacity=1;}); return; }
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  /* ---- split hero headline into letters ---- */
+  var heroChars = [];
+  document.querySelectorAll('#heroType .word').forEach(function(word){
+    var text = word.getAttribute('data-word');
+    word.textContent = '';
+    text.split('').forEach(function(c){
+      var s = document.createElement('span');
+      s.className = 'ch';
+      s.textContent = c;
+      word.appendChild(s);
+      heroChars.push(s);
+    });
+  });
+
+  if (reduced) {
+    gsap.set('.reveal', {opacity:1});
+    return;
+  }
+
+  /* ---- progress rail ---- */
+  gsap.to('#railFill', {
+    scaleX: 1, ease: 'none',
+    scrollTrigger: { scrub: 0.3, start: 0, end: 'max' }
+  });
+
+  /* ---- hero: type presses in like an impression ---- */
+  var intro = gsap.timeline({ defaults: { ease: 'power4.out' } });
+  intro.from(heroChars, {
+      yPercent: 115, scaleY: 1.25, opacity: 0,
+      duration: 1.15, stagger: { each: 0.028, from: 'start' }
+    })
+    .to(heroChars, { scaleY: 1, duration: 0.5, ease: 'power2.out' }, '-=0.7')
+    .fromTo('#heroSub', { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9 }, '-=0.6')
+    .fromTo('#heroCue', { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8 }, '-=0.6');
+
+  /* ---- hero parallax blots ---- */
+  document.querySelectorAll('.hero .blot').forEach(function(el){
+    gsap.to(el, {
+      yPercent: 30 * parseFloat(el.dataset.depth || 0.2) * 4,
+      ease: 'none',
+      scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
+    });
+  });
+  gsap.to('#heroType', {
+    yPercent: -12, opacity: 0.25, ease: 'none',
+    scrollTrigger: { trigger: '.hero', start: 'center center', end: 'bottom top', scrub: true }
+  });
+
+  /* ---- story reveals ---- */
+  gsap.utils.toArray('[data-rv]').forEach(function(el){
+    gsap.fromTo(el,
+      { opacity: 0, y: 34 },
+      {
+        opacity: 1, y: 0, duration: 0.95, ease: 'power3.out',
+        scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none none' }
+      }
+    );
+  });
+
+  /* ---- chapter numerals count up on approach ---- */
+  gsap.utils.toArray('[data-num]').forEach(function(el){
+    gsap.fromTo(el,
+      { opacity: 0, x: -26, rotate: -4 },
+      {
+        opacity: 0.55, x: 0, rotate: 0, duration: 1, ease: 'power3.out',
+        scrollTrigger: { trigger: el.closest('.chapter'), start: 'top 78%' }
+      }
+    );
+  });
+
+  /* ---- plate parallax ---- */
+  gsap.utils.toArray('[data-parallax]').forEach(function(el){
+    gsap.fromTo(el,
+      { yPercent: 7 * parseFloat(el.dataset.parallax) * 10 },
+      {
+        yPercent: -7 * parseFloat(el.dataset.parallax) * 10, ease: 'none',
+        scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: true }
+      }
+    );
+  });
+
+  /* ---- paper stack builds up, sheet by sheet ---- */
+  gsap.from('.stack i', {
+    scaleX: 0.2, opacity: 0, transformOrigin: '0% 50%',
+    duration: 0.5, stagger: 0.055, ease: 'power2.out',
+    scrollTrigger: { trigger: '.stack', start: 'top 80%' }
+  });
+
+  /* ---- type grid sets itself ---- */
+  gsap.from('.grid-type i', {
+    opacity: 0, scale: 0.4, duration: 0.5, ease: 'back.out(2)',
+    stagger: { each: 0.03, from: 'end' },
+    scrollTrigger: { trigger: '.grid-type', start: 'top 80%' }
+  });
+  gsap.from('.glyph', {
+    scale: 0.6, rotate: 8, opacity: 0, duration: 1.1, ease: 'power4.out',
+    scrollTrigger: { trigger: '.glyph', start: 'top 80%' }
+  });
+
+  /* ---- ink swatches wipe in ---- */
+  gsap.from('.swatches i', {
+    opacity: 0, yPercent: 30, duration: 0.6, ease: 'power3.out',
+    stagger: { each: 0.06, grid: [3,3], from: 'center' },
+    scrollTrigger: { trigger: '.swatches', start: 'top 80%' }
+  });
+
+  /* ---- forme locks up: bars tighten toward the centre on scrub ---- */
+  gsap.fromTo('#formeArt .barline',
+    { scaleX: 0.25, transformOrigin: '50% 50%' },
+    {
+      scaleX: 1, ease: 'none',
+      stagger: 0.08,
+      scrollTrigger: { trigger: '#formeArt', start: 'top 85%', end: 'bottom 45%', scrub: true }
+    }
+  );
+
+  /* ---- press rollers turn with the scroll ---- */
+  gsap.to('#ringOuter', {
+    rotate: 320, ease: 'none',
+    scrollTrigger: { trigger: '#ringOuter', start: 'top bottom', end: 'bottom top', scrub: 0.6 }
+  });
+  gsap.to('#ringInner', {
+    rotate: -500, scale: 1.08, ease: 'none',
+    scrollTrigger: { trigger: '#ringInner', start: 'top bottom', end: 'bottom top', scrub: 0.6 }
+  });
+
+  /* ---- press-run ticker drags sideways ---- */
+  gsap.to('#ticker', {
+    xPercent: -45, ease: 'none',
+    scrollTrigger: { trigger: '.pressrun', start: 'top bottom', end: 'bottom top', scrub: 0.4 }
+  });
+
+  /* ---- gallery cards deal out ---- */
+  gsap.from('[data-card] .frame', {
+    yPercent: 14, rotate: function(i){ return i % 2 ? 1.6 : -1.6; }, opacity: 0,
+    duration: 0.9, ease: 'power3.out', stagger: 0.09,
+    scrollTrigger: { trigger: '.cards', start: 'top 82%' }
+  });
+
+  /* ---- contact headline ---- */
+  gsap.from('.contact h2 span', {
+    xPercent: -8, opacity: 0, duration: 1, ease: 'power3.out',
+    scrollTrigger: { trigger: '.contact h2', start: 'top 85%' }
+  });
+
+  window.addEventListener('load', function(){ ScrollTrigger.refresh(); });
+})();
+</script>
+</body>
+</html>

@@ -50,8 +50,9 @@ optional and needs Playwright; without it the line says `rendered SKIPPED`,
 which means that check did not run.
 
 Status, stated plainly: `install.sh` was run end to end on macOS, from a
-clone and from the downloaded archive. `install.ps1` was written to the same
-spec but has not yet been executed on Windows. Its `-DryRun` changes nothing.
+clone and from the downloaded archive. `install.ps1` now runs end to end on
+Windows too, on every push, under both Windows PowerShell 5.1 and PowerShell
+7. Its `-DryRun` changes nothing.
 
 ## What you get
 
@@ -116,11 +117,27 @@ python3 scripts/verify_all.py examples/slop-example.html
 Expected: two `SELFTEST: PASS` lines, then a `PASS:` line for the fixed
 example and a `FAIL:` line scoring 50 for the slop example.
 
-The Windows installer is the one part of this repo the Python selftests
-cannot reach. PowerShell runs on macOS and Linux too, so check it anywhere:
+The Windows installer cannot be reached by the Python selftests. PowerShell
+runs on macOS and Linux too, so check it anywhere:
 
 ```bash
 pwsh -NoProfile -File installer/check-install-ps1.ps1
+```
+
+The installer is also exercised on a real Windows runner on every push.
+The workflow is `.github/workflows/windows-installer.yml`, and four jobs run
+there. The parser
+check and the whole install round trip each run twice, once under Windows
+PowerShell 5.1 and once under PowerShell 7. Every scanner selftest runs
+against native backslash paths on Python 3.9 and 3.13. A fourth job runs the
+installer alone in an empty folder, which is the `irm | iex` path that
+downloads the archive.
+
+The round trip is in `installer/ci-install-roundtrip.ps1` and runs by hand on
+any Windows box:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File installer\ci-install-roundtrip.ps1
 ```
 
 Expected: `PARSE: OK - 0 errors`, then `CHECKS: PASS`. It exits non-zero on
@@ -211,14 +228,25 @@ you stop anyway, because no edit to the page can fix it.
   styling comes from a CDN therefore reports `rendered INCONCLUSIVE`, and
   contrast, tap targets and focus go unmeasured for that page. This is
   deliberate: a hook that fetches from the network on every stop is worse.
-  Run `verify_all.py --render --allow-network <page>` by hand to measure one.
-- `install.ps1` has been run end to end under PowerShell 7.6.9 on macOS.
-  Dry run, install, its own self-check and uninstall, all clean. No hook
-  entries were written to `settings.json`. It has never been run on Windows.
-  Windows-specific behaviour is therefore unproven: `USERPROFILE`, native
-  backslash paths, and Windows PowerShell 5.1. The script parses with no
-  errors and holds no PowerShell 7-only syntax, so the 5.1 claim is
-  plausible rather than tested.
+  The hook now names the hosts whose styling was blocked. It also prints the
+  exact command that gets a verdict. The page is one command away from being
+  measured, rather than a dead end.
+- `install.ps1` runs end to end on a real Windows runner on every push,
+  under Windows PowerShell 5.1 and PowerShell 7 both. Dry run, install,
+  the installed copy's own selftests, a second install that adds nothing, and
+  uninstall. `USERPROFILE` and native backslash paths are therefore tested
+  rather than assumed, and so is 5.1.
+
+  The first Windows run found two real bugs that macOS could not have shown.
+  The Stop hook's path patterns had no backslash or colon, so on Windows it
+  went silent on every absolute path it was handed. And `install.py` doubled
+  the separators in every Windows path it wrote, mangling the commands it
+  puts in your rules. Both are fixed and pinned by cases that run on either
+  platform.
+
+  Three things are still untested. A non-English Windows locale, and a path
+  outside the user profile. And a machine with no Python, where the installer
+  must print its one command to fix that.
 
 ## Refresh the register by March 2028
 
