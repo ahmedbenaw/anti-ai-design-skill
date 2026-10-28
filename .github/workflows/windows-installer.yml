@@ -1,15 +1,20 @@
 # Runs the Windows installer on actual Windows.
 #
 # Until now install.ps1 had only ever run under PowerShell 7 on macOS. The
-# README said so plainly, and that was the last untested half of this repo:
-# USERPROFILE, native backslash paths, and Windows PowerShell 5.1 were all
-# assumptions. A windows-latest runner is real Windows, so there is no reason
-# for them to stay assumptions.
+# README said so, and that was the last untested half of this repo:
+# USERPROFILE, native backslash paths and Windows PowerShell 5.1 were all
+# assumptions. A windows-latest runner is real Windows, so they do not have to
+# stay assumptions.
 #
-# The install job runs under both shells. `powershell` is Windows PowerShell
-# 5.1, which ships with the OS and is what most people will actually have;
-# `pwsh` is PowerShell 7. A script that parses under 7 can still fail under
-# 5.1, so both are required to pass.
+# Each job that cares runs twice: once under `powershell`, which is Windows
+# PowerShell 5.1 and ships with the OS, and once under `pwsh`, which is
+# PowerShell 7. A script that parses under 7 can still fail under 5.1, so both
+# must pass.
+#
+# The test logic lives in installer/ci-*.ps1 rather than in this file. Two
+# reasons. PowerShell embedded in YAML cannot be parsed, linted or run by hand
+# on a Windows box, and the `shell:` key does not get the matrix context -
+# only `run:` does - so the interpreter has to be chosen inside the command.
 
 name: Windows installer
 
@@ -17,7 +22,7 @@ on:
   push:
     paths:
       - 'install.ps1'
-      - 'installer/check-install-ps1.ps1'
+      - 'installer/**'
       - 'anti-ai-design-style/**'
       - '.github/workflows/windows-installer.yml'
   pull_request:
@@ -25,19 +30,26 @@ on:
 
 jobs:
   parser:
-    name: Parser check (${{ matrix.shell }})
+    name: Parser check
     runs-on: windows-latest
     strategy:
       fail-fast: false
       matrix:
-        shell: [powershell, pwsh]
+        exe: [powershell, pwsh]
     steps:
       - uses: actions/checkout@v4
-      - name: Run PowerShell's own parser over install.ps1
-        shell: ${{ matrix.shell }}
+
+      - name: PowerShell's own parser over install.ps1
+        shell: cmd
+        run: ${{ matrix.exe }} -NoProfile -ExecutionPolicy Bypass -File installer\check-install-ps1.ps1
+
+      - name: And over the scripts this workflow runs
+        shell: cmd
         run: |
-          ./installer/check-install-ps1.ps1
-          if ($LASTEXITCODE -ne 0) { throw "parser check failed" }
+          ${{ matrix.exe }} -NoProfile -ExecutionPolicy Bypass -File installer\check-install-ps1.ps1 -Path installer\ci-run-selftests.ps1
+          if errorlevel 1 exit /b 1
+          ${{ matrix.exe }} -NoProfile -ExecutionPolicy Bypass -File installer\check-install-ps1.ps1 -Path installer\ci-install-roundtrip.ps1
+          if errorlevel 1 exit /b 1
 
   selftests:
     name: Scanner selftests on Windows
@@ -51,151 +63,57 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
-      - name: Every scanner selftest, on native Windows paths
-        shell: pwsh
-        run: |
-          # The venv probe, the path joins and the transcript reader have only
-          # ever run against forward slashes. Here they get backslashes.
-          $fail = 0
-          $pass = 0
-          $other = 0
-          # A foreach statement, not ForEach-Object: a pipeline script block
-          # has its own scope, so $pass++ inside one would increment a copy
-          # and leave this counter at zero.
-          foreach ($f in Get-ChildItem anti-ai-design-style/scripts/*.py) {
-            $out = & python $f.FullName --selftest 2>&1 | Select-Object -Last 1
-            if ($out -match 'PASS') { $pass++ }
-            elseif ($out -match 'FAIL') { $fail++; Write-Host "FAIL: $($f.Name)" }
-            else { $other++ }
-          }
-          Write-Host "pass=$pass fail=$fail other=$other"
-          # render_check needs a browser venv that CI does not build, so one
-          # 'other' is expected. Any FAIL is a real failure.
-          if ($fail -ne 0) { throw "$fail selftest(s) failed on Windows" }
-          if ($pass -lt 10) { throw "only $pass selftests ran; expected at least 10" }
+
+      - name: Every scanner, on native Windows paths
+        shell: cmd
+        # The venv probe, the path joins and the transcript reader have only
+        # ever run against forward slashes. Here they get backslashes.
+        run: pwsh -NoProfile -File installer\ci-run-selftests.ps1 -ScriptsDir anti-ai-design-style\scripts
 
   install-roundtrip:
-    name: Install round trip (${{ matrix.shell }})
+    name: Install round trip
     runs-on: windows-latest
     strategy:
       fail-fast: false
       matrix:
-        shell: [powershell, pwsh]
+        exe: [powershell, pwsh]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
 
-      - name: Dry run writes nothing
-        shell: ${{ matrix.shell }}
-        run: |
-          $skillDir = Join-Path $env:USERPROFILE '.claude\skills\anti-ai-design-style'
-          if (Test-Path $skillDir) { throw "skill already present before install" }
-          ./install.ps1 -Yes -DryRun
-          if ($LASTEXITCODE -ne 0) { throw "dry run exited $LASTEXITCODE" }
-          if (Test-Path $skillDir) { throw "dry run installed something" }
-
-      - name: Install, and check it landed on Windows paths
-        shell: ${{ matrix.shell }}
-        run: |
-          ./install.ps1 -Yes
-          if ($LASTEXITCODE -ne 0) { throw "install exited $LASTEXITCODE" }
-
-          # USERPROFILE, not HOME. Backslashes, not forward slashes.
-          $skillDir = Join-Path $env:USERPROFILE '.claude\skills\anti-ai-design-style'
-          $plugin = Join-Path $skillDir '.claude-plugin\plugin.json'
-          $codex = Join-Path $env:USERPROFILE '.agents\skills\anti-ai-design-style'
-          foreach ($p in @($skillDir, $plugin, $codex)) {
-            if (-not (Test-Path $p)) { throw "missing after install: $p" }
-          }
-
-          # The installed version must match the repo's, or the installer
-          # copied something else.
-          $want = (Get-Content anti-ai-design-style/.claude-plugin/plugin.json -Raw |
-                   ConvertFrom-Json).version
-          $got = (Get-Content $plugin -Raw | ConvertFrom-Json).version
-          if ($want -ne $got) { throw "installed $got but repo is $want" }
-          Write-Host "installed version $got"
-
-      - name: Selftests from the installed copy
-        shell: ${{ matrix.shell }}
-        run: |
-          # A selftest that only passes in the repo is not a selftest. This is
-          # the copy a user actually runs.
-          $scripts = Join-Path $env:USERPROFILE '.claude\skills\anti-ai-design-style\scripts'
-          $fail = 0
-          $pass = 0
-          foreach ($f in Get-ChildItem (Join-Path $scripts '*.py')) {
-            $out = & python $f.FullName --selftest 2>&1 | Select-Object -Last 1
-            if ($out -match 'PASS') { $pass++ }
-            elseif ($out -match 'FAIL') { $fail++; Write-Host "FAIL: $($f.Name)" }
-          }
-          Write-Host "installed copy: pass=$pass fail=$fail"
-          if ($fail -ne 0) { throw "$fail selftest(s) failed on the installed copy" }
-          if ($pass -lt 10) { throw "only $pass selftests ran on the installed copy" }
-
-      - name: Installing twice registers once
-        shell: ${{ matrix.shell }}
-        run: |
-          # The 3.2.2 fix. Counting rather than asserting an absolute number,
-          # because what matters is that a second install adds nothing.
-          $settings = Join-Path $env:USERPROFILE '.claude\settings.json'
-          function Count-Ours {
-            if (-not (Test-Path $settings)) { return 0 }
-            $raw = Get-Content $settings -Raw
-            return ([regex]::Matches($raw, 'anti-ai-design')).Count
-          }
-          $before = Count-Ours
-          ./install.ps1 -Yes
-          if ($LASTEXITCODE -ne 0) { throw "second install exited $LASTEXITCODE" }
-          $after = Count-Ours
-          Write-Host "our settings references: $before then $after"
-          if ($after -ne $before) {
-            throw "a second install changed our references from $before to $after"
-          }
-
-      - name: Uninstall removes what it added
-        shell: ${{ matrix.shell }}
-        run: |
-          $settings = Join-Path $env:USERPROFILE '.claude\settings.json'
-          $skillDir = Join-Path $env:USERPROFILE '.claude\skills\anti-ai-design-style'
-          $codex = Join-Path $env:USERPROFILE '.agents\skills\anti-ai-design-style'
-          ./install.ps1 -Yes -Uninstall
-          if ($LASTEXITCODE -ne 0) { throw "uninstall exited $LASTEXITCODE" }
-          foreach ($p in @($skillDir, $codex)) {
-            if (Test-Path $p) { throw "still present after uninstall: $p" }
-          }
-          if (Test-Path $settings) {
-            $left = ([regex]::Matches((Get-Content $settings -Raw), 'anti-ai-design')).Count
-            if ($left -ne 0) { throw "$left of our references left in settings.json" }
-            # Must still be valid JSON, or we have corrupted a shared file.
-            Get-Content $settings -Raw | ConvertFrom-Json | Out-Null
-          }
+      - name: Dry run, install, selftest, reinstall, uninstall
+        shell: cmd
+        run: ${{ matrix.exe }} -NoProfile -ExecutionPolicy Bypass -File installer\ci-install-roundtrip.ps1
 
   download-path:
-    name: Install from the published zip (no clone)
+    name: Install from the published zip, with no clone
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
-      - name: Run install.ps1 with no clone beside it
+
+      - name: Run install.ps1 alone in an empty folder
         shell: pwsh
         run: |
-          # The one-liner path: irm ... | iex. With no skill folder next to the
+          # The one-liner path: irm ... | iex. With no skill folder beside the
           # script the installer downloads main.zip and unpacks it, and that
           # branch has never run on Windows either.
           $staging = Join-Path $env:RUNNER_TEMP 'lone-installer'
           New-Item -ItemType Directory -Force -Path $staging | Out-Null
           Copy-Item install.ps1 (Join-Path $staging 'install.ps1')
           Push-Location $staging
-          ./install.ps1 -Yes
-          $code = $LASTEXITCODE
-          Pop-Location
+          try {
+            ./install.ps1 -Yes
+            $code = $LASTEXITCODE
+          } finally {
+            Pop-Location
+          }
           if ($code -ne 0) { throw "download-path install exited $code" }
           $plugin = Join-Path $env:USERPROFILE '.claude\skills\anti-ai-design-style\.claude-plugin\plugin.json'
-          if (-not (Test-Path $plugin)) { throw "download path installed nothing" }
-          Write-Host ("downloaded and installed version " +
-            (Get-Content $plugin -Raw | ConvertFrom-Json).version)
+          if (-not (Test-Path $plugin)) { throw "the download path installed nothing" }
+          $v = (Get-Content $plugin -Raw | ConvertFrom-Json).version
+          Write-Host "downloaded and installed version $v"
