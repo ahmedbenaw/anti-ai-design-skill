@@ -116,6 +116,16 @@ python3 scripts/verify_all.py examples/slop-example.html
 Expected: two `SELFTEST: PASS` lines, then a `PASS:` line for the fixed
 example and a `FAIL:` line scoring 50 for the slop example.
 
+The Windows installer is the one part of this repo the Python selftests
+cannot reach. PowerShell runs on macOS and Linux too, so check it anywhere:
+
+```bash
+pwsh -NoProfile -File installer/check-install-ps1.ps1
+```
+
+Expected: `PARSE: OK - 0 errors`, then `CHECKS: PASS`. It exits non-zero on
+a parse error, so it can gate a release.
+
 ## Turn on the browser check
 
 Contrast, tap-target size and focus rings are measured by rendering the page
@@ -174,7 +184,7 @@ you stop anyway, because no edit to the page can fix it.
 | Path | What it is |
 |---|---|
 | `anti-ai-design-style/` | The skill. Scanners, rules, register, sources, examples, templates. Canonical. |
-| `install.sh`, `install.ps1`, `installer/` | The universal installer and its contract. |
+| `install.sh`, `install.ps1`, `installer/` | The universal installer, its contract, and a parser check for the PowerShell half. |
 | `anti-ai-design-style-workspace/` | Evaluation runs, the adversarial review, measurements. History; not edited after the fact. |
 | `HANDOVER-claude-code.md` | What was built, what was found, what is still open. |
 | `CHANGELOG.md` | Versions and what changed. |

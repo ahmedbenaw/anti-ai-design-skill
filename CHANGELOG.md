@@ -4,6 +4,28 @@ Versions follow the skill's own `plugin.json`. Every scanner verdict prints a
 rules fingerprint, so a number quoted in one version can be checked against
 the rules that produced it.
 
+## 3.4.3 — 2026-10-28
+
+**A parser check for the Windows installer, so it stops being the untested
+half.** `installer/check-install-ps1.ps1` runs PowerShell's own parser over
+`install.ps1` and reports every error it finds. It also checks for CRLF line
+endings, a byte-order mark, and a `param()` block that is not the first
+executable statement. It exits non-zero on any of those, so it can gate a
+release. PowerShell runs on macOS and Linux, so no Windows machine is needed
+and the README says where to run it.
+
+Worth recording how the third check was arrived at, because it is a small
+lesson in writing assertions. It failed `install.ps1` three times while the
+file was correct. First it did not know a `<# .. #>` help block may precede
+`param()`. Then a second version had a syntax error of its own. Then it did
+not know that `[CmdletBinding()]` may precede `param()` as well, which is in
+fact where that attribute belongs. Each failure looked like a finding about
+the installer and was a fault in the check. It now strips comments and
+leading attributes before deciding, and it still rejects a file with real
+code above `param()`.
+
+No rule changed. Fingerprint stays `3c8f23a11db4e800`.
+
 ## 3.4.2 — 2026-10-28
 
 **The PowerShell installer has now actually been run.** It had never been
