@@ -28,6 +28,14 @@ param(
   [string]$Python = 'python'
 )
 
+# Windows PowerShell 5.1 wraps a native command's stderr in a NativeCommandError
+# when it is merged with 2>&1, and the caller runs with ErrorActionPreference
+# set to Stop, so a scanner that merely prints a note to stderr - render_check
+# says "Playwright is not installed" - killed the whole run. PowerShell 7 does
+# not do this, which is why only the 5.1 leg failed. Exit codes and the printed
+# verdict are what this script judges by, so stderr must not be fatal here.
+$ErrorActionPreference = 'Continue'
+
 if (-not (Test-Path $ScriptsDir)) {
   Write-Host "not found: $ScriptsDir"
   exit 1
