@@ -4,6 +4,37 @@ Versions follow the skill's own `plugin.json`. Every scanner verdict prints a
 rules fingerprint, so a number quoted in one version can be checked against
 the rules that produced it.
 
+## 3.4.2 — 2026-10-28
+
+**The PowerShell installer has now actually been run.** It had never been
+executed since the day it was written. PowerShell runs on macOS, so it was
+never as untestable as the note claimed.
+
+What ran, under PowerShell 7.6.9, against a throwaway home directory:
+
+- `-DryRun` listed the plan and wrote nothing. Exit 0, same as the shell
+  installer.
+- A real install placed the skill, the three commands and both of this
+  week's new test pages.
+- The hook branch took the right path. `settings.json` was left empty, with
+  zero hook entries, which is the single-registration fix from 3.2.2 holding
+  in PowerShell and not only in shell.
+- Its own verification step ran the skill against its example and reported a
+  genuine PASS.
+- `-Uninstall` removed the skill, the commands and the Codex copy, leaving
+  nothing behind.
+- `-Help` exits 0.
+
+Two static results worth recording. The script parses with PowerShell's own
+parser with zero errors across 3361 tokens. It contains no PowerShell 7-only
+syntax, so its claim to support Windows PowerShell 5.1 is plausible.
+
+**What is still not proven.** None of this ran on Windows. `USERPROFILE`,
+native backslash paths and Windows PowerShell 5.1 are untested. The README
+says so in those words now, instead of calling the whole script unexecuted.
+
+No rule changed. Fingerprint stays `3c8f23a11db4e800`.
+
 ## 3.4.1 — 2026-10-27
 
 **The browser check could never have worked on Windows.** Shipped two

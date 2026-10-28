@@ -202,7 +202,13 @@ you stop anyway, because no edit to the page can fix it.
   contrast, tap targets and focus go unmeasured for that page. This is
   deliberate: a hook that fetches from the network on every stop is worse.
   Run `verify_all.py --render --allow-network <page>` by hand to measure one.
-- `install.ps1` is unexecuted on Windows at the time of writing.
+- `install.ps1` has been run end to end under PowerShell 7.6.9 on macOS.
+  Dry run, install, its own self-check and uninstall, all clean. No hook
+  entries were written to `settings.json`. It has never been run on Windows.
+  Windows-specific behaviour is therefore unproven: `USERPROFILE`, native
+  backslash paths, and Windows PowerShell 5.1. The script parses with no
+  errors and holds no PowerShell 7-only syntax, so the 5.1 claim is
+  plausible rather than tested.
 
 ## Refresh the register by March 2028
 
