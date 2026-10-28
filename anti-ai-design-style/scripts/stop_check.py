@@ -562,6 +562,36 @@ def selftest():
         print("  {} {} (exit {})".format("ok  " if good else "FAIL", label,
                                          out.returncode))
 
+    # The session filter applies to the first timestamp too, and the three
+    # cases above cannot see that: none of them carries a stamp, so the mtime
+    # window never runs. Here the parent's line is older than the page and
+    # this session's is newer. Take the start from the parent and the page
+    # looks modified during the session, which is the bug. Take it from this
+    # session and the page is correctly left alone.
+    old_page = os.path.join(scratch, "parent-aged-page.html")
+    shutil.copy(slop, old_page)
+    os.utime(old_page, (now - 60, now - 60))
+    def _stamp(offset):
+        return datetime.datetime.fromtimestamp(
+            now + offset, datetime.timezone.utc).strftime(
+                "%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+    tdir = tempfile.mkdtemp()
+    tname = os.path.join(tdir, mine + ".jsonl")
+    with io.open(tname, "w", encoding="utf-8") as fh:
+        fh.write(_tool_call("Bash", timestamp=_stamp(-120), session_id=theirs,
+                            command="grep -c div " + old_page))
+        fh.write(_tool_call("Bash", timestamp=_stamp(0), session_id=mine,
+                            command="grep -c div " + old_page))
+    out = subprocess.run(
+        [sys.executable, os.path.abspath(__file__)],
+        input=json.dumps({"hook_event_name": "Stop", "transcript_path": tname,
+                          "session_id": mine}),
+        capture_output=True, text=True)
+    good = out.returncode == 0 and not out.stderr.strip()
+    ok = ok and good
+    print("  {} takes the first timestamp from this session, not the parent "
+          "(exit {})".format("ok  " if good else "FAIL", out.returncode))
+
     out = subprocess.run([sys.executable, os.path.abspath(__file__)],
                          input="not json", capture_output=True, text=True)
     good = out.returncode == 0

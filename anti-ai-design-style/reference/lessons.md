@@ -134,9 +134,26 @@ path came from a memory injected out of another session. Others came from
 the printed output of a read-only sweep. Paths only named in Bash commands
 that read the files counted as well.
 
-A file now counts only when two things hold. One of the session's own tool
-calls named it, apart from tools that only read. And it changed after the
-session's first transcript line. The name rule keeps Bash writes such as
-`sed -i` in view. The mtime rule drops Bash reads. Replayed on that session,
-the old logic blocked on six files and the new one on none. The selftest
-proves both directions, and the new cases fail when run on the old logic.
+A file now counts only when three things hold. This session's own line
+named it. One of the session's own tool calls made it, apart from tools that
+only read. And it changed after the session's first transcript line. The
+name rule keeps Bash writes such as `sed -i` in view. The mtime rule drops
+Bash reads. Replayed on that session, the old logic blocked on six files and
+the new one on none. The selftest proves both directions, and the new cases
+fail when run on the old logic.
+
+The first of those three was added on 2026-10-28, and the reason is worth
+keeping. The two rules above were both correct and the hook still blamed the
+wrong session. A fork or a compaction copies the parent's history into the
+child transcript. The code read that file as one session, so a forked
+session inherited every path its parent had named. Two of this project's
+three transcripts carried another session's lines, one of them 14,661 of
+14,763.
+
+The lesson is about where a filter is applied, not what it says. A correct
+tool filter and a correct mtime window, computed over a set of lines that is
+not the session's, still give the wrong answer. The symptom was identical to
+the original bug: a block no edit by that session could clear. Every line is
+now matched against the current session's id, for the first timestamp as
+well as the names. A line with no id still counts, because it cannot be
+attributed.

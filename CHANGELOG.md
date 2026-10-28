@@ -4,6 +4,23 @@ Versions follow the skill's own `plugin.json`. Every scanner verdict prints a
 rules fingerprint, so a number quoted in one version can be checked against
 the rules that produced it.
 
+## 3.5.1 — 2026-10-28
+
+**Tests and a stale lesson, no behaviour change.** 3.5.0 claimed the session
+filter applies to the first timestamp as well as the file names. That half
+was true but unpinned. None of the three new cases carried a timestamp, so
+`start` was always None and the mtime window never ran.
+
+A fourth case pins it. The parent's line is stamped older than the page and
+this session's is stamped newer. Take the start from the parent and the page
+looks modified during the session. Take it from this session and the page is
+correctly left alone. Checked both ways at the function: one file before the
+fix, none after.
+
+`reference/lessons.md` still said a file counts when "two things hold". It is
+three now, and the entry says why the two correct rules were not enough.
+Where a filter is applied matters as much as what it says.
+
 ## 3.5.0 — 2026-10-28
 
 **The Stop hook blamed a session for files another session touched.** A fork
