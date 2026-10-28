@@ -75,8 +75,32 @@ def is_recorded_evidence(path):
 
 
 UI_EXT = r"(?:html|htm|css|scss|jsx|tsx|vue|svelte|astro)"
-QUOTED_UI = re.compile(r'["\']([^"\'\n]+?\.' + UI_EXT + r')["\']')
-BARE_UI = re.compile(r'(?<![\w./~$-])([\w./~-]*[\w-]\.' + UI_EXT + r')(?![\w.-])')
+
+
+def ui_regexes(sep=os.sep):
+    """The two path patterns, built for this platform's separator.
+
+    On Windows a path is `C:\\Users\\me\\page.html`, and neither the
+    backslash nor the colon was in the character class. The pattern therefore
+    matched only `page.html`, which was then joined to the session's cwd,
+    pointed at nothing, and was dropped - so on Windows the hook went silent
+    on every absolute path it was handed. Found by running the selftests on a
+    Windows runner on 2026-10-28; four blame cases returned 0 where they must
+    return 2.
+
+    The separator is a parameter so both platforms' behaviour can be proven
+    from either one. The Unix class is left exactly as it was: a backslash is
+    a legal character in a POSIX filename, and widening the class there would
+    change what the guard matches on the platform it already worked on.
+    """
+    extra = r"\\:" if sep == "\\" else ""
+    quoted = re.compile(r'["\']([^"\'\n]+?\.' + UI_EXT + r')["\']')
+    bare = re.compile(r'(?<![\w./~$' + extra + r'-])([\w./~' + extra +
+                      r'-]*[\w-]\.' + UI_EXT + r')(?![\w.-])')
+    return quoted, bare
+
+
+QUOTED_UI, BARE_UI = ui_regexes()
 # Tools that only look. A file a session merely read is not its work.
 READ_ONLY_TOOLS = {"Read", "Grep", "Glob", "LS", "NotebookRead", "WebFetch", "WebSearch"}
 
@@ -212,6 +236,40 @@ def ui_files_from(transcript_path, cwd=None, session_id=None):
     return out
 
 
+def unmeasured_note(render, line, checked, files):
+    """What to say when the rendered check could not reach a verdict.
+
+    ERROR and INCONCLUSIVE are different problems and must not read the same.
+    ERROR means no browser would start: nothing about the page is at fault and
+    nothing the reader types will change it here. INCONCLUSIVE means the page
+    was loaded but its styling was never fetched, so contrast was measured
+    against an unstyled page - a number that would be wrong rather than
+    missing. That one is recoverable, and the reader is owed the hosts that
+    would be contacted and the command that gets a verdict.
+
+    The earlier version printed the same sentence for both and named neither,
+    which left the reader with a dead end: no way to tell a missing webfont
+    from a missing stylesheet, and no command to run.
+    """
+    state = render.get("state", "")
+    hosts = render.get("blocked_styling") or []
+    head = ("The design guards passed. The rendered check could not return a "
+            "verdict, so\ncontrast, tap targets and focus are unmeasured "
+            "here - no edit to the page\nchanges that.")
+    if state == "INCONCLUSIVE":
+        head = ("The design guards passed. The page's styling was never "
+                "fetched, so contrast\nwas measured against an unstyled page "
+                "and is reported as no verdict rather\nthan a wrong number.")
+        if hosts:
+            head += ("\n\nStyling blocked from: " + ", ".join(hosts) +
+                     "\nTo get a verdict, allowing those hosts to be "
+                     "contacted:\n  python3 \"" +
+                     os.path.join(HERE, "verify_all.py") +
+                     "\" --render --allow-network " +
+                     " ".join('"%s"' % f for f in files[:4]))
+    return head + "\n\n  " + line + "\n\nFiles checked: " + checked
+
+
 def main():
     try:
         payload = json.load(sys.stdin)
@@ -290,10 +348,7 @@ def main():
         summary.get(k, {}).get("ok", False) for k in ("scan", "copy", "brand")) \
         if summary else False
     if design_ok and render_state in ("ERROR", "INCONCLUSIVE"):
-        print("The design guards passed. The rendered check could not return a "
-              "verdict, so\ncontrast, tap targets and focus are unmeasured "
-              "here - no edit to the page\nchanges that.\n\n  " + line +
-              "\n\nFiles checked: " + checked)
+        print(unmeasured_note(summary.get("render") or {}, line, checked, files))
         return 0                      # informative, not a blocker
 
     if brand_missing and others_ok:
@@ -591,6 +646,60 @@ def selftest():
     ok = ok and good
     print("  {} takes the first timestamp from this session, not the parent "
           "(exit {})".format("ok  " if good else "FAIL", out.returncode))
+
+    # ERROR and INCONCLUSIVE are different problems. One is "no browser
+    # started", which the reader cannot fix by typing anything; the other is
+    # "the styling was never fetched", which they can. The old message was
+    # identical for both and named neither the hosts nor a command, so a
+    # reader could not tell a missing webfont from a missing stylesheet.
+    note_err = unmeasured_note({"state": "ERROR", "detail": "no browser"},
+                               "PASS: ...", "a.html", ["a.html"])
+    note_inc = unmeasured_note(
+        {"state": "INCONCLUSIVE",
+         "blocked_styling": ["cdn.tailwindcss.com", "fonts.googleapis.com"]},
+        "PASS: ...", "a.html", ["a.html"])
+    for label, good in (
+            ("an inconclusive note names the blocked hosts",
+             "cdn.tailwindcss.com" in note_inc and
+             "fonts.googleapis.com" in note_inc),
+            ("an inconclusive note gives the command that gets a verdict",
+             "--render --allow-network" in note_inc and "a.html" in note_inc),
+            ("an inconclusive note says the number would be wrong, not missing",
+             "wrong number" in note_inc),
+            ("a browser that will not start names no hosts and no command",
+             "--allow-network" not in note_err),
+            ("both notes still carry the proof line and the file list",
+             "PASS: ..." in note_err and "Files checked: a.html" in note_err and
+             "PASS: ..." in note_inc),
+            ("an inconclusive note with no hosts still avoids a dead end",
+             "--allow-network" not in unmeasured_note(
+                 {"state": "INCONCLUSIVE"}, "PASS: ...", "a.html", ["a.html"]))):
+        ok = ok and good
+        print("  {} {}".format("ok  " if good else "FAIL", label))
+
+    # Windows paths. The class had neither a backslash nor a colon, so an
+    # absolute Windows path yielded the bare filename, resolved against the
+    # wrong folder and was dropped: the hook went silent on exactly the paths
+    # a Windows session hands it. Both separators are asserted here so the
+    # fix is provable from either platform.
+    win_q, win_bare = ui_regexes("\\")
+    nix_q, nix_bare = ui_regexes("/")
+    winpath = r"C:\Users\runneradmin\AppData\Local\Temp\t1\bad-page.html"
+    for label, good in (
+            ("a Windows absolute path is matched whole, drive letter included",
+             win_bare.findall("sed -i '' s/a/b/ " + winpath) == [winpath]),
+            ("a Windows path inside a longer command is still matched whole",
+             winpath in win_bare.findall("type " + winpath + " | findstr div")),
+            ("the Unix pattern is unchanged by the fix",
+             nix_bare.findall("sed -i '' s/a/b/ /tmp/t1/bad-page.html") ==
+             ["/tmp/t1/bad-page.html"]),
+            ("a Unix path still matches under the Unix pattern",
+             nix_bare.pattern == BARE_UI.pattern if os.sep == "/" else True),
+            ("a plain filename still matches on both",
+             win_bare.findall("x page.html y") == ["page.html"] and
+             nix_bare.findall("x page.html y") == ["page.html"])):
+        ok = ok and good
+        print("  {} {}".format("ok  " if good else "FAIL", label))
 
     out = subprocess.run([sys.executable, os.path.abspath(__file__)],
                          input="not json", capture_output=True, text=True)

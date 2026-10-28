@@ -76,7 +76,7 @@ def codex_files(skill_dir=SKILL_DIR):
     return jobs
 
 
-def shell_safe(path):
+def shell_safe(path, sep=os.sep):
     """Quote a path that a shell would otherwise split.
 
     Real install paths contain spaces - "Anti-AI-design skill" and macOS's
@@ -86,6 +86,19 @@ def shell_safe(path):
     directory keeps the rest of the command readable, and adjacent quoted
     and bare segments join into one word in every POSIX shell.
     """
+    # On Windows every absolute path contains backslashes, and the list below
+    # treats a backslash as a shell metacharacter. The result was that every
+    # Windows path was quoted and had its separators doubled, so the commands
+    # this script writes came out mangled for every Windows user. Found by
+    # running the selftests on a Windows runner on 2026-10-28.
+    #
+    # Forward slashes are the fix rather than a Windows-specific escape rule.
+    # Windows accepts them in paths, PowerShell accepts them, Python accepts
+    # them, and install.ps1 already writes its python path that way - so this
+    # follows a convention the repo had already chosen. With no backslashes
+    # left there is nothing to double.
+    if sep == "\\":
+        path = path.replace("\\", "/")
     if path and any(c in path for c in ' \t"\'\\$`&|;<>()*?[]#~!'):
         return '"{}"'.format(path.replace('\\', '\\\\').replace('"', '\\"'))
     return path
@@ -100,6 +113,8 @@ def fill(text, skill_dir, brand_dir):
     # apart at the first space.
     text = text.replace('"%s"' % SKILL_TOKEN, shell_safe(skill_dir))
     text = text.replace(SKILL_TOKEN, shell_safe(skill_dir))
+    # brand_dir is substituted by the caller where it applies; shell_safe is
+    # the single place that decides quoting, so both go through it.
     return text
 
 
@@ -250,12 +265,35 @@ def selftest():
         install(spaced, spacey_skill, spacey_brand, out=io.StringIO())
         rule3 = open(os.path.join(spaced, ".claude",
                                   "hookify.x.local.md")).read()
+        # On Windows the emitted path is deliberately forward-slashed, so the
+        # expectation is built the same way rather than from the native path.
+        want_spacey = spacey_skill.replace(os.sep, "/")
         checks.append(("paths with spaces are quoted exactly once",
-                       '"{}"/scripts/s.py'.format(spacey_skill) in rule3 and
+                       '"{}"/scripts/s.py'.format(want_spacey) in rule3 and
                        '""' not in rule3))
+        checks.append(("no separator is doubled in a written path",
+                       "\\\\" not in rule3))
         checks.append(("paths without spaces are left bare",
                        '"' not in open(os.path.join(
                            target, ".claude", "commands", "c.md")).read()))
+
+        # Both separators, asserted from either platform. A Windows path is
+        # forward-slashed and quoted only when it genuinely needs quoting; a
+        # POSIX path keeps the behaviour it already had.
+        for label, got, want in (
+                ("a Windows path with a space is forward-slashed and quoted once",
+                 shell_safe(r"C:\Users\a b\skill", sep="\\"),
+                 '"C:/Users/a b/skill"'),
+                ("a Windows path with no space is left bare",
+                 shell_safe(r"C:\Users\ab\skill", sep="\\"),
+                 "C:/Users/ab/skill"),
+                ("a POSIX path with a space is still quoted",
+                 shell_safe("/home/a b/skill", sep="/"),
+                 '"/home/a b/skill"'),
+                ("a POSIX path with no space is still bare",
+                 shell_safe("/home/ab/skill", sep="/"),
+                 "/home/ab/skill")):
+            checks.append((label, got == want))
 
         dry = os.path.join(root, "proj3")
         install(dry, skill, brand, dry_run=True, out=io.StringIO())

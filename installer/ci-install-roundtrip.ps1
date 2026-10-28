@@ -27,10 +27,23 @@
 #>
 [CmdletBinding()]
 param(
-  [string]$RepoRoot = (Split-Path -Parent (Split-Path -Parent $PSCommandPath))
+  [string]$RepoRoot = ''
 )
 
 $ErrorActionPreference = 'Stop'
+
+# Resolved here, not in the param default. Under Windows PowerShell 5.1 run as
+# `powershell -File script.ps1`, $PSCommandPath was empty while the default was
+# being evaluated and Split-Path refused the empty string, so the script died
+# before its first check. $PSScriptRoot is set by then; the cwd is the last
+# resort.
+if (-not $RepoRoot) {
+  if ($PSScriptRoot) {
+    $RepoRoot = Split-Path -Parent $PSScriptRoot
+  } else {
+    $RepoRoot = (Get-Location).Path
+  }
+}
 
 $skill = 'anti-ai-design-style'
 $home_ = $env:USERPROFILE
@@ -74,9 +87,15 @@ try {
   if ($LASTEXITCODE -ne 0) { Fail "install exited $LASTEXITCODE" }
 
   # USERPROFILE, not HOME. Native backslashes, not forward slashes.
-  foreach ($p in @($skillDir, $codexDir)) {
-    if (-not (Test-Path $p)) { Fail "missing after install: $p" }
-  }
+  if (-not (Test-Path $skillDir)) { Fail "missing after install: $skillDir" }
+
+  # The Codex surface is only written when Codex is detected, and a clean
+  # runner has none. Requiring it unconditionally failed the first run on a
+  # correct install. What matters is the pairing: whatever was created must be
+  # removed again, so remember it and check that at the end.
+  $codexInstalled = Test-Path $codexDir
+  Write-Host ("  ok   codex surface " +
+    $(if ($codexInstalled) { 'installed' } else { 'not detected, skipped' }))
   $installedPlugin = Join-Path $skillDir '.claude-plugin\plugin.json'
   if (-not (Test-Path $installedPlugin)) { Fail "missing after install: $installedPlugin" }
 
@@ -104,8 +123,9 @@ try {
   # --- 5. uninstall ---------------------------------------------------------
   & $installer -Yes -Uninstall
   if ($LASTEXITCODE -ne 0) { Fail "uninstall exited $LASTEXITCODE" }
-  foreach ($p in @($skillDir, $codexDir)) {
-    if (Test-Path $p) { Fail "still present after uninstall: $p" }
+  if (Test-Path $skillDir) { Fail "still present after uninstall: $skillDir" }
+  if ($codexInstalled -and (Test-Path $codexDir)) {
+    Fail "still present after uninstall: $codexDir"
   }
   if (Test-Path $settings) {
     $left = Count-Ours

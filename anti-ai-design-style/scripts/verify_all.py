@@ -112,6 +112,31 @@ def render_python(env=None):
     return None
 
 
+def blocked_hosts(datas):
+    """Hosts whose stylesheets or scripts were blocked, sorted and deduped.
+
+    An INCONCLUSIVE rendered verdict means the page was never really measured:
+    its styling lives somewhere the check refused to fetch. Saying only that
+    is a dead end, because the reader cannot tell whether the missing styling
+    is a font they do not care about or the entire stylesheet, and has nothing
+    to act on. Naming the hosts turns it into a decision: the reader sees who
+    would be contacted and can ask for a verdict with --allow-network.
+
+    Malformed entries are dropped rather than raised on. This runs inside a
+    hook, and a stop hook that crashes on a surprising URL is worse than one
+    that names one host fewer.
+    """
+    hosts = set()
+    for data in datas or []:
+        for url in (data or {}).get("blocked_styling") or []:
+            if not isinstance(url, str) or "://" not in url:
+                continue
+            host = url.split("://", 1)[1].split("/", 1)[0].split("@")[-1]
+            if host:
+                hosts.add(host)
+    return sorted(hosts)
+
+
 def render_result(paths, enabled, allow_network=False):
     """Run the rendered check if it can run at all.
 
@@ -131,6 +156,7 @@ def render_result(paths, enabled, allow_network=False):
     worst = "PASS"
     fails = 0
     net = {"network": True} if allow_network else {}
+    datas = []
     for f in html:
         cmd = [py, os.path.join(HERE, "render_check.py"), "--json", f]
         if allow_network:
@@ -138,13 +164,22 @@ def render_result(paths, enabled, allow_network=False):
         data = _json_cmd(cmd)
         if data is None:
             return {"state": "ERROR", "detail": "render_check did not run", **net}
+        datas.append(data)
         fails += data.get("aa_failures", 0)
         if data["verdict"] == "INCONCLUSIVE":
             worst = "INCONCLUSIVE"
         elif data["verdict"] == "FAIL" and worst != "INCONCLUSIVE":
             worst = "FAIL"
-    return {**net, "state": worst, "detail": "{} WCAG AA failures".format(fails),
-            "aa_failures": fails}
+    hosts = blocked_hosts(datas)
+    out = {**net, "state": worst, "aa_failures": fails,
+           "detail": "{} WCAG AA failures".format(fails)}
+    if hosts:
+        # Named so the hook can say who it would have to contact for a
+        # verdict. Without this the INCONCLUSIVE message is unactionable.
+        out["blocked_styling"] = hosts
+        if worst == "INCONCLUSIVE":
+            out["detail"] = "styling blocked from " + ", ".join(hosts)
+    return out
 
 
 def gather(paths, brand_dir, max_grade=9.0, render=False, allow_network=False):
@@ -378,6 +413,41 @@ def selftest():
     r_inc = dict(good, render={"state": "INCONCLUSIVE", "detail": "styles blocked"})
     checks.append(("an inconclusive render check fails the run",
                    not summarise(r_inc, rules)["passed"]))
+
+    # An INCONCLUSIVE verdict with no hosts named is a dead end: the page was
+    # not measured and the reader is given nothing to act on. render_check
+    # reports the blocked URLs; these are the hosts the hook names, with the
+    # command that would get a verdict. Tested as a pure function because the
+    # first version of this test asserted on summarise(), which copies the
+    # render dict through untouched and so passed before anything was fixed.
+    for label, datas, want in (
+            ("collects the host of a blocked stylesheet",
+             [{"blocked_styling": ["https://cdn.tailwindcss.com/3.4.0"]}],
+             ["cdn.tailwindcss.com"]),
+            ("dedupes one host blocked many times and sorts them",
+             [{"blocked_styling": ["https://fonts.googleapis.com/css?a",
+                                   "https://cdn.tailwindcss.com/x",
+                                   "https://fonts.googleapis.com/css?b"]}],
+             ["cdn.tailwindcss.com", "fonts.googleapis.com"]),
+            ("merges hosts across several pages",
+             [{"blocked_styling": ["https://a.example/x"]},
+              {"blocked_styling": ["https://b.example/y"]}],
+             ["a.example", "b.example"]),
+            ("a page with nothing blocked contributes nothing",
+             [{"verdict": "PASS"}], []),
+            ("a malformed entry is dropped rather than crashing the run",
+             [{"blocked_styling": ["", "not a url", None]}], []),
+    ):
+        checks.append((label, blocked_hosts(datas) == want))
+
+    # The hosts are useless if render_result throws them away, which is where
+    # they were being lost. Assert on the source, as the hook flag guard does,
+    # because reaching this path for real needs a browser the selftest has no
+    # right to require.
+    with open(os.path.join(HERE, "verify_all.py"), encoding="utf-8") as _fh:
+        _src = _fh.read()
+    checks.append(("render_result carries the blocked hosts into its result",
+                   '"blocked_styling": hosts' in _src))
 
     r_net = dict(good, render={"state": "PASS", "detail": "0 WCAG AA failures", "network": True})
     checks.append(("a render check that loaded the network says so in the line",
