@@ -4,6 +4,30 @@ Versions follow the skill's own `plugin.json`. Every scanner verdict prints a
 rules fingerprint, so a number quoted in one version can be checked against
 the rules that produced it.
 
+## 3.6.1 — 2026-10-28
+
+**The library-misuse check has its first field catch.**
+
+Until now it was a working guard with nothing to its name. It discriminated
+between two fixtures, but no page from an evaluation had ever tripped it, and
+the README said so.
+
+So it was given one. An agent with no knowledge of this skill or its rules
+was handed a letterpress-shop brief and asked for a GSAP scroll story. It
+wrote 578 lines, using GSAP across `to`, `from`, `fromTo`, `timeline` and
+`utils`. The check raised `LB5` on line 519: `ease: 'back.out(2)'`, which is
+overshoot easing on a scroll-revealed element.
+
+Nothing changed in the check to make this happen, and no rule was touched.
+The page is kept under `anti-ai-design-style-workspace/iteration-4/`, so the
+catch can be re-run instead of believed. One catch is not a hit rate, and the
+README still calls this the least-exercised guard here.
+
+Worth recording: the 3.6.0 release commit swept that page in while the agent
+was still writing it, because the commit used `git add -A`. Nothing was lost,
+and the finding predates the commit, but a release should not be carrying
+another process's half-written file.
+
 ## 3.6.0 — 2026-10-28
 
 **The Windows installer now runs on Windows, and that found two real bugs.**

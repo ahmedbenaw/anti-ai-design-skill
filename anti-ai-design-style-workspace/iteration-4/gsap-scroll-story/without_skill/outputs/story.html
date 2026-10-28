@@ -479,7 +479,7 @@
     gsap.fromTo(el,
       { opacity: 0, y: 34 },
       {
-        opacity: 1, y: 0, duration: 0.95, ease: 'power3.out',
+        opacity: 1, y: 0, duration: 0.95, ease: 'power3.out', clearProps: 'transform',
         scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none none' }
       }
     );
@@ -561,7 +561,7 @@
   /* ---- gallery cards deal out ---- */
   gsap.from('[data-card] .frame', {
     yPercent: 14, rotate: function(i){ return i % 2 ? 1.6 : -1.6; }, opacity: 0,
-    duration: 0.9, ease: 'power3.out', stagger: 0.09,
+    duration: 0.9, ease: 'power3.out', stagger: 0.09, clearProps: 'transform',
     scrollTrigger: { trigger: '.cards', start: 'top 82%' }
   });
 

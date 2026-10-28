@@ -219,9 +219,17 @@ you stop anyway, because no edit to the page can fix it.
   ScrollTrigger. `examples/library-misuse-example.html` raises five rules, and
   `examples/library-careful-example.html` raises none. The careful one is real
   generated output, copied byte for byte out of the evaluation run. Presence
-  of the library is therefore not what separates them. One thing stays true.
-  No page in an evaluation has ever been caught by this check. It is a working
-  guard with no field catch to its name.
+  of the library is therefore not what separates them.
+
+  It now has a field catch. On 2026-10-28 an agent that had never seen this
+  skill was given a letterpress-shop brief and asked for a GSAP scroll story.
+  It produced 578 lines using GSAP heavily, across `to`, `from`, `fromTo`,
+  `timeline` and `utils`. The check raised `LB5` on line 519:
+  `ease: 'back.out(2)'`, overshoot easing on a scroll-revealed element. The
+  page is kept at
+  `anti-ai-design-style-workspace/iteration-4/gsap-scroll-story/`, so the
+  catch can be re-run rather than taken on trust. One catch is not a hit rate,
+  and this remains the least-exercised guard here.
 - Near-grey gradients such as `#f4f4f5` still count as colour washes; a
   regex cannot judge colour distance.
 - The hooks run the browser check without network access. A page whose
