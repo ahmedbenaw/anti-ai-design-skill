@@ -4,6 +4,35 @@ Versions follow the skill's own `plugin.json`. Every scanner verdict prints a
 rules fingerprint, so a number quoted in one version can be checked against
 the rules that produced it.
 
+## 3.5.0 — 2026-10-28
+
+**The Stop hook blamed a session for files another session touched.** A fork
+or a compaction copies the parent's history into the child transcript.
+`ui_files_from()` read that file as one session. So a forked session
+inherited every UI file its parent had ever named. It could then be blocked
+over a page it never opened. Measured across this project's three transcripts:
+two carried another session's lines, one of them 14,661 of 14,763. Both of
+those sessions were credited with three files that belonged to the parent.
+
+This is the 2026-10-11 blame trap reached by a different route, which is the
+part worth recording. That fix added two filters, a tool filter and an mtime
+window, and both were right. They were computed over the wrong population. Apply a correct window and
+a correct tool list to lines that are not the session's, and the answer is
+still wrong. The symptom is identical: a block no edit by that session can
+clear.
+
+The fix filters every line to the current session's id, for the first
+timestamp as well as for the file names. The id comes from the hook payload. It falls back to the transcript's own
+filename, which is the id. That was checked across all 15,367 lines of the
+session named by this file. A line carrying no id at all still counts. It cannot be attributed, and
+calling it foreign would switch the guard off wherever ids are absent.
+
+Three selftest cases pin it. A failing page named only by a foreign line
+is ignored. The same page named by the session's own line still blocks. The
+filename fallback works when the payload omits the field. The middle case passed before the fix. That is what makes the other two
+mean something: the machinery that must keep blocking does keep blocking. No rule changed,
+so the fingerprint stays `3c8f23a11db4e800`.
+
 ## 3.4.3 — 2026-10-28
 
 **A parser check for the Windows installer, so it stops being the untested

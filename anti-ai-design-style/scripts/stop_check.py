@@ -99,11 +99,44 @@ def _epoch(timestamp):
         return None
 
 
-def ui_files_from(transcript_path, cwd=None):
+def session_id_for(payload):
+    """This session's id: the hook payload's, else the transcript's filename.
+
+    The filename is the id. Measured on 2026-10-28 across this project's
+    three transcripts: every line of the file named for a session carried
+    that session's id, 15,367 of 15,367. The fallback exists so the filter
+    holds on a payload that omits the field rather than quietly reverting to
+    reading every session's lines.
+    """
+    sid = payload.get("session_id")
+    if sid:
+        return sid
+    path = payload.get("transcript_path") or ""
+    stem = os.path.splitext(os.path.basename(path))[0]
+    return stem or None
+
+
+def _is_other_session(entry, session_id):
+    """True when this line belongs to a session that is not the current one."""
+    if not session_id:
+        return False
+    theirs = entry.get("sessionId")
+    return bool(theirs) and theirs != session_id
+
+
+def ui_files_from(transcript_path, cwd=None, session_id=None):
     """UI files this session changed, newest first.
 
-    A file counts when two things hold. One of the session's own tool calls
-    named it, and it was modified after the session's first transcript line.
+    A file counts when three things hold. This session's own line named it,
+    one of the session's own tool calls made it, and it was modified after
+    the session's first transcript line.
+
+    This session's: a fork or a compaction copies the parent's history into
+    the child transcript, so a line in the file is not necessarily a line of
+    this session. A line whose sessionId differs is another session's and is
+    skipped, for the first timestamp as well as for the names. A line with no
+    id cannot be attributed, so it counts; treating it as foreign would turn
+    the guard off wherever ids are absent.
 
     Named: the input of every tool call the session made, except tools that
     only read. Edit and Write name the file they change. A Bash command
@@ -138,16 +171,20 @@ def ui_files_from(transcript_path, cwd=None):
     try:
         with open(transcript_path, encoding="utf-8", errors="replace") as f:
             for line in f:
+                looks_relevant = '"tool_use"' in line
                 if start is None and '"timestamp"' in line:
-                    try:
-                        start = _epoch(json.loads(line).get("timestamp"))
-                    except ValueError:
-                        pass
-                if '"tool_use"' not in line:
+                    looks_relevant = True
+                if not looks_relevant:
                     continue
                 try:
                     entry = json.loads(line)
                 except ValueError:
+                    continue
+                if _is_other_session(entry, session_id):
+                    continue
+                if start is None:
+                    start = _epoch(entry.get("timestamp"))
+                if '"tool_use"' not in line:
                     continue
                 message = entry.get("message") if entry.get("type") == "assistant" else None
                 content = message.get("content") if isinstance(message, dict) else None
@@ -190,7 +227,8 @@ def main():
     transcript = payload.get("transcript_path")
     if not transcript:
         return 0
-    files = ui_files_from(transcript, payload.get("cwd"))
+    files = ui_files_from(transcript, payload.get("cwd"),
+                          session_id_for(payload))
     evidence = [f for f in files if is_recorded_evidence(f)]
     files = [f for f in files if not is_recorded_evidence(f)]
     if not files:
@@ -298,12 +336,19 @@ EVIDENCE_CASES = [
 ]
 
 
-def _tool_call(name, timestamp=None, **tool_input):
-    """One transcript line in Claude Code's real shape: the session's own call."""
+def _tool_call(name, timestamp=None, session_id=None, **tool_input):
+    """One transcript line in Claude Code's real shape: the session's own call.
+
+    session_id attributes the line to a session, as the real transcript does.
+    Left off, the line carries no id, which is how the other cases here are
+    written and how an unattributable line must still be treated.
+    """
     entry = {"type": "assistant", "message": {"role": "assistant", "content": [
         {"type": "tool_use", "id": "toolu_test", "name": name, "input": tool_input}]}}
     if timestamp:
         entry["timestamp"] = timestamp
+    if session_id:
+        entry["sessionId"] = session_id
     return json.dumps(entry) + "\n"
 
 
@@ -478,6 +523,44 @@ def selftest():
         good = out.returncode == want and not (want == 0 and out.stderr.strip())
         ok = ok and good
         print("  {} {} (exit {})".format("ok  " if good else "FAIL", label, out.returncode))
+
+    # A fork or a compaction copies the parent's whole history into the child
+    # transcript, so reading the file as one session blames the child for
+    # every file the parent ever named. Measured on 2026-10-28: two of three
+    # transcripts in this project carried another session's lines, one of
+    # them 14,661 of 14,763. That is the same trap the 2026-10-11 blame rule
+    # was written to stop, reached by a different route - a correct mtime
+    # window and a correct tool list, computed over the wrong population.
+    # A line with no id at all still counts: it cannot be attributed, and
+    # treating it as foreign would switch the guard off on transcripts that
+    # carry no ids.
+    mine, theirs = "aaaaaaaa-0000-0000-0000-000000000001", "bbbbbbbb-0000-0000-0000-000000000002"
+    for label, lines, payload_id, name_as, want in (
+            ("ignores a failing page named only by another session's line",
+             [_tool_call("Write", session_id=theirs, file_path=slop, content=""),
+              _tool_call("Edit", session_id=mine, file_path="scripts/etl.py",
+                         old_string="a", new_string="b")], mine, None, 0),
+            ("still speaks up when this session's own line names it",
+             [_tool_call("Write", session_id=mine, file_path=slop, content="")],
+             mine, None, 2),
+            ("falls back to the transcript's own filename for the session id",
+             [_tool_call("Write", session_id=theirs, file_path=slop, content="")],
+             None, mine, 0)):
+        tdir = tempfile.mkdtemp()
+        tname = os.path.join(tdir, (name_as or "transcript") + ".jsonl")
+        with io.open(tname, "w", encoding="utf-8") as fh:
+            for line in lines:
+                fh.write(line)
+        payload = {"hook_event_name": "Stop", "transcript_path": tname}
+        if payload_id:
+            payload["session_id"] = payload_id
+        out = subprocess.run(
+            [sys.executable, os.path.abspath(__file__)], input=json.dumps(payload),
+            capture_output=True, text=True)
+        good = out.returncode == want and not (want == 0 and out.stderr.strip())
+        ok = ok and good
+        print("  {} {} (exit {})".format("ok  " if good else "FAIL", label,
+                                         out.returncode))
 
     out = subprocess.run([sys.executable, os.path.abspath(__file__)],
                          input="not json", capture_output=True, text=True)
